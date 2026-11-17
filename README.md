@@ -95,6 +95,23 @@ Akses landing page di peramban Anda melalui: `http://localhost:8000`
 
 ---
 
+## 🌿 Manajemen Branch & Riwayat Fitur (Git Workflow)
+
+Pengembangan proyek ini mengikuti standar *Git Feature Branch Workflow* sesuai panduan pada brief: satu branch terpisah untuk setiap fitur dan section, dengan pesan commit deskriptif yang kemudian digabungkan ke branch utama (`main`):
+
+| Branch | Cakupan Fitur & Section | Pesan Commit Deskriptif |
+| :--- | :--- | :--- |
+| **`feat/database-and-backend`** | Migrasi database `products` & `inquiries`, Model Eloquent, `ProductSeeder` (10 hampers, 4 kategori), Controller, FormRequest (honeypot), Mailable, dan Automated Tests. | `feat: arsitektur database, model produk & inquiry, seeder 10 hampers, dan controller` |
+| **`feat/design-tokens-and-motion`** | Design tokens Tailwind CSS v4 (Warm Ivory, Deep Emerald, Soft Gold), Google Fonts pair (`Playfair Display` & `Plus Jakarta Sans`), sentralisasi varian animasi GPU di `resources/js/lib/motion.ts`, dan tipe TypeScript. | `feat: design tokens tailwind v4, tipografi playfair display, dan sentralisasi animasi motion.ts` |
+| **`feat/section-navbar-and-hero`** | `NavbarSection.tsx` (sticky blur, smooth scroll menu, CTA), `HeroSection.tsx` (single `<h1>`, animasi word-reveal, trust metrics, visual hampers floating), dan `FloatingWhatsApp.tsx`. | `feat: section navbar sticky, hero dengan word-reveal, dan floating button whatsapp` |
+| **`feat/section-about-and-why-choose-us`** | `AboutSection.tsx` (kisah filosofi brand & 3 pilar nilai dengan aksen emas) dan `WhyChooseUsSection.tsx` (4 pilar keunggulan dengan animasi angka count-up). | `feat: section tentang filosofi brand dan kenapa memilih kami dengan count-up animasi` |
+| **`feat/section-katalog-koleksi`** | `CollectionSection.tsx` (katalog hampers dengan layout spring animation filter kategori `Semua`, `Lebaran`, `Natal`, `Corporate`, `Wedding`, hover zoom kartu, dan order langsung via WhatsApp). | `feat: section koleksi hampers pilihan dengan filter kategori dan direct order whatsapp` |
+| **`feat/section-cara-pesan-and-corporate`** | `HowToOrderSection.tsx` (alur 4 langkah pemesanan bergaris progres) dan `CorporateGiftingSection.tsx` (B2B highlights, marquee logo korporat, dan Formulir Corporate Inquiry 8 field). | `feat: section cara pesan 4 langkah dan corporate gifting dengan form inquiry 8 field` |
+| **`feat/section-testimoni-faq-footer`** | `TestimonialsSection.tsx` (carousel review swipe/drag + tombol panah), `FaqSection.tsx` (accordion buka-tutup halus), `FooterCtaSection.tsx` (banner CTA Deep Emerald & footer informasi), perakitan `welcome.tsx`, dan `README.md`. | `feat: section testimoni carousel, faq accordion, footer cta banner, dan integrasi welcome.tsx` |
+| **`main`** | Branch utama produksi yang menggabungkan seluruh branch fitur secara utuh dan siap dideploy. | *Production Ready* |
+
+---
+
 ## 🏛️ Struktur 10 Section Modular
 
 Seluruh section berada di `resources/js/components/sections/`:
