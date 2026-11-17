@@ -8,10 +8,31 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+    --color-ivory: #FDFBF7;
+    --color-cream: #F7F4EE;
+    --color-cream-dark: #EFE9DE;
+
+    --color-emerald-950: #0C1E17;
+    --color-emerald-900: #142E24;
+    --color-emerald-800: #1B382B;
+    --color-emerald-700: #264E3D;
+    --color-emerald-600: #356752;
+
+    --color-gold-100: #F7F2E4;
+    --color-gold-400: #D8BD6E;
+    --color-gold-500: #C8A951;
+    --color-gold-600: #B2923B;
+
+    --color-charcoal-900: #1C1917;
+    --color-charcoal-800: #2C2724;
+    --color-charcoal-600: #6E675F;
+    --color-charcoal-400: #9C9489;
+
+    --color-border-warm: #E8E2D5;
+    --color-border-warm-light: #F2ECE1;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -136,8 +157,32 @@
     * {
         @apply border-border outline-ring/50;
     }
-
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* Custom luxury utilities for GALUH & CO. */
+.bg-paper-texture {
+    background-color: #FDFBF7;
+    background-image: radial-gradient(#E8E2D5 0.6px, transparent 0.6px);
+    background-size: 24px 24px;
+}
+
+.text-gold-gradient {
+    background: linear-gradient(135deg, #DFCA86 0%, #C8A951 50%, #B2923B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.border-gold-subtle {
+    border-color: rgba(200, 169, 81, 0.25);
+}
+
+.shadow-luxury {
+    box-shadow: 0 10px 30px -10px rgba(27, 56, 43, 0.08), 0 4px 6px -4px rgba(27, 56, 43, 0.03);
+}
+
+.shadow-luxury-hover {
+    box-shadow: 0 20px 40px -15px rgba(27, 56, 43, 0.15), 0 8px 12px -6px rgba(27, 56, 43, 0.05);
 }
