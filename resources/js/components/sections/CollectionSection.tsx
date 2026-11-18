@@ -67,16 +67,16 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                 key={cat}
                                 type="button"
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`relative px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A951] ${
+                                className={`relative isolate px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A951] ${
                                     isActive
-                                        ? 'text-[#FDFBF7]'
+                                        ? 'text-[#FDFBF7] border border-transparent'
                                         : 'text-[#6E675F] bg-[#FFFFFF] border border-[#E8E2D5] hover:text-[#1B382B] hover:border-[#1B382B]/40'
                                 }`}
                             >
                                 {isActive && (
                                     <motion.div
                                         layoutId="activeCategoryPill"
-                                        className="absolute inset-0 bg-[#1B382B] rounded-full -z-10 shadow-sm"
+                                        className="absolute inset-0 bg-[#1B382B] rounded-full z-0 shadow-sm"
                                         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                                     />
                                 )}
