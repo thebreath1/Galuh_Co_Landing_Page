@@ -42,8 +42,8 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
         <header
             className={`sticky top-0 z-40 transition-all duration-300 ${
                 scrolled
-                    ? 'bg-[#FDFBF7]/95 backdrop-blur-md shadow-sm border-b border-[#E8E2D5]/80 py-3.5'
-                    : 'bg-[#FDFBF7]/60 backdrop-blur-xs py-5 border-b border-transparent'
+                    ? 'bg-[#FDFBF7]/95 backdrop-blur-md shadow-sm border-b border-[#E8E2D5]/80 py-2.5'
+                    : 'bg-[#FDFBF7]/70 backdrop-blur-xs py-3 border-b border-transparent'
             }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,15 +51,14 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
                     {/* Brand Logo */}
                     <a
                         href="#hero"
-                        className="flex flex-col focus:outline-none focus:ring-2 focus:ring-[#C8A951] rounded-lg p-1 group"
+                        className="flex items-center focus:outline-none focus:ring-2 focus:ring-[#C8A951] rounded-lg p-1 group"
                         aria-label="GALUH & CO. Beranda"
                     >
-                        <span className="font-serif text-xl sm:text-2xl font-bold tracking-[0.2em] text-[#1B382B] group-hover:text-[#C8A951] transition-colors">
-                            GALUH & CO.
-                        </span>
-                        <span className="text-[9px] uppercase tracking-[0.3em] text-[#6E675F] -mt-0.5">
-                            Hampers & Gifting
-                        </span>
+                        <img
+                            src="/images/logo-gold.png"
+                            alt="Logo GALUH & CO. Hampers & Corporate Gifting"
+                            className="h-11 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                        />
                     </a>
 
                     {/* Desktop Navigation */}
