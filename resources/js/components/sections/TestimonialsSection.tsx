@@ -1,48 +1,81 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { motion, AnimatePresence, type PanInfo } from 'motion/react';
+import { Star, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
+interface Testimonial {
+    initials: string;
+    name: string;
+    role: string;
+    content: string;
+    productTag: string;
+    rating: number;
+}
+
 export const TestimonialsSection: React.FC = () => {
-    const testimonials = [
+    const testimonials: Testimonial[] = [
         {
+            initials: 'DS',
             name: 'Dian Sastrawati',
             role: 'VP Human Capital, PT Astra Financial',
             content:
                 'Kerapian kemasan dan kelezatan kue kering dari GALUH & CO. mendapat apresiasi langsung dari jajaran direksi kami. Pengiriman multi-alamat ke 300 rekan bisnis di 5 kota besar terlaksana tepat waktu tanpa cacat.',
+            productTag: 'Synergy Grand Hamper • Corporate Order',
             rating: 5,
         },
         {
+            initials: 'HG',
             name: 'Hendra Gunawan',
             role: 'Managing Partner, HG Law Firm',
             content:
                 'Hampers akhir tahun untuk para klien VVIP kami dipersiapkan dengan sangat eksklusif. Grafir logo emas di atas hardbox magnetik beludru membuat bingkisan ini terasa berbobot, elegan, dan penuh rasa hormat.',
+            productTag: 'Executive Prestige Gift • VIP Custom',
             rating: 5,
         },
         {
+            initials: 'NF',
             name: 'Nadira & Fikri',
             role: 'Bridal Couple, Jakarta Selatan',
             content:
                 'Souvenir dan hampers pengiring pengantin kami luar biasa anggun. Detail pita satin sutra dan stempel lilin monogram inisial nama kami membuat sahabat-sahabat terharu saat menerima undangannya.',
+            productTag: 'Eternal Grace Bridal Suite • Wedding',
             rating: 5,
         },
         {
+            initials: 'KC',
             name: 'Kartika Chandra',
             role: 'Private Client, Surabaya',
             content:
                 'Sudah 3 tahun berturut-turut saya mempercayakan hampers Idul Fitri kepada GALUH & CO. Rasa nastar wisman dan kastengelnya benar-benar resep asli mentega Belanda. Selalu jadi rebutan keluarga!',
+            productTag: 'The Royal Fitr • Personal Order',
             rating: 5,
         },
     ];
 
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const slides: Testimonial[][] = [];
+    for (let i = 0; i < testimonials.length; i += 2) {
+        slides.push(testimonials.slice(i, i + 2));
+    }
+
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [direction, setDirection] = useState(0);
 
     const prevSlide = () => {
-        setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+        setDirection(-1);
+        setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
     };
 
     const nextSlide = () => {
-        setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+        setDirection(1);
+        setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    };
+
+    const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        if (info.offset.x < -50) {
+            nextSlide();
+        } else if (info.offset.x > 50) {
+            prevSlide();
+        }
     };
 
     return (
@@ -72,48 +105,79 @@ export const TestimonialsSection: React.FC = () => {
                     </p>
                 </motion.div>
 
-                {/* Testimonial Showcase */}
-                <div className="max-w-4xl mx-auto relative px-4 sm:px-12">
-                    <AnimatePresence mode="wait">
+                {/* Draggable Two-Card Carousel */}
+                <div className="max-w-5xl mx-auto relative">
+                    <AnimatePresence mode="wait" initial={false}>
                         <motion.div
-                            key={currentIndex}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -15 }}
-                            transition={{ duration: 0.35 }}
-                            className="bg-[#FFFFFF] rounded-3xl p-8 sm:p-12 border border-[#E8E2D5] shadow-luxury relative text-center"
+                            key={currentSlide}
+                            initial={{ opacity: 0, x: direction >= 0 ? 30 : -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: direction >= 0 ? -30 : 30 }}
+                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={0.2}
+                            onDragEnd={handleDragEnd}
+                            className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 cursor-grab active:cursor-grabbing"
                         >
-                            {/* Decorative Quote Icon */}
-                            <div className="w-12 h-12 rounded-full bg-[#F7F2E4] text-[#C8A951] flex items-center justify-center mx-auto mb-6">
-                                <Quote className="w-6 h-6 rotate-180" />
-                            </div>
+                            {slides[currentSlide].map((item, idx) => (
+                                <article
+                                    key={idx}
+                                    className="bg-[#FFFFFF] rounded-2xl border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover transition-shadow flex flex-col justify-between overflow-hidden"
+                                >
+                                    {/* Card Header: Avatar + Name | Role */}
+                                    <div className="px-6 py-4 bg-[#FDFBF7] border-b border-[#E8E2D5] flex items-center gap-3.5">
+                                        <div
+                                            aria-hidden="true"
+                                            className="w-11 h-11 rounded-full bg-[#F7F2E4] border border-[#C8A951]/40 text-[#1B382B] font-serif font-bold text-sm flex items-center justify-center flex-shrink-0"
+                                        >
+                                            {item.initials}
+                                        </div>
 
-                            {/* Stars */}
-                            <div className="flex items-center justify-center gap-1.5 text-[#C8A951] mb-6">
-                                {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                                    <Star key={i} className="w-4 h-4 fill-current" />
-                                ))}
-                            </div>
+                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                            <h3 className="font-serif text-base sm:text-lg font-bold text-[#1B382B] truncate">
+                                                {item.name}
+                                            </h3>
+                                            <span
+                                                aria-hidden="true"
+                                                className="w-px h-6 bg-[#E8E2D5] flex-shrink-0"
+                                            />
+                                            <p className="text-xs text-[#6E675F] leading-snug line-clamp-2">
+                                                {item.role}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                            {/* Quote Text */}
-                            <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-[#1B382B] leading-relaxed mb-8 italic">
-                                &ldquo;{testimonials[currentIndex].content}&rdquo;
-                            </blockquote>
+                                    {/* Card Body: Stars + Quote */}
+                                    <div className="p-6 flex-1 flex flex-col">
+                                        <div
+                                            className="flex items-center gap-1 text-[#C8A951] mb-4"
+                                            aria-label={`Rating ${item.rating} dari 5 bintang`}
+                                        >
+                                            {[...Array(item.rating)].map((_, i) => (
+                                                <Star key={i} className="w-4 h-4 fill-current" />
+                                            ))}
+                                        </div>
 
-                            {/* Author */}
-                            <div>
-                                <p className="font-serif text-base sm:text-lg font-bold text-[#1B382B]">
-                                    {testimonials[currentIndex].name}
-                                </p>
-                                <p className="text-xs sm:text-sm text-[#C8A951] font-medium tracking-wide mt-1">
-                                    {testimonials[currentIndex].role}
-                                </p>
-                            </div>
+                                        <blockquote className="text-sm sm:text-base text-[#2C2724] leading-relaxed text-left">
+                                            &ldquo;{item.content}&rdquo;
+                                        </blockquote>
+                                    </div>
+
+                                    {/* Card Bottom Strip: Order Context */}
+                                    <div className="px-6 py-3 bg-[#F7F4EE]/70 border-t border-[#E8E2D5]/80 flex items-center gap-2 text-xs text-[#6E675F]">
+                                        <Sparkles className="w-3.5 h-3.5 text-[#C8A951] flex-shrink-0" />
+                                        <span className="font-medium text-[#1B382B]/80 truncate">
+                                            {item.productTag}
+                                        </span>
+                                    </div>
+                                </article>
+                            ))}
                         </motion.div>
                     </AnimatePresence>
 
-                    {/* Navigation Buttons */}
-                    <div className="flex items-center justify-center gap-4 mt-8">
+                    {/* Navigation Buttons & Dots */}
+                    <div className="flex items-center justify-center gap-4 mt-10">
                         <button
                             type="button"
                             onClick={prevSlide}
@@ -123,17 +187,19 @@ export const TestimonialsSection: React.FC = () => {
                             <ChevronLeft className="w-5 h-5" />
                         </button>
 
-                        {/* Indicator Dots */}
                         <div className="flex items-center gap-2">
-                            {testimonials.map((_, idx) => (
+                            {slides.map((_, idx) => (
                                 <button
                                     key={idx}
                                     type="button"
-                                    onClick={() => setCurrentIndex(idx)}
+                                    onClick={() => {
+                                        setDirection(idx > currentSlide ? 1 : -1);
+                                        setCurrentSlide(idx);
+                                    }}
                                     className={`h-2 rounded-full transition-all ${
-                                        currentIndex === idx ? 'w-6 bg-[#1B382B]' : 'w-2 bg-[#E8E2D5]'
+                                        currentSlide === idx ? 'w-6 bg-[#1B382B]' : 'w-2 bg-[#E8E2D5]'
                                     }`}
-                                    aria-label={`Beralih ke ulasan ${idx + 1}`}
+                                    aria-label={`Beralih ke halaman ulasan ${idx + 1}`}
                                 />
                             ))}
                         </div>
