@@ -68,10 +68,13 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
                     {/* Brand Info */}
                     <div className="lg:col-span-4 flex flex-col items-start">
-                        <span className="font-serif text-2xl font-bold tracking-[0.2em] text-[#FDFBF7]">
-                            GALUH & CO.
-                        </span>
-                        <span className="text-[10px] uppercase tracking-[0.3em] text-[#C8A951] mt-0.5 mb-4">
+                        <img
+                            src="/images/logo-white.png"
+                            alt="Logo GALUH & CO. Hampers & Corporate Gifting"
+                            className="h-20 sm:h-24 w-auto object-contain mb-3"
+                            loading="lazy"
+                        />
+                        <span className="text-[10px] uppercase tracking-[0.3em] text-[#C8A951] mb-4">
                             Hampers & Corporate Gifting
                         </span>
                         <p className="text-sm text-[#9C9489] leading-relaxed max-w-sm mb-6">
