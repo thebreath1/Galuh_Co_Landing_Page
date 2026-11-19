@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { motion } from 'motion/react';
-import { Building2, CheckCircle2, Send, Loader2, Sparkles, PhoneCall, ShieldCheck, Mail } from 'lucide-react';
+import { CheckCircle2, Send, Loader2, Sparkles, PhoneCall } from 'lucide-react';
 import type { InquiryFormData } from '@/types/landing';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
@@ -37,14 +37,14 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
     };
 
     const clientLogos = [
-        'Bank Mandiri Prioritas',
-        'Telkom Indonesia',
-        'Astra International',
-        'Unilever Indonesia',
-        'BCA Solitaire',
-        'Pertamina',
-        'Tokopedia Enterprise',
-        'Schlumberger Indonesia',
+        { name: 'Bank Mandiri Prioritas', logo: '/images/partners/mandiri.svg' },
+        { name: 'Telkom Indonesia', logo: '/images/partners/telkom.png' },
+        { name: 'Astra International', logo: '/images/partners/astra.svg' },
+        { name: 'Unilever Indonesia', logo: '/images/partners/unilever.png' },
+        { name: 'BCA Solitaire', logo: '/images/partners/bca.svg' },
+        { name: 'Pertamina', logo: '/images/partners/pertamina.svg' },
+        { name: 'Tokopedia Enterprise', logo: '/images/partners/tokopedia.png' },
+        { name: 'Schlumberger Indonesia', logo: '/images/partners/slb.png' },
     ];
 
     const corporateFeatures = [
@@ -103,8 +103,13 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                                 key={idx}
                                 className="px-5 py-2.5 rounded-full bg-[#FFFFFF] border border-[#E8E2D5] hover:border-[#C8A951]/60 text-[#1B382B] font-serif text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap shadow-xs hover:shadow-md transition-all duration-300 flex items-center gap-2.5 flex-shrink-0 cursor-default"
                             >
-                                <Building2 className="w-3.5 h-3.5 text-[#C8A951] flex-shrink-0" />
-                                <span>{client}</span>
+                                <img
+                                    src={client.logo}
+                                    alt={`Logo ${client.name}`}
+                                    className="h-4 sm:h-5 w-auto max-w-[48px] object-contain rounded-xs flex-shrink-0"
+                                    loading="lazy"
+                                />
+                                <span>{client.name}</span>
                             </div>
                         ))}
                     </div>
