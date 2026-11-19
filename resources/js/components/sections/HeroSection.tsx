@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, MessageCircle, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, MessageCircle, Star } from 'lucide-react';
 import { fadeIn, fadeUp, wordReveal } from '@/lib/motion';
 
 interface HeroSectionProps {
@@ -23,7 +23,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
         <section
             id="hero"
             aria-label="Hero Section"
-            className="relative min-h-[82vh] md:min-h-[88vh] flex items-center justify-center py-20 md:py-28 overflow-hidden bg-[#FDFBF7]"
+            className="relative min-h-[78vh] md:min-h-[84vh] flex items-center justify-center pt-12 pb-18 md:pt-16 md:pb-24 overflow-hidden bg-[#FDFBF7]"
         >
             {/* Full-bleed Hampers Background Image */}
             <div aria-hidden="true" className="absolute inset-0 z-0">
@@ -39,22 +39,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(253,251,247,0.75)_0%,rgba(253,251,247,0.15)_75%)]" />
             </div>
 
-            {/* Centered Hero Content */}
-            <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            {/* Centered Hero Content - positioned slightly higher for optimal visual balance */}
+            <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full -translate-y-2 sm:-translate-y-6">
                 <motion.div
                     className="flex flex-col items-center text-center"
                     initial="hidden"
                     animate="visible"
                 >
-                    {/* Eyebrow Badge */}
-                    <motion.div
-                        variants={fadeUp}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FDFBF7]/90 backdrop-blur-xs border border-[#C8A951]/50 text-[#1B382B] text-xs font-semibold tracking-wider uppercase mb-6 shadow-xs"
-                    >
-                        <Sparkles className="w-3.5 h-3.5 text-[#C8A951]" />
-                        <span>Spesialis Hampers Premium & Corporate Gifting</span>
-                    </motion.div>
-
                     {/* Single H1 Headline — Word-by-Word Reveal */}
                     <motion.h1
                         variants={{
@@ -94,7 +85,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                                 },
                             },
                         }}
-                        className="text-[#2C2724] text-base sm:text-lg leading-relaxed max-w-2xl mb-10 flex flex-wrap justify-center gap-x-1.5 gap-y-0.5 font-medium"
+                        className="text-[#2C2724] text-base sm:text-lg leading-relaxed max-w-2xl mb-9 flex flex-wrap justify-center gap-x-1.5 gap-y-0.5 font-medium"
                     >
                         {subheadlineWords.map((word, idx) => (
                             <motion.span key={idx} variants={wordReveal}>
@@ -103,11 +94,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                         ))}
                     </motion.p>
 
-                    {/* 2 CTA Buttons (Unchanged Functions) */}
+                    {/* 2 CTA Buttons */}
                     <motion.div
                         variants={fadeUp}
                         transition={{ delay: 0.45, duration: 0.45 }}
-                        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 w-full sm:w-auto mb-12"
+                        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 w-full sm:w-auto mb-11"
                     >
                         <motion.a
                             href="#koleksi"

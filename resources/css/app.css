@@ -186,3 +186,24 @@
 .shadow-luxury-hover {
     box-shadow: 0 20px 40px -15px rgba(27, 56, 43, 0.15), 0 8px 12px -6px rgba(27, 56, 43, 0.05);
 }
+
+/* Infinite Smooth Logo Marquee */
+@keyframes marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+.animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 36s linear infinite;
+    will-change: transform;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}

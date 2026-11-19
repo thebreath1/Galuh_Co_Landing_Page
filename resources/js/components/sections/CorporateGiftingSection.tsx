@@ -89,17 +89,21 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                 </motion.div>
 
                 {/* Client Logo Marquee */}
-                <div className="mb-16 py-6 border-y border-[#E8E2D5]/70 overflow-hidden relative">
+                <div className="mb-16 py-7 border-y border-[#E8E2D5]/70 overflow-hidden relative select-none">
+                    {/* Gradient Fade Masks on Left & Right so items never look abruptly cut off */}
+                    <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#F7F4EE] via-[#F7F4EE]/90 to-transparent z-10" />
+                    <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#F7F4EE] via-[#F7F4EE]/90 to-transparent z-10" />
+
                     <p className="text-center text-xs uppercase tracking-[0.2em] text-[#9C9489] mb-5 font-semibold">
                         Dipercaya oleh 120+ Perusahaan & Institusi Ternama
                     </p>
-                    <div className="flex w-max gap-8 animate-[marquee_30s_linear_infinite] hover:[animation-play-state:paused]">
-                        {[...clientLogos, ...clientLogos].map((client, idx) => (
+                    <div className="animate-marquee gap-6 sm:gap-8 py-1">
+                        {[...clientLogos, ...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (
                             <div
                                 key={idx}
-                                className="px-5 py-2.5 rounded-full bg-[#FFFFFF] border border-[#E8E2D5] text-[#1B382B] font-serif text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap shadow-xs flex items-center gap-2"
+                                className="px-5 py-2.5 rounded-full bg-[#FFFFFF] border border-[#E8E2D5] hover:border-[#C8A951]/60 text-[#1B382B] font-serif text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap shadow-xs hover:shadow-md transition-all duration-300 flex items-center gap-2.5 flex-shrink-0 cursor-default"
                             >
-                                <Building2 className="w-3.5 h-3.5 text-[#C8A951]" />
+                                <Building2 className="w-3.5 h-3.5 text-[#C8A951] flex-shrink-0" />
                                 <span>{client}</span>
                             </div>
                         ))}
