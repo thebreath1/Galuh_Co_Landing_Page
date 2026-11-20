@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageCircle } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 
 interface FloatingWhatsAppProps {
     whatsappNumber: string;
@@ -27,9 +27,10 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="hidden sm:flex items-center px-3.5 py-2 rounded-full bg-[#1B382B] text-[#FDFBF7] text-xs font-medium tracking-wide shadow-xl border border-[#C8A951]/30"
+                        className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#1B382B] text-[#FDFBF7] text-xs font-medium tracking-wide shadow-xl border border-[#C8A951]/30 select-none"
                     >
-                        <span>Konsultasi Hampers</span>
+                        <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
+                        <span>Chat via WhatsApp</span>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -41,12 +42,12 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
                 aria-label="Hubungi GALUH & CO. via WhatsApp"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#1B382B] text-[#FDFBF7] shadow-2xl border-2 border-[#C8A951] group focus:outline-none focus:ring-4 focus:ring-[#C8A951]/40"
+                className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20BD5A] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.6)] border border-[#20BD5A] group focus:outline-none focus:ring-4 focus:ring-[#25D366]/40 transition-all duration-300"
             >
                 {/* Subtle pulsing background ring */}
-                <span className="absolute -inset-1 rounded-full bg-[#C8A951]/25 animate-ping pointer-events-none" />
+                <span className="absolute -inset-1 rounded-full bg-[#25D366]/35 animate-ping pointer-events-none" />
 
-                <MessageCircle className="w-6 h-6 text-[#DFCA86] group-hover:rotate-12 transition-transform duration-300" />
+                <WhatsAppIcon className="w-7 h-7 text-white drop-shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
             </motion.a>
         </aside>
     );

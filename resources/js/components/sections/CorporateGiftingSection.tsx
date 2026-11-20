@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { motion } from 'motion/react';
-import { CheckCircle2, Send, Loader2, Sparkles, PhoneCall } from 'lucide-react';
+import { CheckCircle2, Send, Loader2, Sparkles, PhoneCall, ExternalLink } from 'lucide-react';
 import type { InquiryFormData } from '@/types/landing';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
@@ -37,14 +37,46 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
     };
 
     const clientLogos = [
-        { name: 'Bank Mandiri Prioritas', logo: '/images/partners/mandiri.svg' },
-        { name: 'Telkom Indonesia', logo: '/images/partners/telkom.png' },
-        { name: 'Astra International', logo: '/images/partners/astra.svg' },
-        { name: 'Unilever Indonesia', logo: '/images/partners/unilever.png' },
-        { name: 'BCA Solitaire', logo: '/images/partners/bca.svg' },
-        { name: 'Pertamina', logo: '/images/partners/pertamina.svg' },
-        { name: 'Tokopedia Enterprise', logo: '/images/partners/tokopedia.png' },
-        { name: 'Schlumberger Indonesia', logo: '/images/partners/slb.png' },
+        {
+            name: 'Bank Mandiri Prioritas',
+            logo: '/images/partners/mandiri.svg',
+            url: 'https://www.bankmandiri.co.id/web/prioritas',
+        },
+        {
+            name: 'Telkom Indonesia',
+            logo: '/images/partners/telkom.png',
+            url: 'https://www.telkom.co.id',
+        },
+        {
+            name: 'Astra International',
+            logo: '/images/partners/astra.svg',
+            url: 'https://www.astra.co.id',
+        },
+        {
+            name: 'Unilever Indonesia',
+            logo: '/images/partners/unilever.png',
+            url: 'https://www.unilever.co.id',
+        },
+        {
+            name: 'BCA Solitaire',
+            logo: '/images/partners/bca.svg',
+            url: 'https://prioritas.bca.co.id',
+        },
+        {
+            name: 'Pertamina',
+            logo: '/images/partners/pertamina.svg',
+            url: 'https://www.pertamina.com',
+        },
+        {
+            name: 'Tokopedia Enterprise',
+            logo: '/images/partners/tokopedia.png',
+            url: 'https://www.tokopedia.com',
+        },
+        {
+            name: 'Schlumberger Indonesia',
+            logo: '/images/partners/slb.png',
+            url: 'https://www.slb.com',
+        },
     ];
 
     const corporateFeatures = [
@@ -99,18 +131,26 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                     </p>
                     <div className="animate-marquee gap-6 sm:gap-8 py-1">
                         {[...clientLogos, ...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (
-                            <div
+                            <a
                                 key={idx}
-                                className="px-5 py-2.5 rounded-full bg-[#FFFFFF] border border-[#E8E2D5] hover:border-[#C8A951]/60 text-[#1B382B] font-serif text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap shadow-xs hover:shadow-md transition-all duration-300 flex items-center gap-2.5 flex-shrink-0 cursor-default"
+                                href={client.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={`Kunjungi situs resmi ${client.name} (buka di tab baru)`}
+                                aria-label={`Kunjungi situs resmi ${client.name} (buka di tab baru)`}
+                                className="group px-5 py-2.5 rounded-full bg-[#FFFFFF] border border-[#E8E2D5] hover:border-[#C8A951] text-[#1B382B] hover:text-[#9B7B2C] font-serif text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2.5 flex-shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C8A951]/40"
                             >
                                 <img
                                     src={client.logo}
                                     alt={`Logo ${client.name}`}
-                                    className="h-4 sm:h-5 w-auto max-w-[48px] object-contain rounded-xs flex-shrink-0"
+                                    className="h-4 sm:h-5 w-auto max-w-[48px] object-contain rounded-xs flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"
                                 />
-                                <span>{client.name}</span>
-                            </div>
+                                <span className="group-hover:text-[#8D6B1F] transition-colors duration-200">
+                                    {client.name}
+                                </span>
+                                <ExternalLink className="w-3 h-3 text-[#9C9489] group-hover:text-[#C8A951] opacity-40 group-hover:opacity-100 transition-all duration-200 flex-shrink-0" />
+                            </a>
                         ))}
                     </div>
                 </div>

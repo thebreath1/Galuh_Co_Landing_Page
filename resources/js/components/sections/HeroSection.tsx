@@ -8,7 +8,8 @@ import {
     useSpring,
     useTransform,
 } from 'motion/react';
-import { ArrowRight, ChevronDown, Gift, MessageCircle, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, ChevronDown, Gift, Sparkles, Star } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 import { fadeIn, fadeUp, wordReveal } from '@/lib/motion';
 
 interface HeroSectionProps {
@@ -283,7 +284,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                             whileTap={{ scale: 0.98 }}
                             className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#FFFFFF]/95 backdrop-blur-xs text-[#1B382B] text-sm font-semibold tracking-wide uppercase border border-[#C8A951] hover:bg-[#F7F4EE] shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
                         >
-                            <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                            <WhatsAppIcon className="w-4 h-4 text-[#25D366] fill-current" />
                             <span>Pesan via WhatsApp</span>
                         </motion.a>
                     </motion.div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { MessageCircle, Mail, MapPin, Clock, Instagram, Sparkles, ArrowUp } from 'lucide-react';
+import { Mail, MapPin, Clock, Instagram, Sparkles, ArrowUp } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
 interface FooterCtaSectionProps {
@@ -56,7 +57,7 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                             whileTap={{ scale: 0.98 }}
                             className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#C8A951] text-[#0C1E17] text-sm font-bold uppercase tracking-wider hover:bg-[#DFCA86] shadow-xl transition-all focus:outline-none focus:ring-4 focus:ring-[#C8A951]/40"
                         >
-                            <MessageCircle className="w-5 h-5 text-[#0C1E17]" />
+                            <WhatsAppIcon className="w-5 h-5 text-[#0C1E17] fill-current" />
                             <span>Konsultasi via WhatsApp</span>
                         </motion.a>
                     </motion.div>
@@ -98,7 +99,7 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                                 className="w-9 h-9 rounded-full bg-[#1B382B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#DFCA86] hover:border-[#C8A951] transition-colors"
                                 aria-label="WhatsApp GALUH & CO."
                             >
-                                <MessageCircle className="w-4 h-4" />
+                                <WhatsAppIcon className="w-4 h-4 fill-current" />
                             </a>
                             <a
                                 href="mailto:hello@galuh.co.id"

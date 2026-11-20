@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence, type Variants } from 'motion/react';
-import { MessageCircle, Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 import type { Product } from '@/types/landing';
 import { fadeUp, viewportConfig, smoothEase } from '@/lib/motion';
 
@@ -220,10 +221,10 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     whileHover={{ scale: 1.04 }}
                                                     whileTap={{ scale: 0.96 }}
                                                     transition={{ duration: 0.2, ease: smoothEase }}
-                                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1B382B] text-[#FDFBF7] text-xs font-semibold hover:bg-[#264E3D] shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A951] cursor-pointer"
+                                                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-semibold shadow-xs hover:shadow-md hover:shadow-[#25D366]/25 transition-all focus:outline-none focus:ring-2 focus:ring-[#25D366]/40 cursor-pointer"
                                                     aria-label={`Pesan ${product.name} via WhatsApp`}
                                                 >
-                                                    <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                                                    <WhatsAppIcon className="w-3.5 h-3.5 text-white fill-current flex-shrink-0" />
                                                     <span>Pesan via WA</span>
                                                 </motion.a>
                                             </div>
