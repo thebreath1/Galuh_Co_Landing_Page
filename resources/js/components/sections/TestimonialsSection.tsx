@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence, type PanInfo } from 'motion/react';
 import { Star, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { fadeUp, viewportConfig } from '@/lib/motion';
@@ -52,22 +52,39 @@ export const TestimonialsSection: React.FC = () => {
         },
     ];
 
-    const slides: Testimonial[][] = [];
-    for (let i = 0; i < testimonials.length; i += 2) {
-        slides.push(testimonials.slice(i, i + 2));
-    }
-
+    const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+        typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false
+    );
     const [currentSlide, setCurrentSlide] = useState(0);
     const [direction, setDirection] = useState(0);
 
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 768px)');
+        const handleChange = (e: MediaQueryListEvent) => {
+            setIsDesktop(e.matches);
+            setCurrentSlide(0);
+        };
+        setIsDesktop(mediaQuery.matches);
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
+
+    const itemsPerSlide = isDesktop ? 2 : 1;
+    const slides: Testimonial[][] = [];
+    for (let i = 0; i < testimonials.length; i += itemsPerSlide) {
+        slides.push(testimonials.slice(i, i + itemsPerSlide));
+    }
+
+    const safeSlideIndex = Math.min(currentSlide, slides.length - 1);
+
     const prevSlide = () => {
         setDirection(-1);
-        setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+        setCurrentSlide((prev) => (prev <= 0 ? slides.length - 1 : prev - 1));
     };
 
     const nextSlide = () => {
         setDirection(1);
-        setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+        setCurrentSlide((prev) => (prev >= slides.length - 1 ? 0 : prev + 1));
     };
 
     const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -109,7 +126,7 @@ export const TestimonialsSection: React.FC = () => {
                 <div className="max-w-5xl mx-auto relative">
                     <AnimatePresence mode="wait" initial={false}>
                         <motion.div
-                            key={currentSlide}
+                            key={`${itemsPerSlide}-${safeSlideIndex}`}
                             initial={{ opacity: 0, x: direction >= 0 ? 30 : -30 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: direction >= 0 ? -30 : 30 }}
@@ -120,7 +137,7 @@ export const TestimonialsSection: React.FC = () => {
                             onDragEnd={handleDragEnd}
                             className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 cursor-grab active:cursor-grabbing"
                         >
-                            {slides[currentSlide].map((item, idx) => (
+                            {slides[safeSlideIndex].map((item, idx) => (
                                 <article
                                     key={idx}
                                     className="bg-[#FFFFFF] rounded-2xl border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover transition-shadow flex flex-col justify-between overflow-hidden"
@@ -197,7 +214,7 @@ export const TestimonialsSection: React.FC = () => {
                                         setCurrentSlide(idx);
                                     }}
                                     className={`h-2 rounded-full transition-all ${
-                                        currentSlide === idx ? 'w-6 bg-[#1B382B]' : 'w-2 bg-[#E8E2D5]'
+                                        safeSlideIndex === idx ? 'w-6 bg-[#1B382B]' : 'w-2 bg-[#E8E2D5]'
                                     }`}
                                     aria-label={`Beralih ke halaman ulasan ${idx + 1}`}
                                 />

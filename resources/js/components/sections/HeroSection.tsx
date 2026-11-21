@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
-    AnimatePresence,
     motion,
     useMotionValue,
     useReducedMotion,
@@ -8,38 +7,13 @@ import {
     useSpring,
     useTransform,
 } from 'motion/react';
-import { ArrowRight, ChevronDown, Gift, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, ChevronDown, Star } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 import { fadeIn, fadeUp, wordReveal } from '@/lib/motion';
 
 interface HeroSectionProps {
     whatsappNumber: string;
 }
-
-type MomentKey = 'Semua' | 'Lebaran' | 'Natal' | 'Corporate' | 'Wedding';
-
-const MOMENT_HIGHLIGHTS: Record<MomentKey, { label: string; highlight: string }> = {
-    Semua: {
-        label: 'Semua Momen',
-        highlight: 'Siap kirim ke seluruh Indonesia dengan garansi kemasan aman & kartu ucapan personal.',
-    },
-    Lebaran: {
-        label: 'Lebaran',
-        highlight: 'Koleksi Idul Fitri bernuansa zamrud & emas — Nastar Wisman, Kastengel Edam, & Kurma Medjool.',
-    },
-    Natal: {
-        label: 'Natal',
-        highlight: 'Kehangatan akhir tahun — Gingerbread Spice, Cokelat Artisan, & Lilin Aromaterapi Pinus.',
-    },
-    Corporate: {
-        label: 'Corporate',
-        highlight: 'Bingkisan B2B eksklusif — Custom logo foil emas, faktur pajak, & kirim multi-alamat.',
-    },
-    Wedding: {
-        label: 'Wedding',
-        highlight: 'Hantaran pernikahan & bridesmaid — Monogram inisial pasangan dengan pita sutra mewah.',
-    },
-};
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
     const cleanedNumber = whatsappNumber.replace(/[^0-9]/g, '');
@@ -49,7 +23,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
 
     const sectionRef = useRef<HTMLElement>(null);
     const prefersReducedMotion = useReducedMotion();
-    const [activeMoment, setActiveMoment] = useState<MomentKey>('Semua');
 
     // Mouse-driven depth parallax (GPU transform only)
     const mouseX = useMotionValue(0);
@@ -143,16 +116,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                     initial="hidden"
                     animate="visible"
                 >
-                    {/* Eyebrow Badge */}
-                    <motion.div
-                        variants={fadeUp}
-                        whileHover={{ scale: 1.03 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FDFBF7]/90 backdrop-blur-xs border border-[#C8A951]/50 text-[#1B382B] text-xs font-semibold tracking-wider uppercase mb-5 shadow-xs cursor-default"
-                    >
-                        <Sparkles className="w-3.5 h-3.5 text-[#C8A951]" />
-                        <span>Spesialis Hampers Premium & Corporate Gifting</span>
-                    </motion.div>
-
                     {/* Single H1 Headline — Word-by-Word Reveal + Subtle Hover Lift */}
                     <motion.h1
                         variants={{
@@ -202,63 +165,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                             </motion.span>
                         ))}
                     </motion.p>
-
-                    {/* Interactive Moment Explorer Pills */}
-                    <motion.div
-                        variants={fadeUp}
-                        transition={{ delay: 0.38, duration: 0.4 }}
-                        className="w-full max-w-2xl mb-8"
-                    >
-                        <div
-                            role="tablist"
-                            aria-label="Pilih momen hampers"
-                            className="inline-flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-full bg-[#FFFFFF]/85 backdrop-blur-xs border border-[#E8E2D5] shadow-xs"
-                        >
-                            {(Object.keys(MOMENT_HIGHLIGHTS) as MomentKey[]).map((key) => {
-                                const isActive = activeMoment === key;
-                                return (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        role="tab"
-                                        aria-selected={isActive}
-                                        onClick={() => setActiveMoment(key)}
-                                        className={`relative isolate px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A951] ${
-                                            isActive
-                                                ? 'text-[#FDFBF7]'
-                                                : 'text-[#6E675F] hover:text-[#1B382B]'
-                                        }`}
-                                    >
-                                        {isActive && (
-                                            <motion.span
-                                                layoutId="heroMomentPill"
-                                                transition={{ type: 'spring', stiffness: 360, damping: 30 }}
-                                                className="absolute inset-0 rounded-full bg-[#1B382B] z-0"
-                                            />
-                                        )}
-                                        <span className="relative z-10">{MOMENT_HIGHLIGHTS[key].label}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {/* Live Moment Highlight Preview */}
-                        <div className="min-h-[2.25rem] mt-3 flex items-center justify-center">
-                            <AnimatePresence mode="wait">
-                                <motion.p
-                                    key={activeMoment}
-                                    initial={{ opacity: 0, y: 6 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -6 }}
-                                    transition={{ duration: 0.25 }}
-                                    className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#1B382B] bg-[#F7F2E4]/85 px-4 py-1.5 rounded-full border border-[#C8A951]/30"
-                                >
-                                    <Gift className="w-3.5 h-3.5 text-[#C8A951] flex-shrink-0" />
-                                    <span>{MOMENT_HIGHLIGHTS[activeMoment].highlight}</span>
-                                </motion.p>
-                            </AnimatePresence>
-                        </div>
-                    </motion.div>
 
                     {/* 2 CTA Buttons (Unchanged Functions) */}
                     <motion.div
