@@ -96,34 +96,39 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                 </motion.div>
 
                 {/* Category Filters */}
-                <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 mb-14">
-                    {categories.map((cat) => {
-                        const isActive = selectedCategory === cat;
-                        return (
-                            <motion.button
-                                key={cat}
-                                type="button"
-                                onClick={() => setSelectedCategory(cat)}
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.97 }}
-                                transition={{ duration: 0.2, ease: smoothEase }}
-                                className={`relative isolate px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-[#C8A951] cursor-pointer ${
-                                    isActive
-                                        ? 'text-[#FDFBF7] border border-transparent'
-                                        : 'text-[#6E675F] bg-[#FFFFFF] border border-[#E8E2D5] hover:text-[#1B382B] hover:border-[#1B382B]/40'
-                                }`}
-                            >
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="activeCategoryPill"
-                                        className="absolute inset-0 bg-[#1B382B] rounded-full z-0 shadow-sm"
-                                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                                    />
-                                )}
-                                <span className="relative z-10">{cat}</span>
-                            </motion.button>
-                        );
-                    })}
+                <div className="flex justify-center mb-14">
+                    <div
+                        role="tablist"
+                        aria-label="Filter kategori hampers"
+                        className="inline-flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-full bg-[#FFFFFF]/85 backdrop-blur-xs border border-[#E8E2D5] shadow-xs"
+                    >
+                        {categories.map((cat) => {
+                            const isActive = selectedCategory === cat;
+                            return (
+                                <button
+                                    key={cat}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={isActive}
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`relative isolate px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A951] cursor-pointer ${
+                                        isActive
+                                            ? 'text-[#FDFBF7]'
+                                            : 'text-[#6E675F] hover:text-[#1B382B]'
+                                    }`}
+                                >
+                                    {isActive && (
+                                        <motion.span
+                                            layoutId="activeCategoryPill"
+                                            className="absolute inset-0 bg-[#1B382B] rounded-full z-0 shadow-sm"
+                                            transition={{ type: 'spring', stiffness: 360, damping: 30 }}
+                                        />
+                                    )}
+                                    <span className="relative z-10">{cat}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {/* Animated Product Grid Container */}
