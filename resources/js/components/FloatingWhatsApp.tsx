@@ -42,11 +42,8 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
                 aria-label="Hubungi GALUH & CO. via WhatsApp"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20BD5A] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.6)] border border-[#20BD5A] group focus:outline-none focus:ring-4 focus:ring-[#25D366]/40 transition-all duration-300"
+                className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20BD5A] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.6)] border border-[#20BD5A] group focus:outline-none focus:ring-4 focus:ring-[#25D366]/40 transition-transform transition-colors duration-300"
             >
-                {/* Subtle pulsing background ring */}
-                <span className="absolute -inset-1 rounded-full bg-[#25D366]/35 animate-ping pointer-events-none" />
-
                 <WhatsAppIcon className="w-7 h-7 text-white drop-shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
             </motion.a>
         </aside>

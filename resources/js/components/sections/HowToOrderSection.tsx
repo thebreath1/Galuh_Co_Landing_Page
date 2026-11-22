@@ -1,9 +1,20 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useRef } from 'react';
+import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
 import { Search, MessageSquareHeart, CreditCard, Truck } from 'lucide-react';
 import { fadeUp, staggerContainer, viewportConfig } from '@/lib/motion';
 
 export const HowToOrderSection: React.FC = () => {
+    const stepsContainerRef = useRef<HTMLDivElement>(null);
+    const prefersReducedMotion = useReducedMotion();
+    const { scrollYProgress } = useScroll({
+        target: stepsContainerRef,
+        offset: ['start 80%', 'end 60%'],
+    });
+    const lineProgress = useSpring(scrollYProgress, {
+        stiffness: 120,
+        damping: 26,
+        restDelta: 0.001,
+    });
     const steps = [
         {
             number: '01',
@@ -50,7 +61,7 @@ export const HowToOrderSection: React.FC = () => {
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#C8A951] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
                         Alur Pemesanan
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
@@ -64,12 +75,20 @@ export const HowToOrderSection: React.FC = () => {
                 </motion.div>
 
                 {/* Steps Grid with Progress Line */}
-                <div className="relative">
-                    {/* Connecting progress line on desktop */}
+                <div ref={stepsContainerRef} className="relative">
+                    {/* Connecting progress line on desktop (scroll-linked fill) */}
                     <div
                         aria-hidden="true"
-                        className="hidden lg:block absolute top-1/2 left-12 right-12 h-0.5 bg-[#E8E2D5] -translate-y-8 -z-0"
-                    />
+                        className="hidden lg:block absolute top-1/2 left-12 right-12 h-0.5 bg-[#E8E2D5] -translate-y-8 -z-0 overflow-hidden rounded-full"
+                    >
+                        <motion.div
+                            style={{
+                                scaleX: prefersReducedMotion ? 1 : lineProgress,
+                                originX: 0,
+                            }}
+                            className="h-full w-full bg-[#C8A951]"
+                        />
+                    </div>
 
                     <motion.div
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10"

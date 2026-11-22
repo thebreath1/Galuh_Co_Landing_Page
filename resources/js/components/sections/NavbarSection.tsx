@@ -56,8 +56,13 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
                     >
                         <img
                             src="/images/logo-gold.png"
-                            alt="Logo GALUH & CO. Hampers & Corporate Gifting"
-                            className="h-11 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            alt="Logo GALUH & CO."
+                            width={554}
+                            height={499}
+                            loading="eager"
+                            decoding="sync"
+                            fetchPriority="high"
+                            className="h-11 w-[49px] sm:h-12 sm:w-[53px] shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
                         />
                     </a>
 

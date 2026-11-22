@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useInView } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { ShieldCheck, Clock, Layers, Award } from 'lucide-react';
 import { fadeUp, staggerContainer, viewportConfig } from '@/lib/motion';
 
@@ -12,14 +12,18 @@ interface StatCounterProps {
 }
 
 const StatCounter: React.FC<StatCounterProps> = ({ value, suffix = '', prefix = '', isText = false, textValue = '' }) => {
-    const [count, setCount] = useState(0);
+    const prefersReducedMotion = useReducedMotion();
+    const [count, setCount] = useState(prefersReducedMotion ? value : 0);
     const ref = useRef<HTMLSpanElement>(null);
     const inView = useInView(ref, { once: true, margin: '-40px' });
 
     useEffect(() => {
         if (!inView || isText) return;
+        if (prefersReducedMotion) {
+            setCount(value);
+            return;
+        }
 
-        let start = 0;
         const end = value;
         const duration = 1500;
         const startTime = performance.now();
@@ -39,7 +43,7 @@ const StatCounter: React.FC<StatCounterProps> = ({ value, suffix = '', prefix = 
         };
 
         requestAnimationFrame(step);
-    }, [inView, value, isText]);
+    }, [inView, value, isText, prefersReducedMotion]);
 
     if (isText) {
         return (
@@ -107,7 +111,7 @@ export const WhyChooseUsSection: React.FC = () => {
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#C8A951] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
                         Keunggulan Kami
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">

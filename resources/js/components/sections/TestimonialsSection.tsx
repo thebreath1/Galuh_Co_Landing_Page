@@ -110,7 +110,7 @@ export const TestimonialsSection: React.FC = () => {
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#C8A951] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
                         Testimoni Klien
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
@@ -151,13 +151,13 @@ export const TestimonialsSection: React.FC = () => {
                                             {item.initials}
                                         </div>
 
-                                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                                            <h3 className="font-serif text-base sm:text-lg font-bold text-[#1B382B] truncate">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-3 min-w-0 flex-1">
+                                            <h3 className="font-serif text-base sm:text-lg font-bold text-[#1B382B] sm:truncate">
                                                 {item.name}
                                             </h3>
                                             <span
                                                 aria-hidden="true"
-                                                className="w-px h-6 bg-[#E8E2D5] flex-shrink-0"
+                                                className="hidden sm:block w-px h-6 bg-[#E8E2D5] flex-shrink-0"
                                             />
                                             <p className="text-xs text-[#6E675F] leading-snug line-clamp-2">
                                                 {item.role}
@@ -213,8 +213,8 @@ export const TestimonialsSection: React.FC = () => {
                                         setDirection(idx > currentSlide ? 1 : -1);
                                         setCurrentSlide(idx);
                                     }}
-                                    className={`h-2 rounded-full transition-all ${
-                                        safeSlideIndex === idx ? 'w-6 bg-[#1B382B]' : 'w-2 bg-[#E8E2D5]'
+                                    className={`w-2.5 h-2.5 rounded-full transition-transform transition-colors duration-200 ${
+                                        safeSlideIndex === idx ? 'bg-[#1B382B] scale-125' : 'bg-[#E8E2D5] hover:bg-[#C8A951]/60'
                                     }`}
                                     aria-label={`Beralih ke halaman ulasan ${idx + 1}`}
                                 />

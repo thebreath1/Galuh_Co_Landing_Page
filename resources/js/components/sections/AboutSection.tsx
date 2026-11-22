@@ -42,7 +42,7 @@ export const AboutSection: React.FC = () => {
                 >
                     <motion.p
                         variants={fadeUp}
-                        className="text-xs uppercase tracking-[0.25em] text-[#C8A951] font-semibold mb-3"
+                        className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3"
                     >
                         Filosofi Kami
                     </motion.p>

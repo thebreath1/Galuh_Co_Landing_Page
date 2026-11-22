@@ -7,9 +7,9 @@ import {
     useSpring,
     useTransform,
 } from 'motion/react';
-import { ArrowRight, ChevronDown, Star } from 'lucide-react';
+import { ArrowRight, Star } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
-import { fadeIn, fadeUp, wordReveal } from '@/lib/motion';
+import { fadeIn, smoothEase, wordReveal } from '@/lib/motion';
 
 interface HeroSectionProps {
     whatsappNumber: string;
@@ -58,10 +58,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
     };
 
     const headlineWords = 'Hampers Eksklusif untuk Setiap Hantaran Berkesan'.split(' ');
-    const subheadlineWords =
-        'Selamat datang di GALUH & CO. — kurasi kotak hadiah & hampers premium untuk Lebaran, Natal, Corporate, dan Wedding dengan kudapan pilihan, kemasan mewah, serta sentuhan personal.'.split(
-            ' '
-        );
 
     return (
         <section
@@ -70,7 +66,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
             aria-label="Hero Section"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative min-h-[82vh] md:min-h-[88vh] flex items-center justify-center pt-12 pb-20 md:pt-16 md:pb-24 overflow-hidden bg-[#FDFBF7]"
+            className="relative flex items-center justify-center py-14 sm:py-16 md:py-20 overflow-hidden bg-[#FDFBF7]"
         >
             {/* Full-bleed Hampers Background Image with Interactive Parallax */}
             <motion.div
@@ -89,8 +85,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                 <img
                     src="/images/hero-hampers-bg.jpg"
                     alt="Latar belakang koleksi hampers eksklusif GALUH & CO. dengan pita dan kudapan artisan"
+                    width={1024}
+                    height={434}
                     className="w-full h-full object-cover object-center md:object-right scale-105"
                     loading="eager"
+                    decoding="sync"
                     fetchPriority="high"
                 />
             </motion.div>
@@ -109,7 +108,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
             {/* Centered Hero Content */}
             <motion.div
                 style={prefersReducedMotion ? undefined : { opacity: scrollContentOpacity }}
-                className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full -translate-y-2 sm:-translate-y-4"
+                className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
             >
                 <motion.div
                     className="flex flex-col items-center text-center"
@@ -122,8 +121,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                             hidden: {},
                             visible: {
                                 transition: {
-                                    staggerChildren: 0.05,
-                                    delayChildren: 0.05,
+                                    staggerChildren: 0.04,
+                                    delayChildren: 0.02,
                                 },
                             },
                         }}
@@ -146,31 +145,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                         ))}
                     </motion.h1>
 
-                    {/* Subheadline — Word-by-Word Reveal */}
+                    {/* Subheadline — Fast Single-Block Reveal (< 1s readable) */}
                     <motion.p
-                        variants={{
-                            hidden: {},
-                            visible: {
-                                transition: {
-                                    staggerChildren: 0.02,
-                                    delayChildren: 0.28,
-                                },
-                            },
-                        }}
-                        className="text-[#2C2724] text-base sm:text-lg leading-relaxed max-w-2xl mb-7 flex flex-wrap justify-center gap-x-1.5 gap-y-0.5 font-medium"
+                        initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.18, duration: 0.4, ease: smoothEase }}
+                        className="text-[#2C2724] text-base sm:text-lg leading-relaxed max-w-2xl mb-7 font-medium"
                     >
-                        {subheadlineWords.map((word, idx) => (
-                            <motion.span key={idx} variants={wordReveal}>
-                                {word}
-                            </motion.span>
-                        ))}
+                        Selamat datang di GALUH &amp; CO. — kurasi kotak hadiah &amp; hampers premium untuk Lebaran,
+                        Natal, Corporate, dan Wedding dengan kudapan pilihan, kemasan mewah, serta sentuhan personal.
                     </motion.p>
 
                     {/* 2 CTA Buttons (Unchanged Functions) */}
                     <motion.div
-                        variants={fadeUp}
-                        transition={{ delay: 0.45, duration: 0.45 }}
-                        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 w-full sm:w-auto mb-11"
+                        initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.28, duration: 0.4, ease: smoothEase }}
+                        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 w-full sm:w-auto mb-9"
                     >
                         <motion.a
                             href="#koleksi"
@@ -241,24 +232,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber }) => {
                     </motion.div>
                 </motion.div>
             </motion.div>
-
-            {/* Interactive Scroll-Down Cue */}
-            <motion.a
-                href="#tentang"
-                aria-label="Gulir ke bagian Tentang Kami"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.75, duration: 0.4 }}
-                className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 inline-flex flex-col items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[#6E675F] hover:text-[#1B382B] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C8A951] rounded-full px-3 py-1"
-            >
-                <span>Jelajahi</span>
-                <motion.span
-                    animate={prefersReducedMotion ? undefined : { y: [0, 5, 0] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                    <ChevronDown className="w-4 h-4 text-[#C8A951]" />
-                </motion.span>
-            </motion.a>
         </section>
     );
 };

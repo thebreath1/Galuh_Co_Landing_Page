@@ -83,7 +83,7 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#C8A951] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
                         Katalog Kami
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
