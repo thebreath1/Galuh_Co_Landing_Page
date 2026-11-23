@@ -177,19 +177,9 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                             <div className="flex items-start gap-2.5">
                                 <MapPin className="w-4 h-4 text-[#C8A951] flex-shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="font-semibold text-white">Studio Jakarta:</p>
+                                    <p className="font-semibold text-white">Studio Ciamis:</p>
                                     <p className="text-[#9C9489] leading-relaxed">
-                                        Jl. Senopati No. 48, Kebayoran Baru, Jakarta Selatan 12190
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-2.5">
-                                <MapPin className="w-4 h-4 text-[#C8A951] flex-shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="font-semibold text-white">Studio Surabaya:</p>
-                                    <p className="text-[#9C9489] leading-relaxed">
-                                        Jl. Darmo Permai Timur No. 12, Surabaya Barat 60189
+                                        Jl. Jend. Sudirman No. 175, Ciamis, Jawa Barat
                                     </p>
                                 </div>
                             </div>

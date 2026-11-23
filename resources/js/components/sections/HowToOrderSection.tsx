@@ -1,20 +1,37 @@
-import React, { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Search, MessageSquareHeart, CreditCard, Truck } from 'lucide-react';
-import { fadeUp, staggerContainer, viewportConfig } from '@/lib/motion';
+import { fadeUp, viewportConfig } from '@/lib/motion';
 
 export const HowToOrderSection: React.FC = () => {
-    const stepsContainerRef = useRef<HTMLDivElement>(null);
+    const stepperRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(stepperRef, { once: true, margin: '-80px' });
     const prefersReducedMotion = useReducedMotion();
-    const { scrollYProgress } = useScroll({
-        target: stepsContainerRef,
-        offset: ['start 80%', 'end 60%'],
-    });
-    const lineProgress = useSpring(scrollYProgress, {
-        stiffness: 120,
-        damping: 26,
-        restDelta: 0.001,
-    });
+
+    // 0: reset/empty, 1..3: step i completed & segment i filling, 4: all completed (5s pause)
+    const [phase, setPhase] = useState<number>(prefersReducedMotion ? 4 : 0);
+
+    useEffect(() => {
+        if (prefersReducedMotion) {
+            setPhase(4);
+            return;
+        }
+        if (!isInView) return;
+
+        let timer: ReturnType<typeof setTimeout>;
+
+        if (phase === 0) {
+            timer = setTimeout(() => setPhase(1), 400);
+        } else if (phase >= 1 && phase <= 3) {
+            timer = setTimeout(() => setPhase((prev) => prev + 1), 1150);
+        } else {
+            // Pause 5 seconds after all steps & pipes are filled, then reset to 0
+            timer = setTimeout(() => setPhase(0), 5000);
+        }
+
+        return () => clearTimeout(timer);
+    }, [phase, isInView, prefersReducedMotion]);
+
     const steps = [
         {
             number: '01',
@@ -74,59 +91,166 @@ export const HowToOrderSection: React.FC = () => {
                     </p>
                 </motion.div>
 
-                {/* Steps Grid with Progress Line */}
-                <div ref={stepsContainerRef} className="relative">
-                    {/* Connecting progress line on desktop (scroll-linked fill) */}
-                    <div
-                        aria-hidden="true"
-                        className="hidden lg:block absolute top-1/2 left-12 right-12 h-0.5 bg-[#E8E2D5] -translate-y-8 -z-0 overflow-hidden rounded-full"
-                    >
-                        <motion.div
-                            style={{
-                                scaleX: prefersReducedMotion ? 1 : lineProgress,
-                                originX: 0,
-                            }}
-                            className="h-full w-full bg-[#C8A951]"
-                        />
+                <div ref={stepperRef}>
+                    {/* Desktop Horizontal Connected Pipe Stepper */}
+                    <div className="hidden lg:block relative">
+                        {/* 3 Pipe Segments Connecting Centers of 4 Columns (12.5% to 87.5%) */}
+                        <div
+                            aria-hidden="true"
+                            className="absolute top-10 left-[12.5%] right-[12.5%] -translate-y-1/2 grid grid-cols-3 z-0"
+                        >
+                            {[0, 1, 2].map((segIdx) => {
+                                const isFlowingOrFilled = phase >= segIdx + 1;
+                                return (
+                                    <div
+                                        key={segIdx}
+                                        className="h-2.5 bg-[#E8E2D5] border-y border-[#DFD7C6] overflow-hidden relative"
+                                    >
+                                        <motion.div
+                                            initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
+                                            animate={{ scaleX: isFlowingOrFilled ? 1 : 0 }}
+                                            transition={{
+                                                duration: isFlowingOrFilled ? 1.0 : 0.25,
+                                                ease: [0.37, 0, 0.63, 1],
+                                            }}
+                                            style={{ originX: 0 }}
+                                            className="h-full w-full bg-gradient-to-r from-[#1B382B] via-[#264E3D] to-[#C8A951] will-change-transform"
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* 4 Step Nodes + Text */}
+                        <ol className="grid grid-cols-4 gap-8 relative z-10">
+                            {steps.map((step, idx) => {
+                                const Icon = step.icon;
+                                const isCompleted = phase >= idx + 1;
+
+                                return (
+                                    <li key={step.number} className="flex flex-col items-center text-center">
+                                        {/* Outer Ivory Mask Ring so the pipe connects seamlessly into the circle */}
+                                        <div className="relative mb-6 p-1.5 rounded-full bg-[#FDFBF7]">
+                                            <motion.div
+                                                animate={
+                                                    isCompleted && !prefersReducedMotion
+                                                        ? { scale: [1, 1.07, 1] }
+                                                        : { scale: 1 }
+                                                }
+                                                transition={{ duration: 0.35, ease: 'easeOut' }}
+                                                className={`w-17 h-17 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
+                                                    isCompleted
+                                                        ? 'bg-[#1B382B] border-[#C8A951] text-[#DFCA86] shadow-[0_10px_25px_-6px_rgba(27,56,43,0.45)]'
+                                                        : 'bg-[#F7F4EE] border-[#E8E2D5] text-[#9C9489]'
+                                                }`}
+                                            >
+                                                <Icon className="w-7 h-7" />
+                                            </motion.div>
+
+                                            <span
+                                                className={`absolute top-0 right-0 w-7 h-7 rounded-full text-xs font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
+                                                    isCompleted
+                                                        ? 'bg-[#C8A951] text-[#0C1E17] border-[#FDFBF7]'
+                                                        : 'bg-[#E8E2D5] text-[#6E675F] border-[#FDFBF7]'
+                                                }`}
+                                            >
+                                                {step.number}
+                                            </span>
+                                        </div>
+
+                                        <h3
+                                            className={`font-serif text-lg font-bold mb-2.5 transition-colors duration-300 ${
+                                                isCompleted ? 'text-[#1B382B]' : 'text-[#6E675F]'
+                                            }`}
+                                        >
+                                            {step.title}
+                                        </h3>
+
+                                        <p className="text-sm text-[#6E675F] leading-relaxed px-2">
+                                            {step.description}
+                                        </p>
+                                    </li>
+                                );
+                            })}
+                        </ol>
                     </div>
 
-                    <motion.div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10"
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={viewportConfig}
-                        variants={staggerContainer}
-                    >
+                    {/* Mobile & Tablet Vertical Connected Pipe Stepper */}
+                    <ol className="lg:hidden flex flex-col max-w-xl mx-auto">
                         {steps.map((step, idx) => {
                             const Icon = step.icon;
+                            const isCompleted = phase >= idx + 1;
+                            const isPipeFilled = phase >= idx + 1;
+                            const isLast = idx === steps.length - 1;
+
                             return (
-                                <motion.div
-                                    key={idx}
-                                    variants={fadeUp}
-                                    whileHover={{ y: -6 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="bg-[#FFFFFF] rounded-2xl p-7 border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover transition-all flex flex-col items-center text-center group"
-                                >
-                                    <div className="relative mb-6">
-                                        <div className="w-16 h-16 rounded-full bg-[#F7F4EE] border-2 border-[#C8A951]/40 flex items-center justify-center text-[#1B382B] group-hover:bg-[#1B382B] group-hover:text-[#DFCA86] transition-colors duration-300">
-                                            <Icon className="w-7 h-7" />
+                                <li key={step.number} className="flex items-stretch gap-5">
+                                    {/* Left Column: Icon Circle + Vertical Flowing Pipe */}
+                                    <div className="flex flex-col items-center shrink-0">
+                                        <div className="relative z-10 p-1 rounded-full bg-[#FDFBF7]">
+                                            <motion.div
+                                                animate={
+                                                    isCompleted && !prefersReducedMotion
+                                                        ? { scale: [1, 1.07, 1] }
+                                                        : { scale: 1 }
+                                                }
+                                                transition={{ duration: 0.35, ease: 'easeOut' }}
+                                                className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
+                                                    isCompleted
+                                                        ? 'bg-[#1B382B] border-[#C8A951] text-[#DFCA86] shadow-[0_8px_20px_-6px_rgba(27,56,43,0.4)]'
+                                                        : 'bg-[#F7F4EE] border-[#E8E2D5] text-[#9C9489]'
+                                                }`}
+                                            >
+                                                <Icon className="w-6 h-6" />
+                                            </motion.div>
+
+                                            <span
+                                                className={`absolute -top-0.5 -right-0.5 w-6 h-6 rounded-full text-[11px] font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
+                                                    isCompleted
+                                                        ? 'bg-[#C8A951] text-[#0C1E17] border-[#FDFBF7]'
+                                                        : 'bg-[#E8E2D5] text-[#6E675F] border-[#FDFBF7]'
+                                                }`}
+                                            >
+                                                {step.number}
+                                            </span>
                                         </div>
-                                        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#1B382B] text-[#DFCA86] text-xs font-serif font-bold flex items-center justify-center border border-[#C8A951]">
-                                            {step.number}
-                                        </span>
+
+                                        {!isLast && (
+                                            <div
+                                                aria-hidden="true"
+                                                className="w-2 flex-1 min-h-10 -my-1 bg-[#E8E2D5] border-x border-[#DFD7C6] overflow-hidden relative z-0"
+                                            >
+                                                <motion.div
+                                                    initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
+                                                    animate={{ scaleY: isPipeFilled ? 1 : 0 }}
+                                                    transition={{
+                                                        duration: isPipeFilled ? 1.0 : 0.25,
+                                                        ease: [0.37, 0, 0.63, 1],
+                                                    }}
+                                                    style={{ originY: 0 }}
+                                                    className="w-full h-full bg-gradient-to-b from-[#1B382B] via-[#264E3D] to-[#C8A951] will-change-transform"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <h3 className="font-serif text-lg font-bold text-[#1B382B] mb-2.5">
-                                        {step.title}
-                                    </h3>
-
-                                    <p className="text-xs sm:text-sm text-[#6E675F] leading-relaxed">
-                                        {step.description}
-                                    </p>
-                                </motion.div>
+                                    {/* Right Column: Step Title & Description */}
+                                    <div className={isLast ? 'pt-2 pb-2' : 'pt-2 pb-10'}>
+                                        <h3
+                                            className={`font-serif text-lg font-bold mb-1.5 transition-colors duration-300 ${
+                                                isCompleted ? 'text-[#1B382B]' : 'text-[#6E675F]'
+                                            }`}
+                                        >
+                                            {step.title}
+                                        </h3>
+                                        <p className="text-sm text-[#6E675F] leading-relaxed">
+                                            {step.description}
+                                        </p>
+                                    </div>
+                                </li>
                             );
                         })}
-                    </motion.div>
+                    </ol>
                 </div>
             </div>
         </section>
