@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { m, useInView, useReducedMotion } from 'motion/react';
 import { Search, MessageSquareHeart, CreditCard, Truck } from 'lucide-react';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
@@ -71,7 +71,7 @@ export const HowToOrderSection: React.FC = () => {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <motion.div
+                <m.div
                     className="text-center max-w-2xl mx-auto mb-16"
                     initial="hidden"
                     whileInView="visible"
@@ -89,7 +89,7 @@ export const HowToOrderSection: React.FC = () => {
                         Proses pemesanan yang terstruktur, transparan, dan terarah dari awal konsultasi hingga paket
                         sampai di tangan penerima.
                     </p>
-                </motion.div>
+                </m.div>
 
                 <div ref={stepperRef}>
                     {/* Desktop Horizontal Connected Pipe Stepper */}
@@ -106,7 +106,7 @@ export const HowToOrderSection: React.FC = () => {
                                         key={segIdx}
                                         className="h-2.5 bg-[#E8E2D5] border-y border-[#DFD7C6] overflow-hidden relative"
                                     >
-                                        <motion.div
+                                        <m.div
                                             initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
                                             animate={{ scaleX: isFlowingOrFilled ? 1 : 0 }}
                                             transition={{
@@ -131,7 +131,7 @@ export const HowToOrderSection: React.FC = () => {
                                     <li key={step.number} className="flex flex-col items-center text-center">
                                         {/* Outer Ivory Mask Ring so the pipe connects seamlessly into the circle */}
                                         <div className="relative mb-6 p-1.5 rounded-full bg-[#FDFBF7]">
-                                            <motion.div
+                                            <m.div
                                                 animate={
                                                     isCompleted && !prefersReducedMotion
                                                         ? { scale: [1, 1.07, 1] }
@@ -145,7 +145,7 @@ export const HowToOrderSection: React.FC = () => {
                                                 }`}
                                             >
                                                 <Icon className="w-7 h-7" />
-                                            </motion.div>
+                                            </m.div>
 
                                             <span
                                                 className={`absolute top-0 right-0 w-7 h-7 rounded-full text-xs font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
@@ -188,7 +188,7 @@ export const HowToOrderSection: React.FC = () => {
                                     {/* Left Column: Icon Circle + Vertical Flowing Pipe */}
                                     <div className="flex flex-col items-center shrink-0">
                                         <div className="relative z-10 p-1 rounded-full bg-[#FDFBF7]">
-                                            <motion.div
+                                            <m.div
                                                 animate={
                                                     isCompleted && !prefersReducedMotion
                                                         ? { scale: [1, 1.07, 1] }
@@ -202,7 +202,7 @@ export const HowToOrderSection: React.FC = () => {
                                                 }`}
                                             >
                                                 <Icon className="w-6 h-6" />
-                                            </motion.div>
+                                            </m.div>
 
                                             <span
                                                 className={`absolute -top-0.5 -right-0.5 w-6 h-6 rounded-full text-[11px] font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
@@ -220,7 +220,7 @@ export const HowToOrderSection: React.FC = () => {
                                                 aria-hidden="true"
                                                 className="w-2 flex-1 min-h-10 -my-1 bg-[#E8E2D5] border-x border-[#DFD7C6] overflow-hidden relative z-0"
                                             >
-                                                <motion.div
+                                                <m.div
                                                     initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
                                                     animate={{ scaleY: isPipeFilled ? 1 : 0 }}
                                                     transition={{

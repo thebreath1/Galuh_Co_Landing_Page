@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
-import { motion } from 'motion/react';
-import { CheckCircle2, Send, Loader2, Sparkles, PhoneCall, ExternalLink } from 'lucide-react';
+import { m } from 'motion/react';
+import { CheckCircle2, Send, Loader2, PhoneCall, ExternalLink } from 'lucide-react';
 import type { InquiryFormData } from '@/types/landing';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
@@ -100,7 +100,7 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <motion.div
+                <m.div
                     className="text-center max-w-3xl mx-auto mb-14"
                     initial="hidden"
                     whileInView="visible"
@@ -118,7 +118,7 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                         Perkuat reputasi dan jalinan kemitraan strategis perusahaan Anda melalui bingkisan berkelas tinggi
                         yang dirancang secara kustom dengan identitas korporat Anda.
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Client Logo Marquee */}
                 <div className="mb-16 py-7 border-y border-[#E8E2D5]/70 overflow-hidden relative select-none">
@@ -143,8 +143,11 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                                 <img
                                     src={client.logo}
                                     alt={`Logo ${client.name}`}
+                                    width={24}
+                                    height={20}
                                     className="h-4 sm:h-5 w-auto max-w-[48px] object-contain rounded-xs flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"
+                                    decoding="async"
                                 />
                                 <span className="group-hover:text-[#8D6B1F] transition-colors duration-200">
                                     {client.name}
@@ -158,7 +161,7 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                 {/* Main Content: Left Info + Right Form */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                     {/* Left Column: Corporate Highlights */}
-                    <motion.div
+                    <m.div
                         className="lg:col-span-5"
                         initial="hidden"
                         whileInView="visible"
@@ -168,11 +171,6 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                         <div className="bg-[#1B382B] text-[#FDFBF7] rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden">
                             {/* Decorative Gold Accent */}
                             <div className="absolute top-0 right-0 w-40 h-40 bg-[#C8A951]/10 rounded-full blur-2xl pointer-events-none" />
-
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DFCA86]/20 border border-[#DFCA86]/40 text-[#DFCA86] text-xs font-semibold uppercase tracking-wider mb-6">
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>Layanan Prioritas B2B</span>
-                            </div>
 
                             <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-4 leading-tight text-white">
                                 Kustomisasi Menyeluruh Sesuai Karakter Brand Anda
@@ -205,10 +203,10 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                                 </a>
                             </div>
                         </div>
-                    </motion.div>
+                    </m.div>
 
                     {/* Right Column: 8-field Inquiry Form */}
-                    <motion.div
+                    <m.div
                         className="lg:col-span-7"
                         initial="hidden"
                         whileInView="visible"
@@ -442,7 +440,7 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
 
                                 {/* Submit Button */}
                                 <div className="pt-2">
-                                    <motion.button
+                                    <m.button
                                         type="submit"
                                         disabled={processing}
                                         whileHover={processing ? {} : { scale: 1.02 }}
@@ -460,7 +458,7 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                                                 <span>Kirim Permintaan Penawaran</span>
                                             </>
                                         )}
-                                    </motion.button>
+                                    </m.button>
                                 </div>
 
                                 <p className="text-[11px] text-[#9C9489] text-center pt-1">
@@ -468,7 +466,7 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                                 </p>
                             </form>
                         </div>
-                    </motion.div>
+                    </m.div>
                 </div>
             </div>
         </section>

@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { ExternalLink, Inbox, LayoutGrid, MessageSquareQuote, Package, ShoppingBag, Sparkles } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -13,7 +13,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { dashboard, home } from '@/routes';
+import { index as ordersIndex } from '@/routes/admin/orders';
+import { index as productsIndex } from '@/routes/admin/products';
+import { index as contentIndex } from '@/routes/admin/content';
+import { index as testimonialsIndex } from '@/routes/admin/testimonials';
+import { index as inquiriesIndex } from '@/routes/admin/inquiries';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -22,18 +27,38 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Pesanan Masuk',
+        href: ordersIndex(),
+        icon: ShoppingBag,
+    },
+    {
+        title: 'Kelola Katalog',
+        href: productsIndex(),
+        icon: Package,
+    },
+    {
+        title: 'Teks & Hero',
+        href: contentIndex(),
+        icon: Sparkles,
+    },
+    {
+        title: 'Testimoni',
+        href: testimonialsIndex(),
+        icon: MessageSquareQuote,
+    },
+    {
+        title: 'Inquiry Masuk',
+        href: inquiriesIndex(),
+        icon: Inbox,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Lihat Landing Page',
+        href: home(),
+        icon: ExternalLink,
     },
 ];
 

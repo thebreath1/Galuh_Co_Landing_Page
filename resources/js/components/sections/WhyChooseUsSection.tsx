@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { m, useInView, useReducedMotion } from 'motion/react';
 import { ShieldCheck, Clock, Layers, Award } from 'lucide-react';
 import { fadeUp, staggerContainer, viewportConfig } from '@/lib/motion';
 
@@ -104,7 +104,7 @@ export const WhyChooseUsSection: React.FC = () => {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <motion.div
+                <m.div
                     className="text-center max-w-2xl mx-auto mb-16"
                     initial="hidden"
                     whileInView="visible"
@@ -122,50 +122,46 @@ export const WhyChooseUsSection: React.FC = () => {
                         Komitmen kami terhadap kesempurnaan rasa, ketepatan waktu, dan pelayanan hangat menjadikan
                         GALUH & CO. mitra hantaran terpercaya.
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Grid 4 Cards */}
-                <motion.div
+                <m.div
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
                     variants={staggerContainer}
                 >
-                    {stats.map((stat, idx) => {
+                    {stats.map((stat) => {
                         const Icon = stat.icon;
                         return (
-                            <motion.div
-                                key={idx}
-                                variants={fadeUp}
-                                whileHover={{ y: -6 }}
-                                transition={{ duration: 0.3 }}
-                                className="bg-[#FFFFFF] rounded-2xl p-7 border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover transition-all text-center flex flex-col items-center group"
-                            >
-                                <div className="w-14 h-14 rounded-full bg-[#F7F2E4] border border-[#C8A951]/40 flex items-center justify-center text-[#C8A951] mb-5 group-hover:bg-[#1B382B] group-hover:text-[#DFCA86] transition-colors duration-300">
-                                    <Icon className="w-6 h-6" />
+                            <m.div key={stat.title} variants={fadeUp} className="h-full">
+                                <div className="h-full bg-[#FFFFFF] rounded-2xl p-7 border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover hover:-translate-y-1.5 transition-[transform,box-shadow] duration-300 ease-out transform-gpu text-center flex flex-col items-center group">
+                                    <div className="w-14 h-14 rounded-full bg-[#F7F2E4] border border-[#C8A951]/40 flex items-center justify-center text-[#C8A951] mb-5 group-hover:bg-[#1B382B] group-hover:text-[#DFCA86] transition-colors duration-300">
+                                        <Icon className="w-6 h-6" />
+                                    </div>
+
+                                    <div className="mb-2">
+                                        <StatCounter
+                                            value={stat.value ?? 0}
+                                            suffix={stat.suffix}
+                                            isText={stat.isText}
+                                            textValue={stat.textValue}
+                                        />
+                                    </div>
+
+                                    <h3 className="font-serif text-lg font-bold text-[#1B382B] mb-2.5">
+                                        {stat.title}
+                                    </h3>
+
+                                    <p className="text-xs sm:text-sm text-[#6E675F] leading-relaxed">
+                                        {stat.description}
+                                    </p>
                                 </div>
-
-                                <div className="mb-2">
-                                    <StatCounter
-                                        value={stat.value ?? 0}
-                                        suffix={stat.suffix}
-                                        isText={stat.isText}
-                                        textValue={stat.textValue}
-                                    />
-                                </div>
-
-                                <h3 className="font-serif text-lg font-bold text-[#1B382B] mb-2.5">
-                                    {stat.title}
-                                </h3>
-
-                                <p className="text-xs sm:text-sm text-[#6E675F] leading-relaxed">
-                                    {stat.description}
-                                </p>
-                            </motion.div>
+                            </m.div>
                         );
                     })}
-                </motion.div>
+                </m.div>
             </div>
         </section>
     );

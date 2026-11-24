@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 
 interface FloatingWhatsAppProps {
@@ -22,7 +22,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
         >
             <AnimatePresence>
                 {isHovered && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, x: 10, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 10, scale: 0.95 }}
@@ -31,11 +31,11 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
                     >
                         <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
                         <span>Chat via WhatsApp</span>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
 
-            <motion.a
+            <m.a
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -45,7 +45,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
                 className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20BD5A] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.6)] border border-[#20BD5A] group focus:outline-none focus:ring-4 focus:ring-[#25D366]/40 transition-transform transition-colors duration-300"
             >
                 <WhatsAppIcon className="w-7 h-7 text-white drop-shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
-            </motion.a>
+            </m.a>
         </aside>
     );
 };

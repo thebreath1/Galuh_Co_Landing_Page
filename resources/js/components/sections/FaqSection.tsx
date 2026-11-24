@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Minus, HelpCircle } from 'lucide-react';
+import { m } from 'motion/react';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
 export const FaqSection: React.FC = () => {
-    const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [openIndices, setOpenIndices] = useState<number[]>([0]);
 
     const faqs = [
         {
@@ -38,7 +37,9 @@ export const FaqSection: React.FC = () => {
     ];
 
     const toggleAccordion = (idx: number) => {
-        setOpenIndex((prev) => (prev === idx ? null : idx));
+        setOpenIndices((prev) =>
+            prev.includes(idx) ? prev.filter((item) => item !== idx) : [...prev, idx],
+        );
     };
 
     return (
@@ -49,7 +50,7 @@ export const FaqSection: React.FC = () => {
         >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <motion.div
+                <m.div
                     className="text-center max-w-2xl mx-auto mb-16"
                     initial="hidden"
                     whileInView="visible"
@@ -66,50 +67,68 @@ export const FaqSection: React.FC = () => {
                     <p className="text-[#6E675F] text-base">
                         Informasi lengkap seputar pemesanan, kustomisasi, sistem pengiriman, dan garansi layanan GALUH & CO.
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Accordion List */}
                 <div className="space-y-4">
                     {faqs.map((faq, idx) => {
-                        const isOpen = openIndex === idx;
+                        const isOpen = openIndices.includes(idx);
                         return (
-                            <motion.div
+                            <m.div
                                 key={idx}
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={viewportConfig}
                                 variants={fadeUp}
-                                className="bg-[#FFFFFF] rounded-2xl border border-[#E8E2D5] overflow-hidden shadow-xs transition-colors"
+                                className="bg-[#FFFFFF] rounded-2xl border border-[#E8E2D5] hover:border-[#C8A951]/45 overflow-hidden shadow-xs transition-[border-color,box-shadow] duration-300"
                             >
                                 <button
                                     type="button"
                                     onClick={() => toggleAccordion(idx)}
                                     aria-expanded={isOpen}
-                                    className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
+                                    className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C8A951]"
                                 >
                                     <span className="font-serif text-base sm:text-lg font-bold text-[#1B382B]">
                                         {faq.question}
                                     </span>
-                                    <span className="w-8 h-8 rounded-full bg-[#F7F2E4] text-[#C8A951] flex items-center justify-center flex-shrink-0 transition-transform">
-                                        {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                                    <span
+                                        aria-hidden="true"
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                                            isOpen
+                                                ? 'bg-[#1B382B] text-[#DFCA86]'
+                                                : 'bg-[#F7F2E4] text-[#C8A951]'
+                                        }`}
+                                    >
+                                        <span className="relative w-3.5 h-3.5 flex items-center justify-center">
+                                            <span className="absolute w-3.5 h-0.5 rounded-full bg-current" />
+                                            <span
+                                                className={`absolute w-0.5 h-3.5 rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                                                    isOpen
+                                                        ? 'rotate-90 opacity-0 scale-y-0'
+                                                        : 'rotate-0 opacity-100 scale-y-100'
+                                                }`}
+                                            />
+                                        </span>
                                     </span>
                                 </button>
 
-                                <AnimatePresence initial={false}>
-                                    {isOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.25, ease: 'easeOut' }}
+                                <div
+                                    aria-hidden={!isOpen}
+                                    className={`grid transition-[grid-template-rows,opacity] duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                                        isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                                    }`}
+                                >
+                                    <div className="overflow-hidden">
+                                        <div
+                                            className={`px-6 pb-6 pt-1 text-sm text-[#6E675F] leading-relaxed border-t border-[#F2ECE1] transition-transform duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                                                isOpen ? 'translate-y-0' : '-translate-y-1.5'
+                                            }`}
                                         >
-                                            <div className="px-6 pb-6 pt-1 text-sm text-[#6E675F] leading-relaxed border-t border-[#F2ECE1]">
-                                                {faq.answer}
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
+                                            {faq.answer}
+                                        </div>
+                                    </div>
+                                </div>
+                            </m.div>
                         );
                     })}
                 </div>

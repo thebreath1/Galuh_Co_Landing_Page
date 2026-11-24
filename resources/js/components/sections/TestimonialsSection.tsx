@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence, type PanInfo } from 'motion/react';
+import { m, AnimatePresence, type PanInfo } from 'motion/react';
 import { Star, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { fadeUp, viewportConfig } from '@/lib/motion';
+import type { SiteSettings, TestimonialRecord } from '@/types/landing';
 
-interface Testimonial {
+interface TestimonialItem {
+    id?: number;
     initials: string;
     name: string;
     role: string;
@@ -12,45 +14,72 @@ interface Testimonial {
     rating: number;
 }
 
-export const TestimonialsSection: React.FC = () => {
-    const testimonials: Testimonial[] = [
-        {
-            initials: 'DS',
-            name: 'Dian Sastrawati',
-            role: 'VP Human Capital, PT Astra Financial',
-            content:
-                'Kerapian kemasan dan kelezatan kue kering dari GALUH & CO. mendapat apresiasi langsung dari jajaran direksi kami. Pengiriman multi-alamat ke 300 rekan bisnis di 5 kota besar terlaksana tepat waktu tanpa cacat.',
-            productTag: 'Synergy Grand Hamper • Corporate Order',
-            rating: 5,
-        },
-        {
-            initials: 'HG',
-            name: 'Hendra Gunawan',
-            role: 'Managing Partner, HG Law Firm',
-            content:
-                'Hampers akhir tahun untuk para klien VVIP kami dipersiapkan dengan sangat eksklusif. Grafir logo emas di atas hardbox magnetik beludru membuat bingkisan ini terasa berbobot, elegan, dan penuh rasa hormat.',
-            productTag: 'Executive Prestige Gift • VIP Custom',
-            rating: 5,
-        },
-        {
-            initials: 'NF',
-            name: 'Nadira & Fikri',
-            role: 'Bridal Couple, Jakarta Selatan',
-            content:
-                'Souvenir dan hampers pengiring pengantin kami luar biasa anggun. Detail pita satin sutra dan stempel lilin monogram inisial nama kami membuat sahabat-sahabat terharu saat menerima undangannya.',
-            productTag: 'Eternal Grace Bridal Suite • Wedding',
-            rating: 5,
-        },
-        {
-            initials: 'KC',
-            name: 'Kartika Chandra',
-            role: 'Private Client, Surabaya',
-            content:
-                'Sudah 3 tahun berturut-turut saya mempercayakan hampers Idul Fitri kepada GALUH & CO. Rasa nastar wisman dan kastengelnya benar-benar resep asli mentega Belanda. Selalu jadi rebutan keluarga!',
-            productTag: 'The Royal Fitr • Personal Order',
-            rating: 5,
-        },
-    ];
+const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
+    {
+        initials: 'DS',
+        name: 'Dian Sastrawati',
+        role: 'VP Human Capital, PT Astra Financial',
+        content:
+            'Kerapian kemasan dan kelezatan kue kering dari GALUH & CO. mendapat apresiasi langsung dari jajaran direksi kami. Pengiriman multi-alamat ke 300 rekan bisnis di 5 kota besar terlaksana tepat waktu tanpa cacat.',
+        productTag: 'Synergy Grand Hamper • Corporate Order',
+        rating: 5,
+    },
+    {
+        initials: 'HG',
+        name: 'Hendra Gunawan',
+        role: 'Managing Partner, HG Law Firm',
+        content:
+            'Hampers akhir tahun untuk para klien VVIP kami dipersiapkan dengan sangat eksklusif. Grafir logo emas di atas hardbox magnetik beludru membuat bingkisan ini terasa berbobot, elegan, dan penuh rasa hormat.',
+        productTag: 'Executive Prestige Gift • VIP Custom',
+        rating: 5,
+    },
+    {
+        initials: 'NF',
+        name: 'Nadira & Fikri',
+        role: 'Bridal Couple, Jakarta Selatan',
+        content:
+            'Souvenir dan hampers pengiring pengantin kami luar biasa anggun. Detail pita satin sutra dan stempel lilin monogram inisial nama kami membuat sahabat-sahabat terharu saat menerima undangannya.',
+        productTag: 'Eternal Grace Bridal Suite • Wedding',
+        rating: 5,
+    },
+    {
+        initials: 'KC',
+        name: 'Kartika Chandra',
+        role: 'Private Client, Surabaya',
+        content:
+            'Sudah 3 tahun berturut-turut saya mempercayakan hampers Idul Fitri kepada GALUH & CO. Rasa nastar wisman dan kastengelnya benar-benar resep asli mentega Belanda. Selalu jadi rebutan keluarga!',
+        productTag: 'The Royal Fitr • Personal Order',
+        rating: 5,
+    },
+];
+
+interface TestimonialsSectionProps {
+    testimonials?: TestimonialRecord[];
+    settings?: SiteSettings;
+}
+
+export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
+    testimonials: remoteTestimonials,
+    settings,
+}) => {
+    const items: TestimonialItem[] =
+        remoteTestimonials !== undefined
+            ? remoteTestimonials.map((item) => ({
+                  id: item.id,
+                  initials: item.initials,
+                  name: item.name,
+                  role: item.role,
+                  content: item.content,
+                  productTag: item.product_tag,
+                  rating: Math.max(1, Math.min(5, item.rating || 5)),
+              }))
+            : DEFAULT_TESTIMONIALS;
+
+    const eyebrow = settings?.testimonials_eyebrow || 'Testimoni Klien';
+    const title = settings?.testimonials_title || 'Cerita Hangat dari Mereka yang Telah Berbagi';
+    const description =
+        settings?.testimonials_description ||
+        'Kepuasan dan senyum penerima adalah tolak ukur dedikasi kami dalam merangkai setiap hantaran.';
 
     const [isDesktop, setIsDesktop] = useState<boolean>(() =>
         typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false
@@ -70,9 +99,13 @@ export const TestimonialsSection: React.FC = () => {
     }, []);
 
     const itemsPerSlide = isDesktop ? 2 : 1;
-    const slides: Testimonial[][] = [];
-    for (let i = 0; i < testimonials.length; i += itemsPerSlide) {
-        slides.push(testimonials.slice(i, i + itemsPerSlide));
+    const slides: TestimonialItem[][] = [];
+    for (let i = 0; i < items.length; i += itemsPerSlide) {
+        slides.push(items.slice(i, i + itemsPerSlide));
+    }
+
+    if (slides.length === 0) {
+        return null;
     }
 
     const safeSlideIndex = Math.min(currentSlide, slides.length - 1);
@@ -103,7 +136,7 @@ export const TestimonialsSection: React.FC = () => {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <motion.div
+                <m.div
                     className="text-center max-w-2xl mx-auto mb-16"
                     initial="hidden"
                     whileInView="visible"
@@ -111,21 +144,21 @@ export const TestimonialsSection: React.FC = () => {
                     variants={fadeUp}
                 >
                     <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
-                        Testimoni Klien
+                        {eyebrow}
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
-                        Cerita Hangat dari Mereka yang Telah Berbagi
+                        {title}
                     </h2>
                     <div className="w-12 h-0.5 bg-[#C8A951] mx-auto mb-5" />
                     <p className="text-[#6E675F] text-base">
-                        Kepuasan dan senyum penerima adalah tolak ukur dedikasi kami dalam merangkai setiap hantaran.
+                        {description}
                     </p>
-                </motion.div>
+                </m.div>
 
                 {/* Draggable Two-Card Carousel */}
                 <div className="max-w-5xl mx-auto relative">
                     <AnimatePresence mode="wait" initial={false}>
-                        <motion.div
+                        <m.div
                             key={`${itemsPerSlide}-${safeSlideIndex}`}
                             initial={{ opacity: 0, x: direction >= 0 ? 30 : -30 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -190,7 +223,7 @@ export const TestimonialsSection: React.FC = () => {
                                     </div>
                                 </article>
                             ))}
-                        </motion.div>
+                        </m.div>
                     </AnimatePresence>
 
                     {/* Navigation Buttons & Dots */}

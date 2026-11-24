@@ -1,25 +1,43 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Head } from '@inertiajs/react';
-import { MotionConfig } from 'motion/react';
+import { LazyMotion, MotionConfig } from 'motion/react';
 import type { LandingPageProps } from '@/types/landing';
+
+const loadMotionFeatures = () => import('@/lib/motion-features').then((res) => res.default);
 
 import { FloatingWhatsApp } from '@/components/FloatingWhatsApp';
 import { NavbarSection } from '@/components/sections/NavbarSection';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { AboutSection } from '@/components/sections/AboutSection';
-import { CollectionSection } from '@/components/sections/CollectionSection';
-import { WhyChooseUsSection } from '@/components/sections/WhyChooseUsSection';
-import { HowToOrderSection } from '@/components/sections/HowToOrderSection';
-import { CorporateGiftingSection } from '@/components/sections/CorporateGiftingSection';
-import { TestimonialsSection } from '@/components/sections/TestimonialsSection';
-import { FaqSection } from '@/components/sections/FaqSection';
-import { FooterCtaSection } from '@/components/sections/FooterCtaSection';
 
-export default function Welcome({ products, whatsappNumber, flash }: LandingPageProps) {
-    const waNumber = whatsappNumber || '6281234567890';
+const CollectionSection = lazy(() =>
+    import('@/components/sections/CollectionSection').then((m) => ({ default: m.CollectionSection }))
+);
+const WhyChooseUsSection = lazy(() =>
+    import('@/components/sections/WhyChooseUsSection').then((m) => ({ default: m.WhyChooseUsSection }))
+);
+const HowToOrderSection = lazy(() =>
+    import('@/components/sections/HowToOrderSection').then((m) => ({ default: m.HowToOrderSection }))
+);
+const CorporateGiftingSection = lazy(() =>
+    import('@/components/sections/CorporateGiftingSection').then((m) => ({ default: m.CorporateGiftingSection }))
+);
+const TestimonialsSection = lazy(() =>
+    import('@/components/sections/TestimonialsSection').then((m) => ({ default: m.TestimonialsSection }))
+);
+const FaqSection = lazy(() =>
+    import('@/components/sections/FaqSection').then((m) => ({ default: m.FaqSection }))
+);
+const FooterCtaSection = lazy(() =>
+    import('@/components/sections/FooterCtaSection').then((m) => ({ default: m.FooterCtaSection }))
+);
+
+export default function Welcome({ products, testimonials, whatsappNumber, siteSettings, flash }: LandingPageProps) {
+    const waNumber = siteSettings?.whatsapp_number || whatsappNumber || '6281234567890';
 
     return (
-        <MotionConfig reducedMotion="user">
+        <LazyMotion features={loadMotionFeatures}>
+            <MotionConfig reducedMotion="user">
             <Head>
                 <title>GALUH & CO. | Hampers Mewah & Corporate Gifting Eksklusif</title>
                 <meta
@@ -34,36 +52,31 @@ export default function Welcome({ products, whatsappNumber, flash }: LandingPage
 
                 <main id="main-content">
                     {/* 2. Hero Section (Single H1, CTAs, Hampers Visual) */}
-                    <HeroSection whatsappNumber={waNumber} />
+                    <HeroSection whatsappNumber={waNumber} settings={siteSettings} />
 
                     {/* 3. Tentang Brand & 3 Nilai Filosofi */}
-                    <AboutSection />
+                    <AboutSection settings={siteSettings} />
 
-                    {/* 4. Katalog Koleksi Hampers (Filter Kategori & WA Order) */}
-                    <CollectionSection products={products} whatsappNumber={waNumber} />
-
-                    {/* 5. Kenapa Memilih Kami (Keunggulan & Count-Up Numbers) */}
-                    <WhyChooseUsSection />
-
-                    {/* 6. Langkah Cara Pemesanan */}
-                    <HowToOrderSection />
-
-                    {/* 7. Corporate Gifting, Client Marquee & Form Inquiry */}
-                    <CorporateGiftingSection whatsappNumber={waNumber} flash={flash} />
-
-                    {/* 8. Testimoni Klien Korporat & Personal (Carousel) */}
-                    <TestimonialsSection />
-
-                    {/* 9. Pertanyaan yang Sering Diajukan (FAQ Accordion) */}
-                    <FaqSection />
+                    {/* 4-9. Lazy-loaded Below-the-Fold Sections */}
+                    <Suspense fallback={<div className="min-h-[600px]" aria-hidden="true" />}>
+                        <CollectionSection products={products} whatsappNumber={waNumber} settings={siteSettings} />
+                        <WhyChooseUsSection />
+                        <HowToOrderSection />
+                        <CorporateGiftingSection whatsappNumber={waNumber} flash={flash} />
+                        <TestimonialsSection testimonials={testimonials} settings={siteSettings} />
+                        <FaqSection />
+                    </Suspense>
                 </main>
 
                 {/* 10. Penutup CTA & Footer Informasi Kontak */}
-                <FooterCtaSection whatsappNumber={waNumber} />
+                <Suspense fallback={null}>
+                    <FooterCtaSection whatsappNumber={waNumber} />
+                </Suspense>
 
                 {/* Floating WhatsApp Button (Fixed Bottom-Right) */}
                 <FloatingWhatsApp whatsappNumber={waNumber} />
             </div>
-        </MotionConfig>
+            </MotionConfig>
+        </LazyMotion>
     );
 }

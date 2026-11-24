@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Preload critical above-the-fold images immediately -->
-        <link rel="preload" as="image" href="/images/logo-gold.png" fetchpriority="high">
-        <link rel="preload" as="image" href="/images/hero-hampers-bg.jpg" fetchpriority="high">
+        <link rel="preload" as="image" href="/images/hero-hampers-bg.webp" fetchpriority="high">
+        <link rel="preload" as="image" href="/images/logo-gold.webp" fetchpriority="high">
 
         <title inertia>{{ config('app.name', 'GALUH & CO.') }} | Hampers Mewah & Corporate Gifting</title>
         <meta name="description" content="Koleksi hampers premium dan corporate gifting mewah dari GALUH & CO. Dikurasi dengan sentuhan personal, delikasi artisanal, dan pengemasan eksklusif berkelas.">
@@ -35,14 +35,18 @@
                 background-color: #FDFBF7;
                 color: #2C2724;
             }
+            html.dark {
+                background-color: oklch(0.145 0 0);
+                color: oklch(0.985 0 0);
+            }
         </style>
 
-        @fonts
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
+        @fonts
         <x-inertia::head />
     </head>
-    <body class="font-sans antialiased bg-[#FDFBF7] text-[#2C2724] selection:bg-[#C8A951]/20 selection:text-[#1B382B]">
+    <body class="font-sans antialiased bg-background text-foreground selection:bg-[#C8A951]/20">
         <x-inertia::app />
     </body>
 </html>

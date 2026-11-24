@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import { Mail, MapPin, Clock, Instagram, Sparkles, ArrowUp } from 'lucide-react';
+import { m } from 'motion/react';
+import { Mail, MapPin, Clock, Instagram, ArrowUp } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
 import { fadeUp, viewportConfig } from '@/lib/motion';
 
@@ -28,18 +28,13 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                 />
 
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-                    <motion.div
+                    <m.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={viewportConfig}
                         variants={fadeUp}
                         className="flex flex-col items-center"
                     >
-                        {/* Gold Emblem Monogram */}
-                        <div className="w-14 h-14 rounded-full bg-[#DFCA86]/10 border border-[#C8A951] flex items-center justify-center text-[#DFCA86] mb-6 shadow-lg">
-                            <Sparkles className="w-6 h-6 text-[#DFCA86]" />
-                        </div>
-
                         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 max-w-3xl leading-tight">
                             Siap Menghadirkan Kesan Terbaik untuk Mereka yang Berharga?
                         </h2>
@@ -49,7 +44,7 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                             pengemasan pita satin, kami wujudkan bingkisan yang tak terlupakan.
                         </p>
 
-                        <motion.a
+                        <m.a
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -59,8 +54,8 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                         >
                             <WhatsAppIcon className="w-5 h-5 text-[#0C1E17] fill-current" />
                             <span>Konsultasi via WhatsApp</span>
-                        </motion.a>
-                    </motion.div>
+                        </m.a>
+                    </m.div>
                 </div>
             </div>
 
@@ -70,10 +65,13 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                     {/* Brand Info */}
                     <div className="lg:col-span-4 flex flex-col items-start">
                         <img
-                            src="/images/logo-white.png"
+                            src="/images/logo-white.webp"
                             alt="Logo GALUH & CO. Hampers & Corporate Gifting"
+                            width={214}
+                            height={192}
                             className="h-20 sm:h-24 w-auto object-contain mb-3"
                             loading="lazy"
+                            decoding="async"
                         />
                         <span className="text-[10px] uppercase tracking-[0.3em] text-[#C8A951] mb-4">
                             Hampers & Corporate Gifting

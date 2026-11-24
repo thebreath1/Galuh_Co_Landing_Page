@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 
 interface NavbarSectionProps {
@@ -55,10 +55,10 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
                         aria-label="GALUH & CO. Beranda"
                     >
                         <img
-                            src="/images/logo-gold.png"
+                            src="/images/logo-gold.webp"
                             alt="Logo GALUH & CO."
-                            width={554}
-                            height={499}
+                            width={120}
+                            height={108}
                             loading="eager"
                             decoding="sync"
                             fetchPriority="high"
@@ -81,7 +81,7 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
 
                     {/* Desktop CTA Button */}
                     <div className="hidden sm:flex items-center gap-3">
-                        <motion.a
+                        <m.a
                             href="#koleksi"
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
@@ -89,7 +89,7 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
                         >
                             <span>Pesan Sekarang</span>
                             <ArrowRight className="w-3.5 h-3.5 text-[#DFCA86]" />
-                        </motion.a>
+                        </m.a>
                     </div>
 
                     {/* Mobile Hamburger Button */}
@@ -110,7 +110,7 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
             {/* Mobile Navigation Drawer */}
             <AnimatePresence>
                 {mobileMenuOpen && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
@@ -146,7 +146,7 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
                                 </a>
                             </div>
                         </nav>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
         </header>

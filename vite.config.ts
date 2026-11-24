@@ -18,7 +18,7 @@ export default defineConfig({
                     styles: ['normal', 'italic'],
                 }),
                 bunny('Plus Jakarta Sans', {
-                    weights: [400, 500, 600, 700],
+                    weights: [400, 600, 700],
                 }),
             ],
         }),
