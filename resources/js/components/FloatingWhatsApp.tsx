@@ -27,7 +27,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ whatsappNumb
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#1B382B] text-[#FDFBF7] text-xs font-medium tracking-wide shadow-xl border border-[#C8A951]/30 select-none"
+                        className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#16233B] text-[#F2EBDC] text-xs font-medium tracking-wide shadow-xl border border-[#A88B54]/30 select-none"
                     >
                         <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
                         <span>Chat via WhatsApp</span>

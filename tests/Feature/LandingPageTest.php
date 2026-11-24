@@ -62,6 +62,7 @@ class LandingPageTest extends TestCase
             'whatsapp_number' => '081234567890',
             'estimated_quantity' => '50 - 100 paket',
             'budget_per_package' => 'Rp 350.000 - Rp 500.000',
+            'payment_method' => 'po_net14',
             'needed_date' => now()->addDays(14)->format('Y-m-d'),
             'notes' => 'Tolong sertakan custom logo emas pada box.',
             'website' => '', // honeypot empty
@@ -76,6 +77,7 @@ class LandingPageTest extends TestCase
             'name' => 'Budi Santoso',
             'company' => 'PT Sumber Makmur',
             'email' => 'budi@sumbermakmur.com',
+            'payment_method' => 'po_net14',
         ]);
 
         Mail::assertSent(InquiryReceivedMail::class);

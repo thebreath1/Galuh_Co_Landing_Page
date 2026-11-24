@@ -46,7 +46,7 @@ export const FaqSection: React.FC = () => {
         <section
             id="faq"
             aria-label="Pertanyaan yang Sering Diajukan"
-            className="py-20 md:py-28 bg-[#F7F4EE] border-t border-[#E8E2D5] relative"
+            className="py-20 md:py-28 bg-[#EAE1CE] border-t border-[#D8CEBA] relative"
         >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
@@ -57,14 +57,14 @@ export const FaqSection: React.FC = () => {
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold mb-3">
                         Tanya Jawab
                     </p>
-                    <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
+                    <h2 className="font-serif text-3xl sm:text-4xl text-[#16233B] font-bold tracking-tight mb-4">
                         Pertanyaan yang Sering Diajukan
                     </h2>
-                    <div className="w-12 h-0.5 bg-[#C8A951] mx-auto mb-5" />
-                    <p className="text-[#6E675F] text-base">
+                    <div className="w-12 h-0.5 bg-[#A88B54] mx-auto mb-5" />
+                    <p className="text-[#6E675D] text-base">
                         Informasi lengkap seputar pemesanan, kustomisasi, sistem pengiriman, dan garansi layanan GALUH & CO.
                     </p>
                 </m.div>
@@ -80,23 +80,23 @@ export const FaqSection: React.FC = () => {
                                 whileInView="visible"
                                 viewport={viewportConfig}
                                 variants={fadeUp}
-                                className="bg-[#FFFFFF] rounded-2xl border border-[#E8E2D5] hover:border-[#C8A951]/45 overflow-hidden shadow-xs transition-[border-color,box-shadow] duration-300"
+                                className="bg-[#FFFFFF] rounded-2xl border border-[#D8CEBA] hover:border-[#A88B54]/45 overflow-hidden shadow-xs transition-[border-color,box-shadow] duration-300"
                             >
                                 <button
                                     type="button"
                                     onClick={() => toggleAccordion(idx)}
                                     aria-expanded={isOpen}
-                                    className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#C8A951]"
+                                    className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#A88B54]"
                                 >
-                                    <span className="font-serif text-base sm:text-lg font-bold text-[#1B382B]">
+                                    <span className="font-serif text-base sm:text-lg font-bold text-[#16233B]">
                                         {faq.question}
                                     </span>
                                     <span
                                         aria-hidden="true"
                                         className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
                                             isOpen
-                                                ? 'bg-[#1B382B] text-[#DFCA86]'
-                                                : 'bg-[#F7F2E4] text-[#C8A951]'
+                                                ? 'bg-[#16233B] text-[#C5AA74]'
+                                                : 'bg-[#EFE6D2] text-[#A88B54]'
                                         }`}
                                     >
                                         <span className="relative w-3.5 h-3.5 flex items-center justify-center">
@@ -120,7 +120,7 @@ export const FaqSection: React.FC = () => {
                                 >
                                     <div className="overflow-hidden">
                                         <div
-                                            className={`px-6 pb-6 pt-1 text-sm text-[#6E675F] leading-relaxed border-t border-[#F2ECE1] transition-transform duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                                            className={`px-6 pb-6 pt-1 text-sm text-[#6E675D] leading-relaxed border-t border-[#E6DEC9] transition-transform duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
                                                 isOpen ? 'translate-y-0' : '-translate-y-1.5'
                                             }`}
                                         >

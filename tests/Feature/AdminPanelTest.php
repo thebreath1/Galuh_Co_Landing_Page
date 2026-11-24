@@ -7,6 +7,7 @@ use App\Models\SiteSetting;
 use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 test('guests cannot access admin routes', function () {
@@ -199,11 +200,13 @@ test('customer can submit manual order and admin can monitor, ACC, complete, and
         'delivery_date' => '2026-12-24',
         'shipping_address' => 'Jl. Jend. Sudirman No. 175, Ciamis',
         'greeting_card_note' => 'Selamat merayakan hari spesial!',
+        'payment_method' => 'qris',
     ])->assertRedirect();
 
     $order = Order::query()->where('customer_name', 'Ibu Rina')->firstOrFail();
     expect($order->status)->toBe(Order::STATUS_PENDING);
     expect($order->total_price)->toBe(2550000);
+    expect($order->payment_method)->toBe('qris');
 
     $admin = User::factory()->create();
     $this->actingAs($admin);
@@ -225,4 +228,52 @@ test('customer can submit manual order and admin can monitor, ACC, complete, and
 
     $this->delete(route('admin.orders.destroy', $approved))->assertRedirect();
     expect(Order::query()->find($approved->id))->toBeNull();
+});
+
+test('geocode endpoints return formatted indonesian street addresses and search suggestions', function () {
+    Http::fake([
+        'nominatim.openstreetmap.org/reverse*' => Http::response([
+            'display_name' => 'Jalan Jendral Sudirman, Ciamis, Jawa Barat',
+            'address' => [
+                'road' => 'Jalan Jendral Sudirman',
+                'house_number' => '175',
+                'village' => 'Ciamis',
+                'subdistrict' => 'Ciamis',
+                'regency' => 'Kabupaten Ciamis',
+                'state' => 'Jawa Barat',
+                'postcode' => '46211',
+            ],
+        ], 200),
+        'nominatim.openstreetmap.org/search*' => Http::response([
+            [
+                'lat' => '-7.3257',
+                'lon' => '108.3534',
+                'display_name' => 'Jalan Jendral Sudirman, Ciamis',
+                'address' => [
+                    'road' => 'Jalan Jendral Sudirman',
+                    'subdistrict' => 'Ciamis',
+                    'regency' => 'Kabupaten Ciamis',
+                    'state' => 'Jawa Barat',
+                    'postcode' => '46211',
+                ],
+            ],
+        ], 200),
+    ]);
+
+    $reverseResponse = $this->getJson(route('geocode.reverse', [
+        'lat' => -7.3257,
+        'lon' => 108.3534,
+    ]));
+
+    $reverseResponse->assertOk()
+        ->assertJsonPath('address', 'Jalan Jendral Sudirman No. 175, Ciamis, Kabupaten Ciamis, Jawa Barat 46211');
+
+    $searchResponse = $this->getJson(route('geocode.search', [
+        'q' => 'Sudirman Ciamis',
+    ]));
+
+    $searchResponse->assertOk()
+        ->assertJsonCount(1, 'results')
+        ->assertJsonPath('results.0.lat', -7.3257)
+        ->assertJsonPath('results.0.lon', 108.3534);
 });

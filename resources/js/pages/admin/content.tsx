@@ -116,26 +116,34 @@ export default function AdminContent({ settings, defaults }: AdminContentProps) 
             <Head title="Editor Teks & Hero Section" />
             <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Editor Teks &amp; Hero Section</h1>
+                <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
+                                Kurasi Konten
+                            </span>
+                        </div>
+                        <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+                            Editor Teks &amp; Hero Section
+                        </h1>
                         <p className="text-sm text-muted-foreground">
                             Ubah headline utama, subheadline, tombol CTA, statistik, foto hero, dan narasi halaman depan.
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <Button type="button" variant="outline" onClick={handleResetDefaults}>
-                            <RotateCcw className="size-4" />
+                            <RotateCcw className="size-4 text-[#725C30] dark:text-[#C5AA74]" />
                             Reset Default
                         </Button>
                         <Button type="button" variant="outline" asChild>
                             <a href={home.url()} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="size-4" />
+                                <ExternalLink className="size-4 text-[#725C30] dark:text-[#C5AA74]" />
                                 Preview Web
                             </a>
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            <Save className="size-4" />
+                            <Save className="size-4 text-[#C5AA74] dark:text-primary-foreground" />
                             {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
                         </Button>
                     </div>

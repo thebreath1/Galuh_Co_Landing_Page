@@ -6,12 +6,21 @@ use App\Http\Controllers\Admin\AdminInquiryController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminTestimonialController;
+use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('home');
+
+Route::get('/api/geocode/reverse', [GeocodeController::class, 'reverse'])
+    ->middleware('throttle:60,1')
+    ->name('geocode.reverse');
+
+Route::get('/api/geocode/search', [GeocodeController::class, 'search'])
+    ->middleware('throttle:60,1')
+    ->name('geocode.search');
 
 Route::post('/orders', [OrderController::class, 'store'])
     ->middleware('throttle:10,1')

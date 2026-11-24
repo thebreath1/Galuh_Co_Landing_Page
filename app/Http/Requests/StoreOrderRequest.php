@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -30,6 +32,7 @@ class StoreOrderRequest extends FormRequest
             'delivery_date' => ['nullable', 'date'],
             'shipping_address' => ['required', 'string', 'max:2000'],
             'greeting_card_note' => ['nullable', 'string', 'max:1000'],
+            'payment_method' => ['nullable', 'string', Rule::in(Order::PAYMENT_METHODS)],
             'website' => ['nullable', 'prohibited'],
         ];
     }

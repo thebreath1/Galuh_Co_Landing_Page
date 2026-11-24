@@ -23,6 +23,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ settings }) => {
 
     const pillars = [
         {
+            number: '01',
+            tag: 'Artisanal Selection',
             icon: Gem,
             title: 'Kurasi Terbaik',
             description:
@@ -35,6 +37,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ settings }) => {
             ],
         },
         {
+            number: '02',
+            tag: 'Silk & Wax Seal',
             icon: Gift,
             title: 'Packaging Premium',
             description:
@@ -47,6 +51,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ settings }) => {
             ],
         },
         {
+            number: '03',
+            tag: 'Bespoke Calligraphy',
             icon: Feather,
             title: 'Sentuhan Personal',
             description:
@@ -64,38 +70,43 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ settings }) => {
         <section
             id="tentang"
             aria-label="Tentang GALUH & CO."
-            className="py-20 md:py-28 bg-[#F7F4EE] relative border-y border-[#E8E2D5]"
+            className="py-20 md:py-28 bg-[#EAE1CE] relative border-y border-[#D8CEBA]"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Section Header */}
+                {/* Editorial Asymmetric Section Header */}
                 <m.div
-                    className="text-center max-w-2xl mx-auto mb-16"
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end pb-12 mb-12 border-b border-[#A88B54]/35"
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
                     variants={staggerContainer}
                 >
+                    <div className="lg:col-span-6">
+                        <m.div variants={fadeUp} className="flex items-center gap-3 mb-3">
+                            <span className="w-8 h-px bg-[#A88B54]" aria-hidden="true" />
+                            <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold">
+                                {eyebrow}
+                            </p>
+                        </m.div>
+                        <m.h2
+                            variants={fadeUp}
+                            className="font-serif text-3xl sm:text-4xl lg:text-[2.6rem] text-[#16233B] font-bold tracking-tight leading-[1.15]"
+                        >
+                            {title}
+                        </m.h2>
+                    </div>
+
                     <m.p
                         variants={fadeUp}
-                        className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3"
+                        className="lg:col-span-6 text-[#6E675D] text-base leading-relaxed lg:pl-6"
                     >
-                        {eyebrow}
-                    </m.p>
-                    <m.h2
-                        variants={fadeUp}
-                        className="font-serif text-3xl sm:text-4xl lg:text-4xl text-[#1B382B] font-bold tracking-tight mb-5"
-                    >
-                        {title}
-                    </m.h2>
-                    <m.div variants={fadeUp} className="w-12 h-0.5 bg-[#C8A951] mx-auto mb-6" />
-                    <m.p variants={fadeUp} className="text-[#6E675F] text-base leading-relaxed">
                         {description}
                     </m.p>
                 </m.div>
 
-                {/* 3 Pillars Grid */}
+                {/* Open Architectural Editorial Pillars (No Boxes) */}
                 <m.div
-                    className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                    className="grid grid-cols-1 md:grid-cols-3 divide-y divide-[#A88B54]/25 md:divide-y-0 md:divide-x md:divide-[#A88B54]/30"
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
@@ -104,7 +115,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ settings }) => {
                     {pillars.map((pillar) => {
                         const Icon = pillar.icon;
                         return (
-                            <m.div key={pillar.title} variants={fadeUp} className="h-full">
+                            <m.div
+                                key={pillar.title}
+                                variants={fadeUp}
+                                className="h-full py-8 md:py-2 md:px-8 first:pt-2 md:first:pl-0 last:pb-2 md:last:pr-0"
+                            >
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -113,17 +128,36 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ settings }) => {
                                             lines: pillar.easterEggLines,
                                         })
                                     }
-                                    className="w-full h-full bg-[#FFFFFF] rounded-2xl p-8 border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover hover:-translate-y-1.5 transition-[transform,box-shadow] duration-300 ease-out transform-gpu text-center flex flex-col items-center group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A951]"
+                                    className="w-full h-full text-left flex flex-col justify-between group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] rounded-lg transition-colors"
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-[#F7F2E4] border border-[#C8A951]/40 flex items-center justify-center text-[#C8A951] mb-6 group-hover:scale-110 group-hover:bg-[#1B382B] group-hover:text-[#DFCA86] transition-all duration-300">
-                                        <Icon className="w-7 h-7" />
+                                    <div>
+                                        <div className="flex items-center justify-between mb-6">
+                                            <span className="font-serif italic text-3xl text-[#A88B54] group-hover:text-[#16233B] transition-colors duration-300">
+                                                {pillar.number}
+                                            </span>
+                                            <Icon
+                                                className="w-5 h-5 text-[#725C30] group-hover:text-[#16233B] group-hover:scale-110 transition-all duration-300"
+                                                strokeWidth={1.6}
+                                            />
+                                        </div>
+
+                                        <h3 className="font-serif text-2xl font-bold text-[#16233B] mb-3">
+                                            {pillar.title}
+                                        </h3>
+
+                                        <div
+                                            aria-hidden="true"
+                                            className="w-10 group-hover:w-20 h-px bg-[#A88B54] mb-4 transition-all duration-500 ease-out"
+                                        />
+
+                                        <p className="text-sm text-[#6E675D] leading-relaxed mb-6">
+                                            {pillar.description}
+                                        </p>
                                     </div>
-                                    <h3 className="font-serif text-xl font-bold text-[#1B382B] mb-3">
-                                        {pillar.title}
-                                    </h3>
-                                    <p className="text-sm text-[#6E675F] leading-relaxed">
-                                        {pillar.description}
-                                    </p>
+
+                                    <span className="text-[11px] uppercase tracking-[0.22em] text-[#725C30] font-semibold">
+                                        {pillar.tag}
+                                    </span>
                                 </button>
                             </m.div>
                         );

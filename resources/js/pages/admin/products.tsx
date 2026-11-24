@@ -193,15 +193,23 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
             <Head title="Kelola Katalog Hampers" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Page Header */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Kelola Katalog &amp; Foto Produk</h1>
+                <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
+                                Koleksi Hampers
+                            </span>
+                        </div>
+                        <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+                            Kelola Katalog &amp; Foto Produk
+                        </h1>
                         <p className="text-sm text-muted-foreground">
                             Unggah atau ganti foto hampers, ubah harga, daftar isi paket, dan visibilitas di landing page.
                         </p>
                     </div>
                     <Button onClick={openCreateDialog}>
-                        <Plus className="size-4" />
+                        <Plus className="size-4 text-[#C5AA74] dark:text-primary-foreground" />
                         Tambah Hampers
                     </Button>
                 </div>
@@ -243,8 +251,8 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                 ) : (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredProducts.map((product) => (
-                            <Card key={product.id} className="overflow-hidden flex flex-col">
-                                <div className="relative aspect-[4/3] bg-muted">
+                            <Card key={product.id} className="flex flex-col overflow-hidden hover:border-[#A88B54]/70">
+                                <div className="relative aspect-[4/3] bg-secondary">
                                     <img
                                         src={product.image}
                                         alt={product.name}
@@ -258,18 +266,20 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                     </div>
                                     <Badge
                                         variant="outline"
-                                        className="absolute right-2.5 bottom-2.5 bg-background/90 backdrop-blur-xs"
+                                        className="absolute right-2.5 bottom-2.5 border-[#D8CEBA] bg-card/90 text-foreground backdrop-blur-xs"
                                     >
                                         Urutan #{product.sort_order}
                                     </Badge>
                                 </div>
 
-                                <CardContent className="flex flex-1 flex-col justify-between gap-4 p-4">
+                                <CardContent className="flex flex-1 flex-col justify-between gap-4 p-5">
                                     <div>
                                         <div className="flex items-start justify-between gap-2">
-                                            <h2 className="font-semibold leading-snug">{product.name}</h2>
+                                            <h2 className="font-serif text-lg font-semibold leading-snug text-foreground">
+                                                {product.name}
+                                            </h2>
                                         </div>
-                                        <p className="mt-1 text-sm font-medium text-primary">
+                                        <p className="mt-1 text-sm font-semibold text-[#725C30] dark:text-[#C5AA74]">
                                             {formatRupiah(product.price_from)}
                                         </p>
                                         <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">

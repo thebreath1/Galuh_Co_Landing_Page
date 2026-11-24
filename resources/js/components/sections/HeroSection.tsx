@@ -106,7 +106,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
             aria-label="Hero Section"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative flex items-center justify-center py-14 sm:py-16 md:py-20 overflow-hidden bg-[#FDFBF7]"
+            className="relative flex items-center justify-center py-14 sm:py-16 md:py-20 overflow-hidden bg-[#F2EBDC]"
         >
             {/* Full-bleed Hampers Background Image with Interactive Parallax */}
             <div
@@ -128,12 +128,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
 
             {/* Warm Ivory Atmospheric Scrim for High Readability & Luxury Tone */}
             <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7]/88 via-[#FDFBF7]/76 to-[#FDFBF7]/95" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(253,251,247,0.78)_0%,rgba(253,251,247,0.18)_75%)]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#F2EBDC]/88 via-[#F2EBDC]/76 to-[#F2EBDC]/95" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(242,235,220,0.78)_0%,rgba(242,235,220,0.18)_75%)]" />
                 {/* Soft interactive golden glow orb */}
                 <div
                     ref={orbRef}
-                    className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-[#DFCA86]/15 blur-3xl transition-transform duration-500 ease-out"
+                    className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-[#C5AA74]/15 blur-3xl transition-transform duration-500 ease-out"
                 />
             </div>
 
@@ -159,7 +159,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                                           ease: 'easeInOut',
                                       }
                             }
-                            className="w-28 lg:w-40 xl:w-48 2xl:w-52 rounded-2xl p-1.5 bg-[#FFFFFF]/92 backdrop-blur-xs border border-[#C8A951]/45 shadow-luxury will-change-transform"
+                            className="w-28 lg:w-40 xl:w-48 2xl:w-52 rounded-2xl p-1.5 bg-[#FFFFFF]/92 backdrop-blur-xs border border-[#A88B54]/45 shadow-luxury will-change-transform"
                         >
                             <img
                                 src={hamper.src}
@@ -179,7 +179,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
             <div className="relative z-20 max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div className="flex flex-col items-center text-center">
                     {/* Single H1 Headline — Instant LCP + Subtle Hover Lift */}
-                    <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#1B382B] font-bold leading-[1.18] tracking-tight mb-5 flex flex-wrap justify-center gap-x-3 gap-y-1.5 max-w-3xl">
+                    <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#16233B] font-bold leading-[1.18] tracking-tight mb-5 flex flex-wrap justify-center gap-x-3 gap-y-1.5 max-w-3xl">
                         {headlineWords.map((word, idx) => (
                             <m.span
                                 key={idx}
@@ -187,7 +187,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                                 transition={{ duration: 0.2 }}
                                 className={
                                     word === 'Hampers' || word === 'Eksklusif' || word === 'Berkesan'
-                                        ? 'text-[#B2923B] italic font-normal cursor-default'
+                                        ? 'text-[#8A703E] italic font-normal cursor-default'
                                         : 'cursor-default'
                                 }
                             >
@@ -197,7 +197,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                     </h1>
 
                     {/* Subheadline */}
-                    <p className="text-[#2C2724] text-base sm:text-lg leading-relaxed max-w-2xl mb-7 font-medium">
+                    <p className="text-[#1E2430] text-base sm:text-lg leading-relaxed max-w-2xl mb-7 font-medium">
                         {subheadline}
                     </p>
 
@@ -207,10 +207,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                             href="#koleksi"
                             whileHover={{ scale: 1.03, y: -2 }}
                             whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#1B382B] text-[#FDFBF7] text-sm font-semibold tracking-wide uppercase hover:bg-[#264E3D] shadow-luxury hover:shadow-luxury-hover transition-all focus:outline-none focus:ring-2 focus:ring-[#C8A951] group"
+                            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#16233B] text-[#F2EBDC] text-sm font-semibold tracking-wide uppercase hover:bg-[#203252] shadow-luxury hover:shadow-luxury-hover transition-all focus:outline-none focus:ring-2 focus:ring-[#A88B54] group"
                         >
                             <span>{primaryCtaLabel}</span>
-                            <ArrowRight className="w-4 h-4 text-[#DFCA86] group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight className="w-4 h-4 text-[#C5AA74] group-hover:translate-x-1 transition-transform" />
                         </m.a>
 
                         <m.a
@@ -219,7 +219,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                             rel="noopener noreferrer"
                             whileHover={{ scale: 1.03, y: -2 }}
                             whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#FFFFFF]/95 backdrop-blur-xs text-[#1B382B] text-sm font-semibold tracking-wide uppercase border border-[#C8A951] hover:bg-[#F7F4EE] shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
+                            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#FFFFFF]/95 backdrop-blur-xs text-[#16233B] text-sm font-semibold tracking-wide uppercase border border-[#A88B54] hover:bg-[#EAE1CE] shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
                         >
                             <WhatsAppIcon className="w-4 h-4 text-[#25D366] fill-current" />
                             <span>{secondaryCtaLabel}</span>
@@ -227,16 +227,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                     </div>
 
                     {/* Interactive Trust Metrics / Social Proof */}
-                    <div className="pt-6 border-t border-[#1B382B]/15 w-full max-w-xl grid grid-cols-3 gap-4 sm:gap-8">
+                    <div className="pt-6 border-t border-[#16233B]/15 w-full max-w-xl grid grid-cols-3 gap-4 sm:gap-8">
                         <m.div
                             whileHover={{ y: -3 }}
                             transition={{ duration: 0.2 }}
                             className="rounded-xl py-2 px-2 hover:bg-[#FFFFFF]/55 transition-colors cursor-default"
                         >
-                            <p className="font-serif text-2xl sm:text-3xl font-bold text-[#1B382B]">
+                            <p className="font-serif text-2xl sm:text-3xl font-bold text-[#16233B]">
                                 {settings?.hero_stat_1_value || '5.000+'}
                             </p>
-                            <p className="text-xs sm:text-sm text-[#2C2724]/80 font-medium mt-0.5">
+                            <p className="text-xs sm:text-sm text-[#1E2430]/80 font-medium mt-0.5">
                                 {settings?.hero_stat_1_label || 'Hampers Terkirim'}
                             </p>
                         </m.div>
@@ -246,10 +246,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                             transition={{ duration: 0.2 }}
                             className="rounded-xl py-2 px-2 hover:bg-[#FFFFFF]/55 transition-colors cursor-default"
                         >
-                            <p className="font-serif text-2xl sm:text-3xl font-bold text-[#1B382B]">
+                            <p className="font-serif text-2xl sm:text-3xl font-bold text-[#16233B]">
                                 {settings?.hero_stat_2_value || '120+'}
                             </p>
-                            <p className="text-xs sm:text-sm text-[#2C2724]/80 font-medium mt-0.5">
+                            <p className="text-xs sm:text-sm text-[#1E2430]/80 font-medium mt-0.5">
                                 {settings?.hero_stat_2_label || 'Mitra Korporat'}
                             </p>
                         </m.div>
@@ -260,14 +260,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                             className="rounded-xl py-2 px-2 hover:bg-[#FFFFFF]/55 transition-colors cursor-default"
                         >
                             <div className="flex items-center justify-center gap-1">
-                                <span className="font-serif text-2xl sm:text-3xl font-bold text-[#1B382B]">
+                                <span className="font-serif text-2xl sm:text-3xl font-bold text-[#16233B]">
                                     {settings?.hero_stat_3_value || '4.9'}
                                 </span>
-                                <div className="flex text-[#C8A951]">
+                                <div className="flex text-[#A88B54]">
                                     <Star className="w-4 h-4 fill-current" />
                                 </div>
                             </div>
-                            <p className="text-xs sm:text-sm text-[#2C2724]/80 font-medium mt-0.5">
+                            <p className="text-xs sm:text-sm text-[#1E2430]/80 font-medium mt-0.5">
                                 {settings?.hero_stat_3_label || 'Kepuasan Klien'}
                             </p>
                         </m.div>
@@ -292,7 +292,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ whatsappNumber, settin
                                               ease: 'easeInOut',
                                           }
                                 }
-                                className={`${hamper.mobileRotateClass} rounded-2xl p-1 bg-[#FFFFFF]/92 border border-[#C8A951]/45 shadow-luxury will-change-transform`}
+                                className={`${hamper.mobileRotateClass} rounded-2xl p-1 bg-[#FFFFFF]/92 border border-[#A88B54]/45 shadow-luxury will-change-transform`}
                             >
                                 <img
                                     src={hamper.src}

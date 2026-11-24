@@ -132,7 +132,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
         <section
             id="testimoni"
             aria-label="Testimoni Pelanggan"
-            className="py-20 md:py-28 bg-[#FDFBF7] relative overflow-hidden"
+            className="py-20 md:py-28 bg-[#F2EBDC] relative overflow-hidden"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
@@ -143,14 +143,14 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold mb-3">
                         {eyebrow}
                     </p>
-                    <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
+                    <h2 className="font-serif text-3xl sm:text-4xl text-[#16233B] font-bold tracking-tight mb-4">
                         {title}
                     </h2>
-                    <div className="w-12 h-0.5 bg-[#C8A951] mx-auto mb-5" />
-                    <p className="text-[#6E675F] text-base">
+                    <div className="w-12 h-0.5 bg-[#A88B54] mx-auto mb-5" />
+                    <p className="text-[#6E675D] text-base">
                         {description}
                     </p>
                 </m.div>
@@ -173,26 +173,26 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                             {slides[safeSlideIndex].map((item, idx) => (
                                 <article
                                     key={idx}
-                                    className="bg-[#FFFFFF] rounded-2xl border border-[#E8E2D5] shadow-luxury hover:shadow-luxury-hover transition-shadow flex flex-col justify-between overflow-hidden"
+                                    className="bg-[#FFFFFF] rounded-2xl border border-[#D8CEBA] shadow-luxury hover:shadow-luxury-hover transition-shadow flex flex-col justify-between overflow-hidden"
                                 >
                                     {/* Card Header: Avatar + Name | Role */}
-                                    <div className="px-6 py-4 bg-[#FDFBF7] border-b border-[#E8E2D5] flex items-center gap-3.5">
+                                    <div className="px-6 py-4 bg-[#F2EBDC] border-b border-[#D8CEBA] flex items-center gap-3.5">
                                         <div
                                             aria-hidden="true"
-                                            className="w-11 h-11 rounded-full bg-[#F7F2E4] border border-[#C8A951]/40 text-[#1B382B] font-serif font-bold text-sm flex items-center justify-center flex-shrink-0"
+                                            className="w-11 h-11 rounded-full bg-[#EFE6D2] border border-[#A88B54]/40 text-[#16233B] font-serif font-bold text-sm flex items-center justify-center flex-shrink-0"
                                         >
                                             {item.initials}
                                         </div>
 
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-3 min-w-0 flex-1">
-                                            <h3 className="font-serif text-base sm:text-lg font-bold text-[#1B382B] sm:truncate">
+                                            <h3 className="font-serif text-base sm:text-lg font-bold text-[#16233B] sm:truncate">
                                                 {item.name}
                                             </h3>
                                             <span
                                                 aria-hidden="true"
-                                                className="hidden sm:block w-px h-6 bg-[#E8E2D5] flex-shrink-0"
+                                                className="hidden sm:block w-px h-6 bg-[#D8CEBA] flex-shrink-0"
                                             />
-                                            <p className="text-xs text-[#6E675F] leading-snug line-clamp-2">
+                                            <p className="text-xs text-[#6E675D] leading-snug line-clamp-2">
                                                 {item.role}
                                             </p>
                                         </div>
@@ -201,7 +201,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                                     {/* Card Body: Stars + Quote */}
                                     <div className="p-6 flex-1 flex flex-col">
                                         <div
-                                            className="flex items-center gap-1 text-[#C8A951] mb-4"
+                                            className="flex items-center gap-1 text-[#A88B54] mb-4"
                                             aria-label={`Rating ${item.rating} dari 5 bintang`}
                                         >
                                             {[...Array(item.rating)].map((_, i) => (
@@ -209,15 +209,15 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                                             ))}
                                         </div>
 
-                                        <blockquote className="text-sm sm:text-base text-[#2C2724] leading-relaxed text-left">
+                                        <blockquote className="text-sm sm:text-base text-[#1E2430] leading-relaxed text-left">
                                             &ldquo;{item.content}&rdquo;
                                         </blockquote>
                                     </div>
 
                                     {/* Card Bottom Strip: Order Context */}
-                                    <div className="px-6 py-3 bg-[#F7F4EE]/70 border-t border-[#E8E2D5]/80 flex items-center gap-2 text-xs text-[#6E675F]">
-                                        <Sparkles className="w-3.5 h-3.5 text-[#C8A951] flex-shrink-0" />
-                                        <span className="font-medium text-[#1B382B]/80 truncate">
+                                    <div className="px-6 py-3 bg-[#EAE1CE]/70 border-t border-[#D8CEBA]/80 flex items-center gap-2 text-xs text-[#6E675D]">
+                                        <Sparkles className="w-3.5 h-3.5 text-[#A88B54] flex-shrink-0" />
+                                        <span className="font-medium text-[#16233B]/80 truncate">
                                             {item.productTag}
                                         </span>
                                     </div>
@@ -231,7 +231,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                         <button
                             type="button"
                             onClick={prevSlide}
-                            className="w-11 h-11 rounded-full border border-[#E8E2D5] bg-[#FFFFFF] text-[#1B382B] hover:bg-[#1B382B] hover:text-[#DFCA86] hover:border-[#1B382B] transition-colors flex items-center justify-center shadow-xs focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
+                            className="w-11 h-11 rounded-full border border-[#D8CEBA] bg-[#FFFFFF] text-[#16233B] hover:bg-[#16233B] hover:text-[#C5AA74] hover:border-[#16233B] transition-colors flex items-center justify-center shadow-xs focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
                             aria-label="Ulasan sebelumnya"
                         >
                             <ChevronLeft className="w-5 h-5" />
@@ -247,7 +247,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                                         setCurrentSlide(idx);
                                     }}
                                     className={`w-2.5 h-2.5 rounded-full transition-transform transition-colors duration-200 ${
-                                        safeSlideIndex === idx ? 'bg-[#1B382B] scale-125' : 'bg-[#E8E2D5] hover:bg-[#C8A951]/60'
+                                        safeSlideIndex === idx ? 'bg-[#16233B] scale-125' : 'bg-[#D8CEBA] hover:bg-[#A88B54]/60'
                                     }`}
                                     aria-label={`Beralih ke halaman ulasan ${idx + 1}`}
                                 />
@@ -257,7 +257,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                         <button
                             type="button"
                             onClick={nextSlide}
-                            className="w-11 h-11 rounded-full border border-[#E8E2D5] bg-[#FFFFFF] text-[#1B382B] hover:bg-[#1B382B] hover:text-[#DFCA86] hover:border-[#1B382B] transition-colors flex items-center justify-center shadow-xs focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
+                            className="w-11 h-11 rounded-full border border-[#D8CEBA] bg-[#FFFFFF] text-[#16233B] hover:bg-[#16233B] hover:text-[#C5AA74] hover:border-[#16233B] transition-colors flex items-center justify-center shadow-xs focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
                             aria-label="Ulasan berikutnya"
                         >
                             <ChevronRight className="w-5 h-5" />

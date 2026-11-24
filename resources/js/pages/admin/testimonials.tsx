@@ -160,15 +160,23 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
             <Head title="Kelola Testimoni Klien" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Page Header */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Kelola Testimoni Klien</h1>
+                <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
+                                Suara Pelanggan
+                            </span>
+                        </div>
+                        <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+                            Kelola Testimoni Klien
+                        </h1>
                         <p className="text-sm text-muted-foreground">
                             Tambah, ubah kutipan, rating bintang, tag produk, dan visibilitas testimoni di landing page.
                         </p>
                     </div>
                     <Button onClick={openCreateDialog}>
-                        <Plus className="size-4" />
+                        <Plus className="size-4 text-[#C5AA74] dark:text-primary-foreground" />
                         Tambah Testimoni
                     </Button>
                 </div>
@@ -214,15 +222,17 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2">
                         {filtered.map((item) => (
-                            <Card key={item.id} className="flex flex-col justify-between">
+                            <Card key={item.id} className="flex flex-col justify-between hover:border-[#A88B54]/70">
                                 <CardContent className="space-y-4 p-5">
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border bg-muted font-serif text-sm font-bold">
+                                            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#A88B54]/50 bg-[#16233B] font-serif text-sm font-bold text-[#F2EBDC]">
                                                 {item.initials}
                                             </div>
                                             <div>
-                                                <h2 className="font-semibold leading-snug">{item.name}</h2>
+                                                <h2 className="font-serif text-base font-semibold leading-snug text-foreground">
+                                                    {item.name}
+                                                </h2>
                                                 <p className="text-xs text-muted-foreground">{item.role}</p>
                                             </div>
                                         </div>
@@ -235,18 +245,18 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-1 text-amber-500">
+                                    <div className="flex items-center gap-1 text-[#A88B54]">
                                         {Array.from({ length: item.rating }).map((_, idx) => (
                                             <Star key={idx} className="size-4 fill-current" />
                                         ))}
                                     </div>
 
-                                    <blockquote className="text-sm leading-relaxed text-muted-foreground">
+                                    <blockquote className="font-serif text-base leading-relaxed italic text-foreground/90">
                                         &ldquo;{item.content}&rdquo;
                                     </blockquote>
 
-                                    <div className="flex items-center gap-1.5 rounded-md bg-muted/50 px-3 py-1.5 text-xs font-medium">
-                                        <MessageSquareQuote className="size-3.5 text-muted-foreground" />
+                                    <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-1.5 text-xs font-medium text-[#725C30] dark:text-[#C5AA74]">
+                                        <MessageSquareQuote className="size-3.5 text-[#A88B54]" />
                                         <span>{item.product_tag}</span>
                                     </div>
 

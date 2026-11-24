@@ -50,6 +50,10 @@
                 <span class="value">{{ $inquiry->budget_per_package }}</span>
             </div>
             <div class="row">
+                <span class="label">Metode Pembayaran:</span>
+                <span class="value">{{ $inquiry->payment_method ?? 'invoice_termin' }}</span>
+            </div>
+            <div class="row">
                 <span class="label">Tanggal Kebutuhan:</span>
                 <span class="value">{{ $inquiry->needed_date ? $inquiry->needed_date->format('d F Y') : '-' }}</span>
             </div>

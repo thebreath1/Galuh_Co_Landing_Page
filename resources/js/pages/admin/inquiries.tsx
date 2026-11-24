@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
-import { Building2, Calendar, Mail, MessageSquare, Package, Phone, Trash2 } from 'lucide-react';
+import { Building2, Calendar, Mail, MessageSquare, Package, Phone, Trash2, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatPaymentMethodLabel } from '@/lib/payment-methods';
 import { dashboard } from '@/routes';
 import { destroy as destroyInquiry, index as inquiriesIndex } from '@/routes/admin/inquiries';
 import type { InquiryRecord } from '@/types/landing';
@@ -38,8 +39,16 @@ export default function AdminInquiries({ inquiries }: AdminInquiriesProps) {
         <>
             <Head title="Inquiry Corporate Masuk" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Inquiry Corporate Gifting</h1>
+                <div className="space-y-1.5 border-b border-border pb-5">
+                    <div className="flex items-center gap-2">
+                        <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                        <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
+                            Permintaan B2B
+                        </span>
+                    </div>
+                    <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+                        Inquiry Corporate Gifting
+                    </h1>
                     <p className="text-sm text-muted-foreground">
                         Daftar permintaan penawaran B2B yang dikirim melalui formulir di landing page.
                     </p>
@@ -54,45 +63,51 @@ export default function AdminInquiries({ inquiries }: AdminInquiriesProps) {
                 ) : (
                     <div className="grid gap-4">
                         {inquiries.map((inq) => (
-                            <Card key={inq.id}>
+                            <Card key={inq.id} className="hover:border-[#A88B54]/70">
                                 <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3">
-                                    <div className="space-y-1">
-                                        <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+                                    <div className="space-y-1.5">
+                                        <CardTitle className="flex flex-wrap items-center gap-2 font-serif text-lg">
                                             <span>{inq.name}</span>
                                             {inq.company && (
-                                                <Badge variant="secondary" className="gap-1">
-                                                    <Building2 className="size-3" />
+                                                <Badge variant="default" className="gap-1 font-sans">
+                                                    <Building2 className="size-3 text-[#C5AA74]" />
                                                     {inq.company}
                                                 </Badge>
                                             )}
                                         </CardTitle>
                                         <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                                             <span className="inline-flex items-center gap-1">
-                                                <Phone className="size-3.5" />
+                                                <Phone className="size-3.5 text-[#A88B54]" />
                                                 {inq.whatsapp_number}
                                             </span>
                                             {inq.email && (
                                                 <span className="inline-flex items-center gap-1">
-                                                    <Mail className="size-3.5" />
+                                                    <Mail className="size-3.5 text-[#A88B54]" />
                                                     {inq.email}
                                                 </span>
                                             )}
                                             <span className="inline-flex items-center gap-1">
-                                                <Package className="size-3.5" />
+                                                <Package className="size-3.5 text-[#A88B54]" />
                                                 {inq.estimated_quantity}
                                             </span>
                                             {inq.needed_date && (
                                                 <span className="inline-flex items-center gap-1">
-                                                    <Calendar className="size-3.5" />
+                                                    <Calendar className="size-3.5 text-[#A88B54]" />
                                                     Target: {new Date(inq.needed_date).toLocaleDateString('id-ID')}
                                                 </span>
                                             )}
+                                            <span className="inline-flex items-center gap-1 font-medium text-[#725C30] dark:text-[#C5AA74]">
+                                                <Wallet className="size-3.5 text-[#A88B54]" />
+                                                {formatPaymentMethodLabel(inq.payment_method ?? 'invoice_termin')}
+                                            </span>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-2">
                                         {inq.budget_per_package && (
-                                            <Badge variant="outline">{inq.budget_per_package}</Badge>
+                                            <Badge variant="outline" className="text-[#725C30] dark:text-[#C5AA74]">
+                                                {inq.budget_per_package}
+                                            </Badge>
                                         )}
                                         <Button
                                             type="button"
@@ -108,8 +123,8 @@ export default function AdminInquiries({ inquiries }: AdminInquiriesProps) {
 
                                 {inq.notes && (
                                     <CardContent className="pt-0">
-                                        <div className="flex items-start gap-2 rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
-                                            <MessageSquare className="mt-0.5 size-4 shrink-0" />
+                                        <div className="flex items-start gap-2 rounded-xl border border-border bg-background/60 p-3.5 text-sm text-muted-foreground">
+                                            <MessageSquare className="mt-0.5 size-4 shrink-0 text-[#A88B54]" />
                                             <p className="whitespace-pre-line">{inq.notes}</p>
                                         </div>
                                     </CardContent>

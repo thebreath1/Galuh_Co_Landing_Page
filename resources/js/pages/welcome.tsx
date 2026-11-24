@@ -46,7 +46,7 @@ export default function Welcome({ products, testimonials, whatsappNumber, siteSe
                 />
             </Head>
 
-            <div className="min-h-screen bg-[#FDFBF7] text-[#2C2724] font-sans antialiased selection:bg-[#C8A951]/20 selection:text-[#1B382B] overflow-x-clip">
+            <div className="min-h-screen bg-[#F2EBDC] text-[#1E2430] font-sans antialiased selection:bg-[#A88B54]/20 selection:text-[#16233B] overflow-x-clip">
                 {/* 1. Sticky Navigation Bar */}
                 <NavbarSection whatsappNumber={waNumber} />
 

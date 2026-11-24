@@ -57,6 +57,7 @@ export interface InquiryRecord {
     whatsapp_number: string;
     estimated_quantity: string;
     budget_per_package: string | null;
+    payment_method: string | null;
     needed_date: string | null;
     notes: string | null;
     created_at: string;
@@ -69,6 +70,7 @@ export interface InquiryFormData {
     whatsapp_number: string;
     estimated_quantity: string;
     budget_per_package: string;
+    payment_method: string;
     needed_date: string;
     notes: string;
     website?: string; // honeypot
@@ -90,6 +92,7 @@ export interface OrderRecord {
     delivery_date: string | null;
     shipping_address: string;
     greeting_card_note: string | null;
+    payment_method: string | null;
     status: OrderStatus;
     admin_note: string | null;
     reviewed_at: string | null;

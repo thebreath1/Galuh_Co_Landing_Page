@@ -18,6 +18,7 @@ class InquiryController extends Controller
     {
         $validated = $request->validated();
         unset($validated['website']);
+        $validated['payment_method'] = $validated['payment_method'] ?? 'invoice_termin';
 
         $inquiry = Inquiry::create($validated);
 

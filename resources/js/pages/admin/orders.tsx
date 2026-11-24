@@ -12,6 +12,7 @@ import {
     Search,
     ShoppingBag,
     Trash2,
+    Wallet,
     XCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -19,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { formatPaymentMethodLabel } from '@/lib/payment-methods';
 import { dashboard } from '@/routes';
 import {
     destroy as destroyOrder,
@@ -49,12 +51,27 @@ const formatRupiah = (amount: number) =>
 
 const STATUS_META: Record<
     OrderStatus,
-    { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
+    { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }
 > = {
-    pending: { label: 'Menunggu ACC', variant: 'outline' },
-    approved: { label: 'Di-ACC Admin', variant: 'default' },
-    completed: { label: 'Selesai', variant: 'secondary' },
-    rejected: { label: 'Ditolak', variant: 'destructive' },
+    pending: {
+        label: 'Menunggu ACC',
+        variant: 'outline',
+        className: 'border-[#A88B54]/60 bg-[#EAE1CE]/85 text-[#725C30] dark:bg-[#203252] dark:text-[#C5AA74]',
+    },
+    approved: {
+        label: 'Di-ACC Admin',
+        variant: 'default',
+        className: 'bg-[#16233B] text-[#F2EBDC] border-transparent',
+    },
+    completed: {
+        label: 'Selesai',
+        variant: 'secondary',
+        className: 'border-emerald-700/25 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+    },
+    rejected: {
+        label: 'Ditolak',
+        variant: 'destructive',
+    },
 };
 
 export default function AdminOrders({ orders }: AdminOrdersProps) {
@@ -121,8 +138,16 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
             <Head title="Kelola & ACC Pesanan Masuk" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Pesanan Hampers Masuk</h1>
+                <div className="space-y-1.5 border-b border-border pb-5">
+                    <div className="flex items-center gap-2">
+                        <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                        <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
+                            Pesanan Manual
+                        </span>
+                    </div>
+                    <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+                        Pesanan Hampers Masuk
+                    </h1>
                     <p className="text-sm text-muted-foreground">
                         Pantau pesanan manual dari katalog landing page, berikan catatan internal, lalu ACC atau tolak.
                     </p>
@@ -167,51 +192,61 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
                         {filteredOrders.map((order) => {
                             const statusMeta = STATUS_META[order.status] ?? STATUS_META.pending;
                             return (
-                                <Card key={order.id}>
+                                <Card key={order.id} className="hover:border-[#A88B54]/70">
                                     <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-start sm:justify-between">
                                         <div className="space-y-1.5">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <span className="font-mono text-xs font-semibold text-muted-foreground">
+                                                <span className="rounded bg-secondary px-2 py-0.5 font-mono text-xs font-semibold text-[#725C30] dark:text-[#C5AA74]">
                                                     {order.order_code}
                                                 </span>
-                                                <Badge variant={statusMeta.variant}>{statusMeta.label}</Badge>
+                                                <Badge variant={statusMeta.variant} className={statusMeta.className}>
+                                                    {statusMeta.label}
+                                                </Badge>
+                                                <Badge variant="outline" className="gap-1 border-border bg-card text-foreground">
+                                                    <Wallet className="size-3 text-[#725C30] dark:text-[#C5AA74]" />
+                                                    {formatPaymentMethodLabel(order.payment_method)}
+                                                </Badge>
                                                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                                                    <Clock className="size-3" />
+                                                    <Clock className="size-3 text-[#A88B54]" />
                                                     {new Date(order.created_at).toLocaleString('id-ID')}
                                                 </span>
                                             </div>
-                                            <CardTitle className="flex flex-wrap items-center gap-2 text-base">
-                                                <ShoppingBag className="size-4 text-primary" />
+                                            <CardTitle className="flex flex-wrap items-center gap-2 font-serif text-lg">
+                                                <ShoppingBag className="size-4 text-[#A88B54]" />
                                                 <span>{order.product_name}</span>
-                                                <span className="text-sm font-normal text-muted-foreground">
+                                                <span className="font-sans text-sm font-normal text-muted-foreground">
                                                     × {order.quantity} paket
                                                 </span>
                                             </CardTitle>
                                         </div>
 
                                         <div className="text-left sm:text-right">
-                                            <p className="text-xs text-muted-foreground">Total Estimasi</p>
-                                            <p className="text-lg font-bold">{formatRupiah(order.total_price)}</p>
+                                            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+                                                Total Estimasi
+                                            </p>
+                                            <p className="font-serif text-xl font-bold text-[#725C30] dark:text-[#C5AA74]">
+                                                {formatRupiah(order.total_price)}
+                                            </p>
                                         </div>
                                     </CardHeader>
 
                                     <CardContent className="space-y-4">
-                                        <div className="grid gap-3 rounded-lg border bg-muted/30 p-3 text-sm md:grid-cols-2">
+                                        <div className="grid gap-3 rounded-xl border border-border bg-background/60 p-3.5 text-sm md:grid-cols-2">
                                             <div className="space-y-1.5">
-                                                <p className="font-semibold">{order.customer_name}</p>
+                                                <p className="font-semibold text-foreground">{order.customer_name}</p>
                                                 <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                                    <Phone className="size-3.5" />
+                                                    <Phone className="size-3.5 text-[#A88B54]" />
                                                     {order.customer_whatsapp}
                                                 </p>
                                                 {order.customer_email && (
                                                     <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                                        <Mail className="size-3.5" />
+                                                        <Mail className="size-3.5 text-[#A88B54]" />
                                                         {order.customer_email}
                                                     </p>
                                                 )}
                                                 {order.delivery_date && (
                                                     <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                                        <Calendar className="size-3.5" />
+                                                        <Calendar className="size-3.5 text-[#A88B54]" />
                                                         Target Kirim:{' '}
                                                         {new Date(order.delivery_date).toLocaleDateString('id-ID')}
                                                     </p>
@@ -220,12 +255,12 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
 
                                             <div className="space-y-2 text-xs text-muted-foreground">
                                                 <p className="flex items-start gap-1.5">
-                                                    <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                                                    <MapPin className="mt-0.5 size-3.5 shrink-0 text-[#A88B54]" />
                                                     <span>{order.shipping_address}</span>
                                                 </p>
                                                 {order.greeting_card_note && (
                                                     <p className="flex items-start gap-1.5">
-                                                        <MessageSquareText className="mt-0.5 size-3.5 shrink-0" />
+                                                        <MessageSquareText className="mt-0.5 size-3.5 shrink-0 text-[#A88B54]" />
                                                         <span>Kartu Ucapan: &ldquo;{order.greeting_card_note}&rdquo;</span>
                                                     </p>
                                                 )}

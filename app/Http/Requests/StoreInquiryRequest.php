@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Inquiry;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreInquiryRequest extends FormRequest
 {
@@ -28,6 +30,7 @@ class StoreInquiryRequest extends FormRequest
             'whatsapp_number' => ['required', 'string', 'max:30'],
             'estimated_quantity' => ['required', 'string', 'max:100'],
             'budget_per_package' => ['required', 'string', 'max:100'],
+            'payment_method' => ['nullable', 'string', Rule::in(Inquiry::PAYMENT_METHODS)],
             'needed_date' => ['required', 'date'],
             'notes' => ['nullable', 'string', 'max:2000'],
             // Honeypot field - must remain empty if submitted by humans

@@ -37,6 +37,7 @@ class OrderController extends Controller
             'delivery_date' => $validated['delivery_date'] ?: null,
             'shipping_address' => $validated['shipping_address'],
             'greeting_card_note' => $validated['greeting_card_note'] ?: null,
+            'payment_method' => $validated['payment_method'] ?? 'transfer_bca',
             'status' => Order::STATUS_PENDING,
         ]);
 

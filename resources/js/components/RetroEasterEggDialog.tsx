@@ -40,9 +40,9 @@ const PixelCharacterPlaceholder: React.FC<{ title: string }> = ({ title }) => (
             <rect x="4" y="9" width="8" height="2" fill="#6E7B2C" />
             <rect x="5" y="10" width="6" height="1" fill="#464E1A" />
             {/* Shoulders / Coat */}
-            <rect x="3" y="11" width="10" height="4" fill="#1B382B" />
-            <rect x="6" y="11" width="4" height="4" fill="#C8A951" />
-            <rect x="7" y="11" width="2" height="4" fill="#DFCA86" />
+            <rect x="3" y="11" width="10" height="4" fill="#16233B" />
+            <rect x="6" y="11" width="4" height="4" fill="#A88B54" />
+            <rect x="7" y="11" width="2" height="4" fill="#C5AA74" />
         </svg>
         <span
             title={`Placeholder karakter untuk ${title}`}
@@ -167,11 +167,11 @@ export const RetroEasterEggDialog: React.FC<RetroEasterEggDialogProps> = ({ cont
                                             e.stopPropagation();
                                             onClose();
                                         }}
-                                        className="group inline-flex items-center gap-2.5 font-mono text-sm sm:text-base font-bold uppercase tracking-widest text-[#F8FAFC] hover:text-[#DFCA86] focus:outline-none focus-visible:text-[#DFCA86] [text-shadow:2px_2px_0_#090A0F] cursor-pointer transition-colors"
+                                        className="group inline-flex items-center gap-2.5 font-mono text-sm sm:text-base font-bold uppercase tracking-widest text-[#F8FAFC] hover:text-[#C5AA74] focus:outline-none focus-visible:text-[#C5AA74] [text-shadow:2px_2px_0_#090A0F] cursor-pointer transition-colors"
                                     >
                                         <span
                                             aria-hidden="true"
-                                            className="inline-block w-2.5 h-2.5 bg-[#F8FAFC] group-hover:bg-[#DFCA86] group-focus-visible:bg-[#DFCA86] shadow-[2px_2px_0_#090A0F]"
+                                            className="inline-block w-2.5 h-2.5 bg-[#F8FAFC] group-hover:bg-[#C5AA74] group-focus-visible:bg-[#C5AA74] shadow-[2px_2px_0_#090A0F]"
                                         />
                                         <span>OK</span>
                                     </button>

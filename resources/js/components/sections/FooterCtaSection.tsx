@@ -19,12 +19,12 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
     };
 
     return (
-        <footer className="relative bg-[#0C1E17] text-[#FDFBF7] overflow-hidden">
+        <footer className="relative bg-[#0B1322] text-[#F2EBDC] overflow-hidden">
             {/* Closing CTA Banner */}
-            <div className="relative py-20 lg:py-24 border-b border-[#FFFFFF]/10 bg-gradient-to-b from-[#142E24] to-[#0C1E17]">
+            <div className="relative py-20 lg:py-24 border-b border-[#FFFFFF]/10 bg-gradient-to-b from-[#111C30] to-[#0B1322]">
                 <div
                     aria-hidden="true"
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#C8A951]/10 rounded-full blur-3xl pointer-events-none"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#A88B54]/10 rounded-full blur-3xl pointer-events-none"
                 />
 
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -39,7 +39,7 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                             Siap Menghadirkan Kesan Terbaik untuk Mereka yang Berharga?
                         </h2>
 
-                        <p className="text-[#E8E2D5] text-base sm:text-lg max-w-2xl mb-9 leading-relaxed">
+                        <p className="text-[#D8CEBA] text-base sm:text-lg max-w-2xl mb-9 leading-relaxed">
                             Percayakan setiap detail hantaran kepada spesialis gifting kami. Dari kurasi rasa hingga
                             pengemasan pita satin, kami wujudkan bingkisan yang tak terlupakan.
                         </p>
@@ -50,9 +50,9 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                             rel="noopener noreferrer"
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#C8A951] text-[#0C1E17] text-sm font-bold uppercase tracking-wider hover:bg-[#DFCA86] shadow-xl transition-all focus:outline-none focus:ring-4 focus:ring-[#C8A951]/40"
+                            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#A88B54] text-[#0B1322] text-sm font-bold uppercase tracking-wider hover:bg-[#C5AA74] shadow-xl transition-all focus:outline-none focus:ring-4 focus:ring-[#A88B54]/40"
                         >
-                            <WhatsAppIcon className="w-5 h-5 text-[#0C1E17] fill-current" />
+                            <WhatsAppIcon className="w-5 h-5 text-[#0B1322] fill-current" />
                             <span>Konsultasi via WhatsApp</span>
                         </m.a>
                     </m.div>
@@ -73,19 +73,19 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                             loading="lazy"
                             decoding="async"
                         />
-                        <span className="text-[10px] uppercase tracking-[0.3em] text-[#C8A951] mb-4">
+                        <span className="text-[10px] uppercase tracking-[0.3em] text-[#C5AA74] mb-4">
                             Hampers & Corporate Gifting
                         </span>
-                        <p className="text-sm text-[#9C9489] leading-relaxed max-w-sm mb-6">
+                        <p className="text-sm text-[#B5ADA1] leading-relaxed max-w-sm mb-6">
                             Menghidupkan seni tradisi berbagi melalui kurasi bingkisan mewah, kemasan puitis, dan
                             pengalaman personalisasi tanpa batas bagi momen istimewa dan relasi profesional Anda.
                         </p>
-                        <div className="flex items-center gap-3 text-xs text-[#E8E2D5]">
+                        <div className="flex items-center gap-3 text-xs text-[#D8CEBA]">
                             <a
                                 href="https://instagram.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-full bg-[#1B382B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#DFCA86] hover:border-[#C8A951] transition-colors"
+                                className="w-9 h-9 rounded-full bg-[#16233B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#C5AA74] hover:border-[#A88B54] transition-colors"
                                 aria-label="Kunjungi Instagram GALUH & CO."
                             >
                                 <Instagram className="w-4 h-4" />
@@ -94,14 +94,14 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                                 href={waUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-full bg-[#1B382B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#DFCA86] hover:border-[#C8A951] transition-colors"
+                                className="w-9 h-9 rounded-full bg-[#16233B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#C5AA74] hover:border-[#A88B54] transition-colors"
                                 aria-label="WhatsApp GALUH & CO."
                             >
                                 <WhatsAppIcon className="w-4 h-4 fill-current" />
                             </a>
                             <a
                                 href="mailto:hello@galuh.co.id"
-                                className="w-9 h-9 rounded-full bg-[#1B382B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#DFCA86] hover:border-[#C8A951] transition-colors"
+                                className="w-9 h-9 rounded-full bg-[#16233B] border border-[#FFFFFF]/15 flex items-center justify-center hover:text-[#C5AA74] hover:border-[#A88B54] transition-colors"
                                 aria-label="Kirim Email ke GALUH & CO."
                             >
                                 <Mail className="w-4 h-4" />
@@ -111,10 +111,10 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
 
                     {/* Quick Links */}
                     <div className="lg:col-span-2">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#C8A951] font-semibold mb-4">
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#C5AA74] font-semibold mb-4">
                             Navigasi
                         </p>
-                        <ul className="space-y-2.5 text-sm text-[#E8E2D5]">
+                        <ul className="space-y-2.5 text-sm text-[#D8CEBA]">
                             <li>
                                 <a href="#hero" className="hover:text-white transition-colors">Beranda</a>
                             </li>
@@ -141,24 +141,24 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
 
                     {/* Jam Operasional & Layanan */}
                     <div className="lg:col-span-3">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#C8A951] font-semibold mb-4">
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#C5AA74] font-semibold mb-4">
                             Layanan & Konsultasi
                         </p>
-                        <div className="space-y-3.5 text-xs sm:text-sm text-[#E8E2D5]">
+                        <div className="space-y-3.5 text-xs sm:text-sm text-[#D8CEBA]">
                             <div className="flex items-start gap-2.5">
-                                <Clock className="w-4 h-4 text-[#C8A951] flex-shrink-0 mt-0.5" />
+                                <Clock className="w-4 h-4 text-[#A88B54] flex-shrink-0 mt-0.5" />
                                 <div>
                                     <p className="font-semibold text-white">Jam Operasional Studio:</p>
-                                    <p className="text-[#9C9489]">Senin – Sabtu: 08.00 – 20.00 WIB</p>
-                                    <p className="text-[#9C9489]">Minggu / Hari Libur: By Appointment</p>
+                                    <p className="text-[#B5ADA1]">Senin – Sabtu: 08.00 – 20.00 WIB</p>
+                                    <p className="text-[#B5ADA1]">Minggu / Hari Libur: By Appointment</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start gap-2.5">
-                                <Mail className="w-4 h-4 text-[#C8A951] flex-shrink-0 mt-0.5" />
+                                <Mail className="w-4 h-4 text-[#A88B54] flex-shrink-0 mt-0.5" />
                                 <div>
                                     <p className="font-semibold text-white">Email Resmi:</p>
-                                    <a href="mailto:hello@galuh.co.id" className="text-[#9C9489] hover:text-white">
+                                    <a href="mailto:hello@galuh.co.id" className="text-[#B5ADA1] hover:text-white">
                                         hello@galuh.co.id
                                     </a>
                                 </div>
@@ -168,15 +168,15 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
 
                     {/* Alamat Studio */}
                     <div className="lg:col-span-3">
-                        <p className="text-xs uppercase tracking-[0.2em] text-[#C8A951] font-semibold mb-4">
+                        <p className="text-xs uppercase tracking-[0.2em] text-[#C5AA74] font-semibold mb-4">
                             Lokasi Studio
                         </p>
-                        <div className="space-y-4 text-xs sm:text-sm text-[#E8E2D5]">
+                        <div className="space-y-4 text-xs sm:text-sm text-[#D8CEBA]">
                             <div className="flex items-start gap-2.5">
-                                <MapPin className="w-4 h-4 text-[#C8A951] flex-shrink-0 mt-0.5" />
+                                <MapPin className="w-4 h-4 text-[#A88B54] flex-shrink-0 mt-0.5" />
                                 <div>
                                     <p className="font-semibold text-white">Studio Ciamis:</p>
-                                    <p className="text-[#9C9489] leading-relaxed">
+                                    <p className="text-[#B5ADA1] leading-relaxed">
                                         Jl. Jend. Sudirman No. 175, Ciamis, Jawa Barat
                                     </p>
                                 </div>
@@ -186,7 +186,7 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                 </div>
 
                 {/* Bottom Bar & Copyright */}
-                <div className="mt-16 pt-8 border-t border-[#FFFFFF]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9C9489]">
+                <div className="mt-16 pt-8 border-t border-[#FFFFFF]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#B5ADA1]">
                     <p>
                         &copy; {new Date().getFullYear()} GALUH & CO. All rights reserved. Hampers Mewah & Corporate Gifting.
                     </p>
@@ -194,7 +194,7 @@ export const FooterCtaSection: React.FC<FooterCtaSectionProps> = ({ whatsappNumb
                         <button
                             type="button"
                             onClick={scrollToTop}
-                            className="inline-flex items-center gap-1.5 text-[#E8E2D5] hover:text-[#C8A951] transition-colors focus:outline-none"
+                            className="inline-flex items-center gap-1.5 text-[#D8CEBA] hover:text-[#A88B54] transition-colors focus:outline-none"
                         >
                             <span>Kembali ke Atas</span>
                             <ArrowUp className="w-3.5 h-3.5" />

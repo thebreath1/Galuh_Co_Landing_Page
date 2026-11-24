@@ -14,22 +14,34 @@ export function NavMain({ items }: { items: NavItem[] }) {
 
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
-            <SidebarMenu>
-                {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                            asChild
-                            isActive={isCurrentUrl(item.href)}
-                            tooltip={{ children: item.title }}
-                        >
-                            <Link href={item.href} prefetch>
-                                {item.icon && <item.icon />}
-                                <span>{item.title}</span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                ))}
+            <SidebarGroupLabel className="text-[10px] font-semibold tracking-[0.18em] text-[#C5AA74]/90 uppercase">
+                Navigasi Atelier
+            </SidebarGroupLabel>
+            <SidebarMenu className="gap-1">
+                {items.map((item) => {
+                    const active = isCurrentUrl(item.href);
+                    return (
+                        <SidebarMenuItem key={item.title}>
+                            <SidebarMenuButton
+                                asChild
+                                isActive={active}
+                                tooltip={{ children: item.title }}
+                                className={
+                                    active
+                                        ? 'border-l-2 border-[#A88B54] bg-[#203252] text-[#F2EBDC] font-medium hover:bg-[#203252] hover:text-[#F2EBDC]'
+                                        : 'text-[#D8CEBA] hover:bg-[#203252]/70 hover:text-[#F2EBDC]'
+                                }
+                            >
+                                <Link href={item.href} prefetch>
+                                    {item.icon && (
+                                        <item.icon className={active ? 'text-[#C5AA74]' : 'text-[#C5AA74]/75'} />
+                                    )}
+                                    <span>{item.title}</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    );
+                })}
             </SidebarMenu>
         </SidebarGroup>
     );

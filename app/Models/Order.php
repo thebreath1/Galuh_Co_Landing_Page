@@ -22,6 +22,14 @@ class Order extends Model
         self::STATUS_COMPLETED,
     ];
 
+    public const PAYMENT_METHODS = [
+        'transfer_bca',
+        'transfer_mandiri',
+        'qris',
+        'ewallet',
+        'cod',
+    ];
+
     protected $fillable = [
         'order_code',
         'product_id',
@@ -35,6 +43,7 @@ class Order extends Model
         'delivery_date',
         'shipping_address',
         'greeting_card_note',
+        'payment_method',
         'status',
         'admin_note',
         'reviewed_by',

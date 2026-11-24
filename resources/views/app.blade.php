@@ -24,7 +24,7 @@
         <meta name="twitter:description" content="Merangkai kehangatan di setiap hantaran berkesan. Pilihan hampers Lebaran, Natal, Corporate, dan Wedding terbaik.">
         <meta name="twitter:image" content="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=1200&auto=format&fit=crop">
 
-        <meta name="theme-color" content="#1B382B">
+        <meta name="theme-color" content="#16233B">
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -32,12 +32,12 @@
 
         <style>
             html {
-                background-color: #FDFBF7;
-                color: #2C2724;
+                background-color: #F2EBDC;
+                color: #16233B;
             }
             html.dark {
-                background-color: oklch(0.145 0 0);
-                color: oklch(0.985 0 0);
+                background-color: #0B1322;
+                color: #F2EBDC;
             }
         </style>
 
@@ -46,7 +46,7 @@
         @fonts
         <x-inertia::head />
     </head>
-    <body class="font-sans antialiased bg-background text-foreground selection:bg-[#C8A951]/20">
+    <body class="font-sans antialiased bg-background text-foreground selection:bg-[#A88B54]/20">
         <x-inertia::app />
     </body>
 </html>

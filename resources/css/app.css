@@ -11,28 +11,28 @@
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 
-    --color-ivory: #FDFBF7;
-    --color-cream: #F7F4EE;
-    --color-cream-dark: #EFE9DE;
+    --color-ivory: #F2EBDC;
+    --color-cream: #EAE1CE;
+    --color-cream-dark: #E1D6C0;
 
-    --color-emerald-950: #0C1E17;
-    --color-emerald-900: #142E24;
-    --color-emerald-800: #1B382B;
-    --color-emerald-700: #264E3D;
-    --color-emerald-600: #356752;
+    --color-navy-950: #0B1322;
+    --color-navy-900: #111C30;
+    --color-navy-800: #16233B;
+    --color-navy-700: #203252;
+    --color-navy-600: #2C436B;
 
-    --color-gold-100: #F7F2E4;
-    --color-gold-400: #D8BD6E;
-    --color-gold-500: #C8A951;
-    --color-gold-600: #B2923B;
+    --color-gold-100: #EFE6D2;
+    --color-gold-400: #BA9E67;
+    --color-gold-500: #A88B54;
+    --color-gold-600: #8A703E;
 
-    --color-charcoal-900: #1C1917;
-    --color-charcoal-800: #2C2724;
-    --color-charcoal-600: #6E675F;
-    --color-charcoal-400: #9C9489;
+    --color-charcoal-900: #111827;
+    --color-charcoal-800: #1E2430;
+    --color-charcoal-600: #6E675D;
+    --color-charcoal-400: #6E675D;
 
-    --color-border-warm: #E8E2D5;
-    --color-border-warm-light: #F2ECE1;
+    --color-border-warm: #D8CEBA;
+    --color-border-warm-light: #E6DEC9;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -83,74 +83,74 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --background: #F2EBDC;
+    --foreground: #16233B;
+    --card: #FCF9F2;
+    --card-foreground: #16233B;
+    --popover: #FCF9F2;
+    --popover-foreground: #16233B;
+    --primary: #16233B;
+    --primary-foreground: #F2EBDC;
+    --secondary: #EAE1CE;
+    --secondary-foreground: #16233B;
+    --muted: #EAE1CE;
+    --muted-foreground: #6E675D;
+    --accent: #E6DEC9;
+    --accent-foreground: #16233B;
+    --destructive: #9E2A2B;
+    --destructive-foreground: #FCF9F2;
+    --border: #D8CEBA;
+    --input: #D8CEBA;
+    --ring: #A88B54;
+    --chart-1: #16233B;
+    --chart-2: #A88B54;
+    --chart-3: #6E675D;
+    --chart-4: #203252;
+    --chart-5: #C5AA74;
+    --radius: 0.75rem;
+    --sidebar: #16233B;
+    --sidebar-foreground: #F2EBDC;
+    --sidebar-primary: #A88B54;
+    --sidebar-primary-foreground: #16233B;
+    --sidebar-accent: #203252;
+    --sidebar-accent-foreground: #F2EBDC;
+    --sidebar-border: #263B5E;
+    --sidebar-ring: #A88B54;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: #0B1322;
+    --foreground: #F2EBDC;
+    --card: #111C30;
+    --card-foreground: #F2EBDC;
+    --popover: #111C30;
+    --popover-foreground: #F2EBDC;
+    --primary: #A88B54;
+    --primary-foreground: #16233B;
+    --secondary: #16233B;
+    --secondary-foreground: #F2EBDC;
+    --muted: #1B2B47;
+    --muted-foreground: #BEB5A8;
+    --accent: #203252;
+    --accent-foreground: #F2EBDC;
+    --destructive: #B84243;
+    --destructive-foreground: #F2EBDC;
+    --border: #263B5E;
+    --input: #263B5E;
+    --ring: #C5AA74;
+    --chart-1: #C5AA74;
+    --chart-2: #F2EBDC;
+    --chart-3: #8A703E;
+    --chart-4: #415F91;
+    --chart-5: #6E675D;
+    --sidebar: #080E1A;
+    --sidebar-foreground: #F2EBDC;
+    --sidebar-primary: #A88B54;
+    --sidebar-primary-foreground: #0B1322;
+    --sidebar-accent: #16233B;
+    --sidebar-accent-foreground: #F2EBDC;
+    --sidebar-border: #203252;
+    --sidebar-ring: #C5AA74;
 }
 
 @layer base {
@@ -164,27 +164,27 @@
 
 /* Custom luxury utilities for GALUH & CO. */
 .bg-paper-texture {
-    background-color: #FDFBF7;
-    background-image: radial-gradient(#E8E2D5 0.6px, transparent 0.6px);
+    background-color: #F2EBDC;
+    background-image: radial-gradient(#D8CEBA 0.6px, transparent 0.6px);
     background-size: 24px 24px;
 }
 
 .text-gold-gradient {
-    background: linear-gradient(135deg, #DFCA86 0%, #C8A951 50%, #B2923B 100%);
+    background: linear-gradient(135deg, #C5AA74 0%, #A88B54 50%, #8A703E 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .border-gold-subtle {
-    border-color: rgba(200, 169, 81, 0.25);
+    border-color: rgba(168, 139, 84, 0.25);
 }
 
 .shadow-luxury {
-    box-shadow: 0 10px 30px -10px rgba(27, 56, 43, 0.08), 0 4px 6px -4px rgba(27, 56, 43, 0.03);
+    box-shadow: 0 10px 30px -10px rgba(22, 35, 59, 0.08), 0 4px 6px -4px rgba(22, 35, 59, 0.03);
 }
 
 .shadow-luxury-hover {
-    box-shadow: 0 20px 40px -15px rgba(27, 56, 43, 0.15), 0 8px 12px -6px rgba(27, 56, 43, 0.05);
+    box-shadow: 0 20px 40px -15px rgba(22, 35, 59, 0.15), 0 8px 12px -6px rgba(22, 35, 59, 0.05);
 }
 
 /* Infinite Smooth Logo Marquee */

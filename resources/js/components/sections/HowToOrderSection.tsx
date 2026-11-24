@@ -67,7 +67,7 @@ export const HowToOrderSection: React.FC = () => {
         <section
             id="cara-pesan"
             aria-label="Cara Pemesanan"
-            className="py-20 md:py-28 bg-[#FDFBF7] relative overflow-hidden"
+            className="py-20 md:py-28 bg-[#F2EBDC] relative overflow-hidden"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
@@ -78,14 +78,14 @@ export const HowToOrderSection: React.FC = () => {
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#9A7D2E] font-semibold mb-3">
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold mb-3">
                         Alur Pemesanan
                     </p>
-                    <h2 className="font-serif text-3xl sm:text-4xl text-[#1B382B] font-bold tracking-tight mb-4">
+                    <h2 className="font-serif text-3xl sm:text-4xl text-[#16233B] font-bold tracking-tight mb-4">
                         Langkah Mudah Menghadirkan Kebahagiaan
                     </h2>
-                    <div className="w-12 h-0.5 bg-[#C8A951] mx-auto mb-5" />
-                    <p className="text-[#6E675F] text-base">
+                    <div className="w-12 h-0.5 bg-[#A88B54] mx-auto mb-5" />
+                    <p className="text-[#6E675D] text-base">
                         Proses pemesanan yang terstruktur, transparan, dan terarah dari awal konsultasi hingga paket
                         sampai di tangan penerima.
                     </p>
@@ -104,7 +104,7 @@ export const HowToOrderSection: React.FC = () => {
                                 return (
                                     <div
                                         key={segIdx}
-                                        className="h-2.5 bg-[#E8E2D5] border-y border-[#DFD7C6] overflow-hidden relative"
+                                        className="h-2.5 bg-[#D8CEBA] border-y border-[#CFC4AE] overflow-hidden relative"
                                     >
                                         <m.div
                                             initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
@@ -114,7 +114,7 @@ export const HowToOrderSection: React.FC = () => {
                                                 ease: [0.37, 0, 0.63, 1],
                                             }}
                                             style={{ originX: 0 }}
-                                            className="h-full w-full bg-gradient-to-r from-[#1B382B] via-[#264E3D] to-[#C8A951] will-change-transform"
+                                            className="h-full w-full bg-gradient-to-r from-[#16233B] via-[#203252] to-[#A88B54] will-change-transform"
                                         />
                                     </div>
                                 );
@@ -130,7 +130,7 @@ export const HowToOrderSection: React.FC = () => {
                                 return (
                                     <li key={step.number} className="flex flex-col items-center text-center">
                                         {/* Outer Ivory Mask Ring so the pipe connects seamlessly into the circle */}
-                                        <div className="relative mb-6 p-1.5 rounded-full bg-[#FDFBF7]">
+                                        <div className="relative mb-6 p-1.5 rounded-full bg-[#F2EBDC]">
                                             <m.div
                                                 animate={
                                                     isCompleted && !prefersReducedMotion
@@ -140,8 +140,8 @@ export const HowToOrderSection: React.FC = () => {
                                                 transition={{ duration: 0.35, ease: 'easeOut' }}
                                                 className={`w-17 h-17 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#1B382B] border-[#C8A951] text-[#DFCA86] shadow-[0_10px_25px_-6px_rgba(27,56,43,0.45)]'
-                                                        : 'bg-[#F7F4EE] border-[#E8E2D5] text-[#9C9489]'
+                                                        ? 'bg-[#16233B] border-[#A88B54] text-[#C5AA74] shadow-[0_10px_25px_-6px_rgba(22,35,59,0.45)]'
+                                                        : 'bg-[#EAE1CE] border-[#D8CEBA] text-[#6E675D]'
                                                 }`}
                                             >
                                                 <Icon className="w-7 h-7" />
@@ -150,8 +150,8 @@ export const HowToOrderSection: React.FC = () => {
                                             <span
                                                 className={`absolute top-0 right-0 w-7 h-7 rounded-full text-xs font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#C8A951] text-[#0C1E17] border-[#FDFBF7]'
-                                                        : 'bg-[#E8E2D5] text-[#6E675F] border-[#FDFBF7]'
+                                                        ? 'bg-[#A88B54] text-[#0B1322] border-[#F2EBDC]'
+                                                        : 'bg-[#D8CEBA] text-[#6E675D] border-[#F2EBDC]'
                                                 }`}
                                             >
                                                 {step.number}
@@ -160,13 +160,13 @@ export const HowToOrderSection: React.FC = () => {
 
                                         <h3
                                             className={`font-serif text-lg font-bold mb-2.5 transition-colors duration-300 ${
-                                                isCompleted ? 'text-[#1B382B]' : 'text-[#6E675F]'
+                                                isCompleted ? 'text-[#16233B]' : 'text-[#6E675D]'
                                             }`}
                                         >
                                             {step.title}
                                         </h3>
 
-                                        <p className="text-sm text-[#6E675F] leading-relaxed px-2">
+                                        <p className="text-sm text-[#6E675D] leading-relaxed px-2">
                                             {step.description}
                                         </p>
                                     </li>
@@ -187,7 +187,7 @@ export const HowToOrderSection: React.FC = () => {
                                 <li key={step.number} className="flex items-stretch gap-5">
                                     {/* Left Column: Icon Circle + Vertical Flowing Pipe */}
                                     <div className="flex flex-col items-center shrink-0">
-                                        <div className="relative z-10 p-1 rounded-full bg-[#FDFBF7]">
+                                        <div className="relative z-10 p-1 rounded-full bg-[#F2EBDC]">
                                             <m.div
                                                 animate={
                                                     isCompleted && !prefersReducedMotion
@@ -197,8 +197,8 @@ export const HowToOrderSection: React.FC = () => {
                                                 transition={{ duration: 0.35, ease: 'easeOut' }}
                                                 className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#1B382B] border-[#C8A951] text-[#DFCA86] shadow-[0_8px_20px_-6px_rgba(27,56,43,0.4)]'
-                                                        : 'bg-[#F7F4EE] border-[#E8E2D5] text-[#9C9489]'
+                                                        ? 'bg-[#16233B] border-[#A88B54] text-[#C5AA74] shadow-[0_8px_20px_-6px_rgba(22,35,59,0.4)]'
+                                                        : 'bg-[#EAE1CE] border-[#D8CEBA] text-[#6E675D]'
                                                 }`}
                                             >
                                                 <Icon className="w-6 h-6" />
@@ -207,8 +207,8 @@ export const HowToOrderSection: React.FC = () => {
                                             <span
                                                 className={`absolute -top-0.5 -right-0.5 w-6 h-6 rounded-full text-[11px] font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#C8A951] text-[#0C1E17] border-[#FDFBF7]'
-                                                        : 'bg-[#E8E2D5] text-[#6E675F] border-[#FDFBF7]'
+                                                        ? 'bg-[#A88B54] text-[#0B1322] border-[#F2EBDC]'
+                                                        : 'bg-[#D8CEBA] text-[#6E675D] border-[#F2EBDC]'
                                                 }`}
                                             >
                                                 {step.number}
@@ -218,7 +218,7 @@ export const HowToOrderSection: React.FC = () => {
                                         {!isLast && (
                                             <div
                                                 aria-hidden="true"
-                                                className="w-2 flex-1 min-h-10 -my-1 bg-[#E8E2D5] border-x border-[#DFD7C6] overflow-hidden relative z-0"
+                                                className="w-2 flex-1 min-h-10 -my-1 bg-[#D8CEBA] border-x border-[#CFC4AE] overflow-hidden relative z-0"
                                             >
                                                 <m.div
                                                     initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
@@ -228,7 +228,7 @@ export const HowToOrderSection: React.FC = () => {
                                                         ease: [0.37, 0, 0.63, 1],
                                                     }}
                                                     style={{ originY: 0 }}
-                                                    className="w-full h-full bg-gradient-to-b from-[#1B382B] via-[#264E3D] to-[#C8A951] will-change-transform"
+                                                    className="w-full h-full bg-gradient-to-b from-[#16233B] via-[#203252] to-[#A88B54] will-change-transform"
                                                 />
                                             </div>
                                         )}
@@ -238,12 +238,12 @@ export const HowToOrderSection: React.FC = () => {
                                     <div className={isLast ? 'pt-2 pb-2' : 'pt-2 pb-10'}>
                                         <h3
                                             className={`font-serif text-lg font-bold mb-1.5 transition-colors duration-300 ${
-                                                isCompleted ? 'text-[#1B382B]' : 'text-[#6E675F]'
+                                                isCompleted ? 'text-[#16233B]' : 'text-[#6E675D]'
                                             }`}
                                         >
                                             {step.title}
                                         </h3>
-                                        <p className="text-sm text-[#6E675F] leading-relaxed">
+                                        <p className="text-sm text-[#6E675D] leading-relaxed">
                                             {step.description}
                                         </p>
                                     </div>

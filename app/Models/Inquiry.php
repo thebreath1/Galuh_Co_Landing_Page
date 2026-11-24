@@ -9,6 +9,13 @@ class Inquiry extends Model
 {
     use HasFactory;
 
+    public const PAYMENT_METHODS = [
+        'invoice_termin',
+        'transfer_perusahaan',
+        'po_net14',
+        'qris',
+    ];
+
     protected $fillable = [
         'name',
         'company',
@@ -16,6 +23,7 @@ class Inquiry extends Model
         'whatsapp_number',
         'estimated_quantity',
         'budget_per_package',
+        'payment_method',
         'needed_date',
         'notes',
     ];
