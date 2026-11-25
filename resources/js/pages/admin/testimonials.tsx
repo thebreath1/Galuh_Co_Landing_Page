@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Eye, EyeOff, MessageSquareQuote, Pencil, Plus, Search, Star, Trash2 } from 'lucide-react';
+import {
+    Eye,
+    EyeOff,
+    MessageSquareQuote,
+    Pencil,
+    Plus,
+    Search,
+    Star,
+    Trash2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import InputError from '@/components/input-error';
@@ -58,26 +67,42 @@ interface TestimonialFormState {
     is_active: boolean;
 }
 
-export default function AdminTestimonials({ testimonials }: AdminTestimonialsProps) {
+export default function AdminTestimonials({
+    testimonials,
+}: AdminTestimonialsProps) {
     const { flash } = usePage<FlashProps>().props;
     const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'hidden'>('all');
+    const [statusFilter, setStatusFilter] = useState<
+        'all' | 'active' | 'hidden'
+    >('all');
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState<TestimonialRecord | null>(null);
-    const [pendingDelete, setPendingDelete] = useState<TestimonialRecord | null>(null);
+    const [editingItem, setEditingItem] = useState<TestimonialRecord | null>(
+        null,
+    );
+    const [pendingDelete, setPendingDelete] =
+        useState<TestimonialRecord | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const { data, setData, post, put, processing, errors, reset, clearErrors, transform } =
-        useForm<TestimonialFormState>({
-            name: '',
-            initials: '',
-            role: '',
-            content: '',
-            product_tag: '',
-            rating: '5',
-            sort_order: '0',
-            is_active: true,
-        });
+    const {
+        data,
+        setData,
+        post,
+        put,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+        transform,
+    } = useForm<TestimonialFormState>({
+        name: '',
+        initials: '',
+        role: '',
+        content: '',
+        product_tag: '',
+        rating: '5',
+        sort_order: '0',
+        is_active: true,
+    });
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -135,7 +160,11 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
     };
 
     const handleToggleVisibility = (item: TestimonialRecord) => {
-        router.patch(toggleTestimonial.url(item.id), {}, { preserveScroll: true });
+        router.patch(
+            toggleTestimonial.url(item.id),
+            {},
+            { preserveScroll: true },
+        );
     };
 
     const handleConfirmDelete = () => {
@@ -174,7 +203,10 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                 <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span
+                                className="h-px w-6 bg-[#A88B54]"
+                                aria-hidden="true"
+                            />
                             <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
                                 Suara Pelanggan
                             </span>
@@ -183,7 +215,8 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                             Kelola Testimoni Klien
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Tambah, ubah kutipan, rating bintang, tag produk, dan visibilitas testimoni di landing page.
+                            Tambah, ubah kutipan, rating bintang, tag produk,
+                            dan visibilitas testimoni di landing page.
                         </p>
                     </div>
                     <Button onClick={openCreateDialog}>
@@ -204,7 +237,11 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                 key={tab.key}
                                 type="button"
                                 size="sm"
-                                variant={statusFilter === tab.key ? 'default' : 'outline'}
+                                variant={
+                                    statusFilter === tab.key
+                                        ? 'default'
+                                        : 'outline'
+                                }
                                 onClick={() => setStatusFilter(tab.key)}
                             >
                                 {tab.label}
@@ -233,7 +270,10 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2">
                         {filtered.map((item) => (
-                            <Card key={item.id} className="flex flex-col justify-between hover:border-[#A88B54]/70">
+                            <Card
+                                key={item.id}
+                                className="flex flex-col justify-between hover:border-[#A88B54]/70"
+                            >
                                 <CardContent className="space-y-4 p-5">
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex items-center gap-3">
@@ -241,28 +281,45 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                                 {item.initials}
                                             </div>
                                             <div>
-                                                <h2 className="font-serif text-base font-semibold leading-snug text-foreground">
+                                                <h2 className="font-serif text-base leading-snug font-semibold text-foreground">
                                                     {item.name}
                                                 </h2>
-                                                <p className="text-xs text-muted-foreground">{item.role}</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {item.role}
+                                                </p>
                                             </div>
                                         </div>
 
                                         <div className="flex items-center gap-1.5">
-                                            <Badge variant={item.is_active ? 'default' : 'secondary'}>
-                                                {item.is_active ? 'Aktif' : 'Disembunyikan'}
+                                            <Badge
+                                                variant={
+                                                    item.is_active
+                                                        ? 'default'
+                                                        : 'secondary'
+                                                }
+                                            >
+                                                {item.is_active
+                                                    ? 'Aktif'
+                                                    : 'Disembunyikan'}
                                             </Badge>
-                                            <Badge variant="outline">#{item.sort_order}</Badge>
+                                            <Badge variant="outline">
+                                                #{item.sort_order}
+                                            </Badge>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-1 text-[#A88B54]">
-                                        {Array.from({ length: item.rating }).map((_, idx) => (
-                                            <Star key={idx} className="size-4 fill-current" />
+                                        {Array.from({
+                                            length: item.rating,
+                                        }).map((_, idx) => (
+                                            <Star
+                                                key={idx}
+                                                className="size-4 fill-current"
+                                            />
                                         ))}
                                     </div>
 
-                                    <blockquote className="font-serif text-base leading-relaxed italic text-foreground/90">
+                                    <blockquote className="font-serif text-base leading-relaxed text-foreground/90 italic">
                                         &ldquo;{item.content}&rdquo;
                                     </blockquote>
 
@@ -286,8 +343,14 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                             type="button"
                                             size="icon"
                                             variant="outline"
-                                            title={item.is_active ? 'Sembunyikan' : 'Tampilkan'}
-                                            onClick={() => handleToggleVisibility(item)}
+                                            title={
+                                                item.is_active
+                                                    ? 'Sembunyikan'
+                                                    : 'Tampilkan'
+                                            }
+                                            onClick={() =>
+                                                handleToggleVisibility(item)
+                                            }
                                         >
                                             {item.is_active ? (
                                                 <Eye className="size-4" />
@@ -301,7 +364,9 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                             variant="outline"
                                             title="Hapus"
                                             className="hover:border-destructive/60 hover:bg-destructive/10"
-                                            onClick={() => setPendingDelete(item)}
+                                            onClick={() =>
+                                                setPendingDelete(item)
+                                            }
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
@@ -318,10 +383,13 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                 <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
                     <DialogHeader>
                         <DialogTitle>
-                            {editingItem ? `Edit Testimoni "${editingItem.name}"` : 'Tambah Testimoni Baru'}
+                            {editingItem
+                                ? `Edit Testimoni "${editingItem.name}"`
+                                : 'Tambah Testimoni Baru'}
                         </DialogTitle>
                         <DialogDescription>
-                            Isi profil klien, rating bintang, dan teks ulasan untuk ditampilkan pada carousel testimoni.
+                            Isi profil klien, rating bintang, dan teks ulasan
+                            untuk ditampilkan pada carousel testimoni.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -332,7 +400,9 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                 <Input
                                     id="t_name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     placeholder="Dian Sastrawati"
                                     required
                                 />
@@ -340,12 +410,19 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="t_initials">Inisial (Opsional)</Label>
+                                <Label htmlFor="t_initials">
+                                    Inisial (Opsional)
+                                </Label>
                                 <Input
                                     id="t_initials"
                                     value={data.initials}
                                     maxLength={4}
-                                    onChange={(e) => setData('initials', e.target.value.toUpperCase())}
+                                    onChange={(e) =>
+                                        setData(
+                                            'initials',
+                                            e.target.value.toUpperCase(),
+                                        )
+                                    }
                                     placeholder="Auto"
                                 />
                                 <InputError message={errors.initials} />
@@ -353,11 +430,15 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="t_role">Jabatan / Perusahaan / Kota</Label>
+                            <Label htmlFor="t_role">
+                                Jabatan / Perusahaan / Kota
+                            </Label>
                             <Input
                                 id="t_role"
                                 value={data.role}
-                                onChange={(e) => setData('role', e.target.value)}
+                                onChange={(e) =>
+                                    setData('role', e.target.value)
+                                }
                                 placeholder="VP Human Capital, PT Astra Financial"
                                 required
                             />
@@ -369,14 +450,19 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                 <Label htmlFor="t_rating">Rating Bintang</Label>
                                 <Select
                                     value={data.rating}
-                                    onValueChange={(val) => setData('rating', val)}
+                                    onValueChange={(val) =>
+                                        setData('rating', val)
+                                    }
                                 >
                                     <SelectTrigger id="t_rating">
                                         <SelectValue placeholder="Pilih rating" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {[5, 4, 3, 2, 1].map((num) => (
-                                            <SelectItem key={num} value={String(num)}>
+                                            <SelectItem
+                                                key={num}
+                                                value={String(num)}
+                                            >
                                                 {num} Bintang
                                             </SelectItem>
                                         ))}
@@ -386,24 +472,32 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="t_sort_order">Urutan Tampil</Label>
+                                <Label htmlFor="t_sort_order">
+                                    Urutan Tampil
+                                </Label>
                                 <Input
                                     id="t_sort_order"
                                     type="number"
                                     min={0}
                                     value={data.sort_order}
-                                    onChange={(e) => setData('sort_order', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('sort_order', e.target.value)
+                                    }
                                 />
                                 <InputError message={errors.sort_order} />
                             </div>
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="t_product_tag">Tag Produk / Konteks Pesanan</Label>
+                            <Label htmlFor="t_product_tag">
+                                Tag Produk / Konteks Pesanan
+                            </Label>
                             <Input
                                 id="t_product_tag"
                                 value={data.product_tag}
-                                onChange={(e) => setData('product_tag', e.target.value)}
+                                onChange={(e) =>
+                                    setData('product_tag', e.target.value)
+                                }
                                 placeholder="Synergy Grand Hamper • Corporate Order"
                                 required
                             />
@@ -411,15 +505,19 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="t_content">Isi Kutipan Testimoni</Label>
+                            <Label htmlFor="t_content">
+                                Isi Kutipan Testimoni
+                            </Label>
                             <textarea
                                 id="t_content"
                                 rows={4}
                                 value={data.content}
-                                onChange={(e) => setData('content', e.target.value)}
+                                onChange={(e) =>
+                                    setData('content', e.target.value)
+                                }
                                 placeholder="Tuliskan ulasan klien..."
                                 required
-                                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+                                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground shadow-xs placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                             />
                             <InputError message={errors.content} />
                         </div>
@@ -428,9 +526,14 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                             <Checkbox
                                 id="t_is_active"
                                 checked={data.is_active}
-                                onCheckedChange={(checked) => setData('is_active', checked === true)}
+                                onCheckedChange={(checked) =>
+                                    setData('is_active', checked === true)
+                                }
                             />
-                            <Label htmlFor="t_is_active" className="cursor-pointer font-normal">
+                            <Label
+                                htmlFor="t_is_active"
+                                className="cursor-pointer font-normal"
+                            >
                                 Tampilkan langsung di carousel testimoni website
                             </Label>
                         </div>
@@ -444,7 +547,11 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                 Batal
                             </Button>
                             <Button type="submit" disabled={processing}>
-                                {processing ? 'Menyimpan...' : editingItem ? 'Simpan Perubahan' : 'Tambah Testimoni'}
+                                {processing
+                                    ? 'Menyimpan...'
+                                    : editingItem
+                                      ? 'Simpan Perubahan'
+                                      : 'Tambah Testimoni'}
                             </Button>
                         </DialogFooter>
                     </form>

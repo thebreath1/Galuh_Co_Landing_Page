@@ -5,6 +5,7 @@ namespace App\Mail;
 use App\Models\Inquiry;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -26,7 +27,7 @@ class InquiryReceivedMail extends Mailable
     public function Envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Permintaan Penawaran Baru: ' . $this->inquiry->company . ' (' . $this->inquiry->name . ')',
+            subject: 'Permintaan Penawaran Baru: '.$this->inquiry->company.' ('.$this->inquiry->name.')',
         );
     }
 
@@ -43,7 +44,7 @@ class InquiryReceivedMail extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

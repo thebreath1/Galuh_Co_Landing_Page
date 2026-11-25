@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminPromoController;
 use App\Http\Controllers\Admin\AdminShipmentController;
 use App\Http\Controllers\Admin\AdminTestimonialController;
+use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LandingPageController;
@@ -24,15 +25,20 @@ Route::get('/api/geocode/search', [GeocodeController::class, 'search'])
     ->middleware('throttle:60,1')
     ->name('geocode.search');
 
-Route::post('/orders', [OrderController::class, 'store'])
-    ->middleware('throttle:10,1')
-    ->name('orders.store');
-
 Route::post('/inquiries', [InquiryController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('inquiries.store');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    Route::post('/orders', [OrderController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('orders.store');
+
+    Route::get('/pesanan-saya', [CustomerOrderController::class, 'index'])
+        ->name('orders.mine');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::redirect('admin', '/dashboard')->name('admin.index');
 

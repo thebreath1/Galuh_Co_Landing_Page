@@ -6,13 +6,17 @@ const LazyAppLayout = lazy(() => import('@/layouts/app-layout'));
 const LazyAuthLayout = lazy(() => import('@/layouts/auth-layout'));
 const LazySettingsLayout = lazy(() => import('@/layouts/settings/layout'));
 const LazyToaster = lazy(() =>
-    import('@/components/ui/sonner').then((m) => ({ default: m.Toaster }))
+    import('@/components/ui/sonner').then((m) => ({ default: m.Toaster })),
 );
 const LazyTooltipProvider = lazy(() =>
-    import('@/components/ui/tooltip').then((m) => ({ default: m.TooltipProvider }))
+    import('@/components/ui/tooltip').then((m) => ({
+        default: m.TooltipProvider,
+    })),
 );
 
-const AppLayoutWrapper = (props: Record<string, unknown> & { children: ReactNode }) => (
+const AppLayoutWrapper = (
+    props: Record<string, unknown> & { children: ReactNode },
+) => (
     <Suspense fallback={null}>
         <LazyTooltipProvider delayDuration={0}>
             <LazyAppLayout {...props} />
@@ -20,7 +24,9 @@ const AppLayoutWrapper = (props: Record<string, unknown> & { children: ReactNode
     </Suspense>
 );
 
-const AuthLayoutWrapper = (props: Record<string, unknown> & { children: ReactNode }) => (
+const AuthLayoutWrapper = (
+    props: Record<string, unknown> & { children: ReactNode },
+) => (
     <Suspense fallback={null}>
         <LazyAuthLayout {...props} />
     </Suspense>

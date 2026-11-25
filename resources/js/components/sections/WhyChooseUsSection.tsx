@@ -11,7 +11,13 @@ interface StatCounterProps {
     textValue?: string;
 }
 
-const StatCounter: React.FC<StatCounterProps> = ({ value, suffix = '', prefix = '', isText = false, textValue = '' }) => {
+const StatCounter: React.FC<StatCounterProps> = ({
+    value,
+    suffix = '',
+    prefix = '',
+    isText = false,
+    textValue = '',
+}) => {
     const prefersReducedMotion = useReducedMotion();
     const [count, setCount] = useState(prefersReducedMotion ? value : 0);
     const ref = useRef<HTMLSpanElement>(null);
@@ -49,7 +55,7 @@ const StatCounter: React.FC<StatCounterProps> = ({ value, suffix = '', prefix = 
         return (
             <span
                 ref={ref}
-                className="font-serif text-4xl sm:text-[2.75rem] font-bold text-[#16233B] tracking-tight leading-none group-hover:text-[#725C30] transition-colors duration-300"
+                className="font-serif text-4xl leading-none font-bold tracking-tight text-[#16233B] transition-colors duration-300 group-hover:text-[#725C30] sm:text-[2.75rem]"
             >
                 {textValue}
             </span>
@@ -59,7 +65,7 @@ const StatCounter: React.FC<StatCounterProps> = ({ value, suffix = '', prefix = 
     return (
         <span
             ref={ref}
-            className="font-serif text-4xl sm:text-[2.75rem] font-bold text-[#16233B] tracking-tight leading-none group-hover:text-[#725C30] transition-colors duration-300"
+            className="font-serif text-4xl leading-none font-bold tracking-tight text-[#16233B] transition-colors duration-300 group-hover:text-[#725C30] sm:text-[2.75rem]"
         >
             {prefix}
             {count.toLocaleString('id-ID')}
@@ -77,7 +83,8 @@ export const WhyChooseUsSection: React.FC = () => {
             value: 100,
             suffix: '%',
             title: 'Bahan Premium Terpilih',
-            description: 'Semua kudapan dan bahan bersertifikasi halal, higienis, dan terbuat dari resep warisan terbaik.',
+            description:
+                'Semua kudapan dan bahan bersertifikasi halal, higienis, dan terbuat dari resep warisan terbaik.',
         },
         {
             number: '02',
@@ -85,7 +92,8 @@ export const WhyChooseUsSection: React.FC = () => {
             isText: true,
             textValue: '24/7',
             title: 'Konsultasi Responsif',
-            description: 'Tim spesialis gifting kami siap membantu mencocokkan paket dengan tema momen dan anggaran Anda.',
+            description:
+                'Tim spesialis gifting kami siap membantu mencocokkan paket dengan tema momen dan anggaran Anda.',
         },
         {
             number: '03',
@@ -94,7 +102,8 @@ export const WhyChooseUsSection: React.FC = () => {
             value: 1000,
             suffix: '+',
             title: 'Kapasitas Produksi Masal',
-            description: 'Didukung fasilitas perakitan profesional yang mampu menangani ribuan paket tepat waktu tanpa kompromi.',
+            description:
+                'Didukung fasilitas perakitan profesional yang mampu menangani ribuan paket tepat waktu tanpa kompromi.',
         },
         {
             number: '04',
@@ -102,7 +111,8 @@ export const WhyChooseUsSection: React.FC = () => {
             isText: true,
             textValue: 'Aman',
             title: 'Garansi Pengiriman',
-            description: 'Proteksi packing berlapis dengan jaminan ganti baru apabila terdapat kerusakan selama di perjalanan.',
+            description:
+                'Proteksi packing berlapis dengan jaminan ganti baru apabila terdapat kerusakan selama di perjalanan.',
         },
     ];
 
@@ -110,43 +120,49 @@ export const WhyChooseUsSection: React.FC = () => {
         <section
             id="keunggulan"
             aria-label="Kenapa Memilih GALUH & CO."
-            className="py-20 md:py-28 bg-[#EAE1CE] border-y border-[#D8CEBA] relative"
+            className="relative border-y border-[#D8CEBA] bg-[#EAE1CE] py-20 md:py-28"
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
                     {/* Left Column: Editorial Intro & Atelier Assurance */}
                     <m.div
-                        className="lg:col-span-5 lg:sticky lg:top-28"
+                        className="lg:sticky lg:top-28 lg:col-span-5"
                         initial="hidden"
                         whileInView="visible"
                         viewport={viewportConfig}
                         variants={fadeUp}
                     >
-                        <div className="flex items-center gap-3 mb-3">
-                            <span className="w-8 h-px bg-[#A88B54]" aria-hidden="true" />
-                            <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold">
+                        <div className="mb-3 flex items-center gap-3">
+                            <span
+                                className="h-px w-8 bg-[#A88B54]"
+                                aria-hidden="true"
+                            />
+                            <p className="text-xs font-semibold tracking-[0.25em] text-[#725C30] uppercase">
                                 Keunggulan Kami
                             </p>
                         </div>
 
-                        <h2 className="font-serif text-3xl sm:text-4xl lg:text-[2.6rem] text-[#16233B] font-bold tracking-tight leading-[1.15] mb-5">
+                        <h2 className="mb-5 font-serif text-3xl leading-[1.15] font-bold tracking-tight text-[#16233B] sm:text-4xl lg:text-[2.6rem]">
                             Kemewahan yang Terasa di Setiap Detail
                         </h2>
 
-                        <p className="text-[#6E675D] text-base leading-relaxed mb-8">
-                            Komitmen kami terhadap kesempurnaan rasa, ketepatan waktu, dan pelayanan hangat menjadikan
-                            GALUH &amp; CO. mitra hantaran terpercaya.
+                        <p className="mb-8 text-base leading-relaxed text-[#6E675D]">
+                            Komitmen kami terhadap kesempurnaan rasa, ketepatan
+                            waktu, dan pelayanan hangat menjadikan GALUH &amp;
+                            CO. mitra hantaran terpercaya.
                         </p>
 
-                        <blockquote className="border-l-2 border-[#A88B54] pl-4 py-1 text-sm italic font-serif text-[#16233B]/85 leading-relaxed">
-                            &ldquo;Setiap bingkisan dirangkai dengan standar kualitas atelier—halal tersertifikasi,
-                            tepat waktu dalam skala besar, dan terlindungi penuh hingga ke tangan penerima.&rdquo;
+                        <blockquote className="border-l-2 border-[#A88B54] py-1 pl-4 font-serif text-sm leading-relaxed text-[#16233B]/85 italic">
+                            &ldquo;Setiap bingkisan dirangkai dengan standar
+                            kualitas atelier—halal tersertifikasi, tepat waktu
+                            dalam skala besar, dan terlindungi penuh hingga ke
+                            tangan penerima.&rdquo;
                         </blockquote>
                     </m.div>
 
                     {/* Right Column: Open Vertical Specification Ledger (No Boxes) */}
                     <m.div
-                        className="lg:col-span-7 border-y border-[#A88B54]/35 divide-y divide-[#A88B54]/30"
+                        className="divide-y divide-[#A88B54]/30 border-y border-[#A88B54]/35 lg:col-span-7"
                         initial="hidden"
                         whileInView="visible"
                         viewport={viewportConfig}
@@ -158,13 +174,19 @@ export const WhyChooseUsSection: React.FC = () => {
                                 <m.div
                                     key={stat.title}
                                     variants={fadeUp}
-                                    className="py-7 sm:py-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 group"
+                                    className="group flex flex-col gap-4 py-7 sm:flex-row sm:items-center sm:gap-8 sm:py-8"
                                 >
-                                    <div className="sm:w-44 shrink-0 flex items-center justify-between sm:block">
-                                        <div className="flex items-center gap-2 sm:mb-2 text-xs font-medium tracking-[0.2em] text-[#725C30] uppercase">
+                                    <div className="flex shrink-0 items-center justify-between sm:block sm:w-44">
+                                        <div className="flex items-center gap-2 text-xs font-medium tracking-[0.2em] text-[#725C30] uppercase sm:mb-2">
                                             <span>{stat.number}</span>
-                                            <span aria-hidden="true" className="w-4 h-px bg-[#A88B54]/60" />
-                                            <Icon className="w-3.5 h-3.5 text-[#725C30]" strokeWidth={1.75} />
+                                            <span
+                                                aria-hidden="true"
+                                                className="h-px w-4 bg-[#A88B54]/60"
+                                            />
+                                            <Icon
+                                                className="h-3.5 w-3.5 text-[#725C30]"
+                                                strokeWidth={1.75}
+                                            />
                                         </div>
 
                                         <div>
@@ -177,11 +199,11 @@ export const WhyChooseUsSection: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 min-w-0 transition-transform duration-300 ease-out group-hover:translate-x-1">
-                                        <h3 className="font-serif text-xl font-bold text-[#16233B] mb-2">
+                                    <div className="min-w-0 flex-1 transition-transform duration-300 ease-out group-hover:translate-x-1">
+                                        <h3 className="mb-2 font-serif text-xl font-bold text-[#16233B]">
                                             {stat.title}
                                         </h3>
-                                        <p className="text-sm text-[#6E675D] leading-relaxed">
+                                        <p className="text-sm leading-relaxed text-[#6E675D]">
                                             {stat.description}
                                         </p>
                                     </div>

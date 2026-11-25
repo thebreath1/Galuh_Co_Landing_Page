@@ -14,7 +14,9 @@ class Promo extends Model
     use HasFactory;
 
     public const SCOPE_ALL = 'all';
+
     public const SCOPE_CATEGORY = 'category';
+
     public const SCOPE_PRODUCT = 'product';
 
     public const SCOPES = [
@@ -42,6 +44,7 @@ class Promo extends Model
         'is_active' => 'boolean',
     ];
 
+    /** @return BelongsTo<Product, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

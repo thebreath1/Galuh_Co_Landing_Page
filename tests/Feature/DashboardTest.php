@@ -8,8 +8,15 @@ test('guests are redirected to the login page', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
-    $user = User::factory()->create();
+test('customers cannot visit the admin dashboard', function () {
+    $customer = User::factory()->create();
+    $this->actingAs($customer);
+
+    $this->get(route('dashboard'))->assertForbidden();
+});
+
+test('authenticated admins can visit the dashboard', function () {
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $response = $this->get(route('dashboard'));

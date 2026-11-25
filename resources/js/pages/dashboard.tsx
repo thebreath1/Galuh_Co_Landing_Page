@@ -33,7 +33,13 @@ import {
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -47,14 +53,26 @@ import { formatPaymentMethodLabel } from '@/lib/payment-methods';
 import { dashboard, home } from '@/routes';
 import { index as contentIndex } from '@/routes/admin/content';
 import { index as inquiriesIndex } from '@/routes/admin/inquiries';
-import { index as ordersIndex, updateStatus as updateOrderStatus } from '@/routes/admin/orders';
-import { index as productsIndex, toggle as toggleProduct } from '@/routes/admin/products';
+import {
+    index as ordersIndex,
+    updateStatus as updateOrderStatus,
+} from '@/routes/admin/orders';
+import {
+    index as productsIndex,
+    toggle as toggleProduct,
+} from '@/routes/admin/products';
 import { index as promosIndex } from '@/routes/admin/promos';
 import { index as shipmentsIndex } from '@/routes/admin/shipments';
 import { index as testimonialsIndex } from '@/routes/admin/testimonials';
-import type { InquiryRecord, OrderRecord, OrderStatus, Product } from '@/types/landing';
+import type {
+    InquiryRecord,
+    OrderRecord,
+    OrderStatus,
+    Product,
+} from '@/types/landing';
 
-const loadMotionFeatures = () => import('@/lib/motion-features').then((res) => res.default);
+const loadMotionFeatures = () =>
+    import('@/lib/motion-features').then((res) => res.default);
 
 interface ActivityPoint {
     date: string;
@@ -107,7 +125,8 @@ const formatRupiah = (amount: number) =>
     }).format(amount);
 
 const formatCompactRupiah = (amount: number) => {
-    if (amount >= 1_000_000_000) return `Rp ${(amount / 1_000_000_000).toFixed(1)}M`;
+    if (amount >= 1_000_000_000)
+        return `Rp ${(amount / 1_000_000_000).toFixed(1)}M`;
     if (amount >= 1_000_000) return `Rp ${(amount / 1_000_000).toFixed(1)}jt`;
     if (amount >= 1_000) return `Rp ${Math.round(amount / 1_000)}rb`;
     return formatRupiah(amount);
@@ -127,7 +146,8 @@ const ORDER_STATUS_STYLE: Record<
 > = {
     pending: {
         label: 'Pending',
-        badgeClass: 'border-[#A88B54]/60 bg-[#EAE1CE]/85 text-[#725C30] dark:bg-[#203252] dark:text-[#C5AA74]',
+        badgeClass:
+            'border-[#A88B54]/60 bg-[#EAE1CE]/85 text-[#725C30] dark:bg-[#203252] dark:text-[#C5AA74]',
     },
     approved: {
         label: 'Di-ACC',
@@ -135,7 +155,8 @@ const ORDER_STATUS_STYLE: Record<
     },
     completed: {
         label: 'Selesai',
-        badgeClass: 'border-emerald-700/25 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+        badgeClass:
+            'border-emerald-700/25 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
     },
     rejected: {
         label: 'Ditolak',
@@ -155,13 +176,18 @@ export default function Dashboard({
     const [activeTab, setActiveTab] = useState<FeedTab>('overview');
     const [searchQuery, setSearchQuery] = useState('');
     const [chartMetric, setChartMetric] = useState<ChartMetric>('orders');
-    const [hoveredDayIndex, setHoveredDayIndex] = useState<number>(Math.max(0, activitySeries.length - 1));
+    const [hoveredDayIndex, setHoveredDayIndex] = useState<number>(
+        Math.max(0, activitySeries.length - 1),
+    );
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [busyOrderId, setBusyOrderId] = useState<number | null>(null);
     const [busyProductId, setBusyProductId] = useState<number | null>(null);
-    const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(
+        null,
+    );
     const [orderAdminNote, setOrderAdminNote] = useState('');
-    const [selectedInquiry, setSelectedInquiry] = useState<InquiryRecord | null>(null);
+    const [selectedInquiry, setSelectedInquiry] =
+        useState<InquiryRecord | null>(null);
 
     const handleRefresh = () => {
         setIsRefreshing(true);
@@ -176,14 +202,17 @@ export default function Dashboard({
     const handleQuickOrderStatus = (
         order: OrderRecord,
         status: OrderStatus,
-        customNote?: string
+        customNote?: string,
     ) => {
         setBusyOrderId(order.id);
         router.patch(
             updateOrderStatus.url(order.id),
             {
                 status,
-                admin_note: customNote !== undefined ? customNote : (order.admin_note ?? ''),
+                admin_note:
+                    customNote !== undefined
+                        ? customNote
+                        : (order.admin_note ?? ''),
             },
             {
                 preserveScroll: true,
@@ -194,7 +223,7 @@ export default function Dashboard({
                 },
                 onError: () => toast.error('Gagal memperbarui status pesanan.'),
                 onFinish: () => setBusyOrderId(null),
-            }
+            },
         );
     };
 
@@ -205,9 +234,10 @@ export default function Dashboard({
             {},
             {
                 preserveScroll: true,
-                onError: () => toast.error('Gagal mengubah visibilitas produk.'),
+                onError: () =>
+                    toast.error('Gagal mengubah visibilitas produk.'),
                 onFinish: () => setBusyProductId(null),
-            }
+            },
         );
     };
 
@@ -236,7 +266,7 @@ export default function Dashboard({
         return recentProducts.filter(
             (p) =>
                 p.name.toLowerCase().includes(normalizedQuery) ||
-                p.category.toLowerCase().includes(normalizedQuery)
+                p.category.toLowerCase().includes(normalizedQuery),
         );
     }, [recentProducts, normalizedQuery]);
 
@@ -246,7 +276,7 @@ export default function Dashboard({
             (inq) =>
                 inq.name.toLowerCase().includes(normalizedQuery) ||
                 (inq.company ?? '').toLowerCase().includes(normalizedQuery) ||
-                inq.whatsapp_number.toLowerCase().includes(normalizedQuery)
+                inq.whatsapp_number.toLowerCase().includes(normalizedQuery),
         );
     }, [recentInquiries, normalizedQuery]);
 
@@ -255,9 +285,13 @@ export default function Dashboard({
         return Math.max(1, ...values);
     }, [activitySeries, chartMetric]);
 
-    const focusedDay = activitySeries[hoveredDayIndex] ?? activitySeries[activitySeries.length - 1];
+    const focusedDay =
+        activitySeries[hoveredDayIndex] ??
+        activitySeries[activitySeries.length - 1];
     const activeProductPercent =
-        stats.totalProducts > 0 ? Math.round((stats.activeProducts / stats.totalProducts) * 100) : 0;
+        stats.totalProducts > 0
+            ? Math.round((stats.activeProducts / stats.totalProducts) * 100)
+            : 0;
 
     const pipelineSegments = [
         {
@@ -293,7 +327,11 @@ export default function Dashboard({
     const workspaceTabs: { key: FeedTab; label: string; badge?: number }[] = [
         { key: 'overview', label: 'Semua Aktivitas' },
         { key: 'pending', label: 'Antrean ACC', badge: stats.pendingOrders },
-        { key: 'products', label: 'Katalog Cepat', badge: stats.activeProducts },
+        {
+            key: 'products',
+            label: 'Katalog Cepat',
+            badge: stats.activeProducts,
+        },
         { key: 'inquiries', label: 'Inquiry B2B', badge: stats.totalInquiries },
     ];
 
@@ -311,12 +349,15 @@ export default function Dashboard({
                     >
                         <div className="space-y-1.5">
                             <div className="flex flex-wrap items-center gap-2.5">
-                                <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                                <span
+                                    className="h-px w-6 bg-[#A88B54]"
+                                    aria-hidden="true"
+                                />
                                 <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
                                     Atelier Command Center
                                 </span>
                                 <span className="inline-flex items-center gap-1.5 rounded-full border border-[#A88B54]/35 bg-secondary/80 px-2.5 py-0.5 text-[10px] font-semibold text-foreground">
-                                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                                     Live Sync
                                 </span>
                             </div>
@@ -324,7 +365,9 @@ export default function Dashboard({
                                 {getGreeting()}, Tim GALUH &amp; CO.
                             </h1>
                             <p className="text-sm text-muted-foreground">
-                                Pantau omzet terkonfirmasi, ACC pesanan masuk lebih cepat, dan kelola etalase katalog dalam satu layar.
+                                Pantau omzet terkonfirmasi, ACC pesanan masuk
+                                lebih cepat, dan kelola etalase katalog dalam
+                                satu layar.
                             </p>
                         </div>
 
@@ -342,7 +385,11 @@ export default function Dashboard({
                                 Refresh
                             </Button>
                             <Button variant="outline" size="sm" asChild>
-                                <a href={home.url()} target="_blank" rel="noopener noreferrer">
+                                <a
+                                    href={home.url()}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     <ExternalLink className="size-3.5 text-[#725C30] dark:text-[#C5AA74]" />
                                     Landing Page
                                 </a>
@@ -363,7 +410,7 @@ export default function Dashboard({
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => router.visit(ordersIndex.url())}
-                            className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-card p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors hover:border-[#A88B54] cursor-pointer"
+                            className="group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-border bg-card p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors hover:border-[#A88B54]"
                         >
                             <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[#A88B54] via-[#C5AA74] to-transparent" />
                             <div className="flex items-center justify-between gap-2">
@@ -376,11 +423,18 @@ export default function Dashboard({
                             </div>
                             <div className="mt-3">
                                 <div className="font-serif text-2xl font-bold text-foreground sm:text-3xl">
-                                    {formatCompactRupiah(stats.confirmedRevenue)}
+                                    {formatCompactRupiah(
+                                        stats.confirmedRevenue,
+                                    )}
                                 </div>
                                 <p className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                                    <span>Potensi pending: {formatCompactRupiah(stats.pendingRevenue)}</span>
-                                    <ArrowUpRight className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100 text-[#A88B54]" />
+                                    <span>
+                                        Potensi pending:{' '}
+                                        {formatCompactRupiah(
+                                            stats.pendingRevenue,
+                                        )}
+                                    </span>
+                                    <ArrowUpRight className="size-3.5 text-[#A88B54] opacity-0 transition-opacity group-hover:opacity-100" />
                                 </p>
                             </div>
                         </m.button>
@@ -390,7 +444,7 @@ export default function Dashboard({
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setActiveTab('pending')}
-                            className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors cursor-pointer ${
+                            className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors ${
                                 activeTab === 'pending'
                                     ? 'border-[#A88B54] bg-card ring-1 ring-[#A88B54]/40'
                                     : 'border-border bg-card hover:border-[#A88B54]'
@@ -401,7 +455,7 @@ export default function Dashboard({
                                 <span className="flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                     Menunggu ACC
                                     {stats.pendingOrders > 0 && (
-                                        <span className="size-2 rounded-full bg-[#A88B54] animate-pulse" />
+                                        <span className="size-2 animate-pulse rounded-full bg-[#A88B54]" />
                                     )}
                                 </span>
                                 <div className="flex size-8 items-center justify-center rounded-lg border border-[#A88B54]/30 bg-secondary text-[#725C30] dark:text-[#C5AA74]">
@@ -413,8 +467,11 @@ export default function Dashboard({
                                     {stats.pendingOrders}
                                 </div>
                                 <p className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                                    <span>Dari total {stats.totalOrders} pesanan masuk</span>
-                                    <span className="font-medium text-[#725C30] dark:text-[#C5AA74] group-hover:underline">
+                                    <span>
+                                        Dari total {stats.totalOrders} pesanan
+                                        masuk
+                                    </span>
+                                    <span className="font-medium text-[#725C30] group-hover:underline dark:text-[#C5AA74]">
                                         Filter antrean →
                                     </span>
                                 </p>
@@ -426,7 +483,7 @@ export default function Dashboard({
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setActiveTab('products')}
-                            className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors cursor-pointer ${
+                            className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors ${
                                 activeTab === 'products'
                                     ? 'border-[#A88B54] bg-card ring-1 ring-[#A88B54]/40'
                                     : 'border-border bg-card hover:border-[#A88B54]'
@@ -447,13 +504,16 @@ export default function Dashboard({
                                         {stats.activeProducts}
                                     </span>
                                     <span className="text-xs text-muted-foreground">
-                                        / {stats.totalProducts} paket ({stats.categoriesCount} kategori)
+                                        / {stats.totalProducts} paket (
+                                        {stats.categoriesCount} kategori)
                                     </span>
                                 </div>
                                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
                                     <div
                                         className="h-full rounded-full bg-[#A88B54] transition-all duration-500"
-                                        style={{ width: `${activeProductPercent}%` }}
+                                        style={{
+                                            width: `${activeProductPercent}%`,
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -464,7 +524,7 @@ export default function Dashboard({
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => setActiveTab('inquiries')}
-                            className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors cursor-pointer ${
+                            className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border p-5 text-left shadow-[0_10px_30px_-15px_rgba(22,35,59,0.08)] transition-colors ${
                                 activeTab === 'inquiries'
                                     ? 'border-[#A88B54] bg-card ring-1 ring-[#A88B54]/40'
                                     : 'border-border bg-card hover:border-[#A88B54]'
@@ -485,7 +545,7 @@ export default function Dashboard({
                                 </div>
                                 <p className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
                                     <span>Permintaan B2B tersimpan</span>
-                                    <span className="font-medium text-[#725C30] dark:text-[#C5AA74] group-hover:underline">
+                                    <span className="font-medium text-[#725C30] group-hover:underline dark:text-[#C5AA74]">
                                         Buka B2B →
                                     </span>
                                 </p>
@@ -499,7 +559,9 @@ export default function Dashboard({
                         <Card className="lg:col-span-7">
                             <CardHeader className="flex flex-col gap-3 border-b border-border/60 pb-4 sm:flex-row sm:items-center sm:justify-between">
                                 <div>
-                                    <CardTitle className="font-serif text-lg">Aktivitas 7 Hari Terakhir</CardTitle>
+                                    <CardTitle className="font-serif text-lg">
+                                        Aktivitas 7 Hari Terakhir
+                                    </CardTitle>
                                     <CardDescription>
                                         {focusedDay
                                             ? `${focusedDay.label}, ${focusedDay.fullDate}: ${focusedDay.orders} pesanan • ${formatRupiah(focusedDay.revenue)} • ${focusedDay.inquiries} inquiry`
@@ -512,14 +574,19 @@ export default function Dashboard({
                                         [
                                             { key: 'orders', label: 'Pesanan' },
                                             { key: 'revenue', label: 'Omzet' },
-                                            { key: 'inquiries', label: 'Inquiry' },
+                                            {
+                                                key: 'inquiries',
+                                                label: 'Inquiry',
+                                            },
                                         ] as const
                                     ).map((mOption) => (
                                         <button
                                             key={mOption.key}
                                             type="button"
-                                            onClick={() => setChartMetric(mOption.key)}
-                                            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                                            onClick={() =>
+                                                setChartMetric(mOption.key)
+                                            }
+                                            className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                                 chartMetric === mOption.key
                                                     ? 'bg-primary text-primary-foreground shadow-xs'
                                                     : 'text-muted-foreground hover:text-foreground'
@@ -532,11 +599,22 @@ export default function Dashboard({
                             </CardHeader>
 
                             <CardContent className="pt-2">
-                                <div className="grid grid-cols-7 items-end gap-2 sm:gap-3 h-44 pt-4">
+                                <div className="grid h-44 grid-cols-7 items-end gap-2 pt-4 sm:gap-3">
                                     {activitySeries.map((day, idx) => {
                                         const val = day[chartMetric];
-                                        const heightPct = val === 0 ? 8 : Math.max(14, Math.round((val / maxMetricValue) * 100));
-                                        const isFocused = idx === hoveredDayIndex;
+                                        const heightPct =
+                                            val === 0
+                                                ? 8
+                                                : Math.max(
+                                                      14,
+                                                      Math.round(
+                                                          (val /
+                                                              maxMetricValue) *
+                                                              100,
+                                                      ),
+                                                  );
+                                        const isFocused =
+                                            idx === hoveredDayIndex;
                                         const displayVal =
                                             chartMetric === 'revenue'
                                                 ? val > 0
@@ -548,16 +626,22 @@ export default function Dashboard({
                                             <button
                                                 key={day.date}
                                                 type="button"
-                                                onMouseEnter={() => setHoveredDayIndex(idx)}
-                                                onFocus={() => setHoveredDayIndex(idx)}
-                                                onClick={() => setHoveredDayIndex(idx)}
-                                                className="group flex h-full flex-col items-center justify-end gap-2 focus:outline-none cursor-pointer"
+                                                onMouseEnter={() =>
+                                                    setHoveredDayIndex(idx)
+                                                }
+                                                onFocus={() =>
+                                                    setHoveredDayIndex(idx)
+                                                }
+                                                onClick={() =>
+                                                    setHoveredDayIndex(idx)
+                                                }
+                                                className="group flex h-full cursor-pointer flex-col items-center justify-end gap-2 focus:outline-none"
                                             >
                                                 <span
                                                     className={`text-[10px] font-semibold transition-opacity ${
                                                         isFocused
-                                                            ? 'opacity-100 text-[#725C30] dark:text-[#C5AA74]'
-                                                            : 'opacity-0 group-hover:opacity-100 text-muted-foreground'
+                                                            ? 'text-[#725C30] opacity-100 dark:text-[#C5AA74]'
+                                                            : 'text-muted-foreground opacity-0 group-hover:opacity-100'
                                                     }`}
                                                 >
                                                     {displayVal}
@@ -569,18 +653,22 @@ export default function Dashboard({
                                                                 ? 'bg-primary ring-2 ring-[#A88B54]/60'
                                                                 : 'bg-[#A88B54]/65 group-hover:bg-[#A88B54]'
                                                         }`}
-                                                        style={{ height: `${heightPct}%` }}
+                                                        style={{
+                                                            height: `${heightPct}%`,
+                                                        }}
                                                     />
                                                 </div>
                                                 <div className="text-center">
                                                     <p
                                                         className={`text-[11px] font-semibold ${
-                                                            isFocused ? 'text-foreground' : 'text-muted-foreground'
+                                                            isFocused
+                                                                ? 'text-foreground'
+                                                                : 'text-muted-foreground'
                                                         }`}
                                                     >
                                                         {day.label}
                                                     </p>
-                                                    <p className="text-[10px] text-muted-foreground hidden sm:block">
+                                                    <p className="hidden text-[10px] text-muted-foreground sm:block">
                                                         {day.fullDate}
                                                     </p>
                                                 </div>
@@ -592,15 +680,27 @@ export default function Dashboard({
                         </Card>
 
                         {/* Order Pipeline & Category Breakdown */}
-                        <Card className="lg:col-span-5 flex flex-col justify-between">
+                        <Card className="flex flex-col justify-between lg:col-span-5">
                             <CardHeader className="border-b border-border/60 pb-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <div>
-                                        <CardTitle className="font-serif text-lg">Distribusi Pipeline</CardTitle>
-                                        <CardDescription>Status pesanan &amp; sebaran kategori</CardDescription>
+                                        <CardTitle className="font-serif text-lg">
+                                            Distribusi Pipeline
+                                        </CardTitle>
+                                        <CardDescription>
+                                            Status pesanan &amp; sebaran
+                                            kategori
+                                        </CardDescription>
                                     </div>
-                                    <Button variant="ghost" size="sm" asChild className="text-[#725C30] dark:text-[#C5AA74]">
-                                        <Link href={ordersIndex()}>Detail Pesanan</Link>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        asChild
+                                        className="text-[#725C30] dark:text-[#C5AA74]"
+                                    >
+                                        <Link href={ordersIndex()}>
+                                            Detail Pesanan
+                                        </Link>
                                     </Button>
                                 </div>
                             </CardHeader>
@@ -613,14 +713,19 @@ export default function Dashboard({
                                             <div className="h-full w-full bg-secondary" />
                                         ) : (
                                             pipelineSegments.map((seg) => {
-                                                const width = (seg.count / stats.totalOrders) * 100;
+                                                const width =
+                                                    (seg.count /
+                                                        stats.totalOrders) *
+                                                    100;
                                                 if (width === 0) return null;
                                                 return (
                                                     <div
                                                         key={seg.key}
                                                         title={`${seg.label}: ${seg.count}`}
                                                         className={`h-full transition-all duration-500 ${seg.colorClass}`}
-                                                        style={{ width: `${width}%` }}
+                                                        style={{
+                                                            width: `${width}%`,
+                                                        }}
                                                     />
                                                 );
                                             })
@@ -633,16 +738,24 @@ export default function Dashboard({
                                                 type="button"
                                                 onClick={() =>
                                                     seg.key === 'pending'
-                                                        ? setActiveTab('pending')
-                                                        : router.visit(ordersIndex.url())
+                                                        ? setActiveTab(
+                                                              'pending',
+                                                          )
+                                                        : router.visit(
+                                                              ordersIndex.url(),
+                                                          )
                                                 }
-                                                className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-2.5 py-1.5 text-xs hover:border-[#A88B54] transition-colors cursor-pointer"
+                                                className="flex cursor-pointer items-center justify-between rounded-lg border border-border bg-background/60 px-2.5 py-1.5 text-xs transition-colors hover:border-[#A88B54]"
                                             >
                                                 <span className="flex items-center gap-1.5 text-muted-foreground">
-                                                    <span className={`size-2 rounded-full ${seg.dotClass}`} />
+                                                    <span
+                                                        className={`size-2 rounded-full ${seg.dotClass}`}
+                                                    />
                                                     {seg.label}
                                                 </span>
-                                                <span className="font-semibold text-foreground">{seg.count}</span>
+                                                <span className="font-semibold text-foreground">
+                                                    {seg.count}
+                                                </span>
                                             </button>
                                         ))}
                                     </div>
@@ -663,15 +776,19 @@ export default function Dashboard({
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {categoryBreakdown.length === 0 ? (
-                                            <span className="text-xs text-muted-foreground">Belum ada kategori.</span>
+                                            <span className="text-xs text-muted-foreground">
+                                                Belum ada kategori.
+                                            </span>
                                         ) : (
                                             categoryBreakdown.map((cat) => (
                                                 <Link
                                                     key={cat.category}
                                                     href={productsIndex()}
-                                                    className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs hover:border-[#A88B54] transition-colors"
+                                                    className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs transition-colors hover:border-[#A88B54]"
                                                 >
-                                                    <span className="font-medium text-foreground">{cat.category}</span>
+                                                    <span className="font-medium text-foreground">
+                                                        {cat.category}
+                                                    </span>
                                                     <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-[#725C30] dark:text-[#C5AA74]">
                                                         {cat.active}/{cat.total}
                                                     </span>
@@ -695,19 +812,29 @@ export default function Dashboard({
                                         <button
                                             key={tab.key}
                                             type="button"
-                                            onClick={() => setActiveTab(tab.key)}
-                                            className={`relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
-                                                isActive ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                                            onClick={() =>
+                                                setActiveTab(tab.key)
+                                            }
+                                            className={`relative flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                                isActive
+                                                    ? 'text-primary-foreground'
+                                                    : 'text-muted-foreground hover:text-foreground'
                                             }`}
                                         >
                                             {isActive && (
                                                 <m.span
                                                     layoutId="dashboardTabPill"
-                                                    transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                                                    transition={{
+                                                        type: 'spring',
+                                                        stiffness: 420,
+                                                        damping: 32,
+                                                    }}
                                                     className="absolute inset-0 rounded-lg bg-primary shadow-xs"
                                                 />
                                             )}
-                                            <span className="relative z-10">{tab.label}</span>
+                                            <span className="relative z-10">
+                                                {tab.label}
+                                            </span>
                                             {typeof tab.badge === 'number' && (
                                                 <span
                                                     className={`relative z-10 rounded-full px-1.5 py-0.5 text-[10px] ${
@@ -729,7 +856,9 @@ export default function Dashboard({
                                 <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
                                     placeholder="Cari pesanan, hampers, atau PT..."
                                     className="pl-9"
                                 />
@@ -737,7 +866,8 @@ export default function Dashboard({
                         </CardHeader>
 
                         <CardContent className="pt-2">
-                            {(activeTab === 'overview' || activeTab === 'pending') && (
+                            {(activeTab === 'overview' ||
+                                activeTab === 'pending') && (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
@@ -762,8 +892,13 @@ export default function Dashboard({
                                     ) : (
                                         <div className="grid gap-3 md:grid-cols-2">
                                             {filteredOrders.map((order) => {
-                                                const st = ORDER_STATUS_STYLE[order.status] ?? ORDER_STATUS_STYLE.pending;
-                                                const isBusy = busyOrderId === order.id;
+                                                const st =
+                                                    ORDER_STATUS_STYLE[
+                                                        order.status
+                                                    ] ??
+                                                    ORDER_STATUS_STYLE.pending;
+                                                const isBusy =
+                                                    busyOrderId === order.id;
 
                                                 return (
                                                     <div
@@ -772,41 +907,79 @@ export default function Dashboard({
                                                     >
                                                         <button
                                                             type="button"
-                                                            onClick={() => openOrderDetail(order)}
-                                                            className="w-full text-left focus:outline-none cursor-pointer"
+                                                            onClick={() =>
+                                                                openOrderDetail(
+                                                                    order,
+                                                                )
+                                                            }
+                                                            className="w-full cursor-pointer text-left focus:outline-none"
                                                         >
                                                             <div className="flex flex-wrap items-center justify-between gap-2">
                                                                 <div className="flex items-center gap-2">
                                                                     <span className="rounded bg-secondary px-2 py-0.5 font-mono text-[11px] font-semibold text-[#725C30] dark:text-[#C5AA74]">
-                                                                        {order.order_code}
+                                                                        {
+                                                                            order.order_code
+                                                                        }
                                                                     </span>
-                                                                    <Badge variant="outline" className={st.badgeClass}>
-                                                                        {st.label}
+                                                                    <Badge
+                                                                        variant="outline"
+                                                                        className={
+                                                                            st.badgeClass
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            st.label
+                                                                        }
                                                                     </Badge>
                                                                 </div>
                                                                 <span className="font-serif text-base font-bold text-[#725C30] dark:text-[#C5AA74]">
-                                                                    {formatRupiah(order.total_price)}
+                                                                    {formatRupiah(
+                                                                        order.total_price,
+                                                                    )}
                                                                 </span>
                                                             </div>
 
-                                                            <p className="mt-2 font-serif text-base font-semibold text-foreground group-hover:text-[#725C30] dark:group-hover:text-[#C5AA74] transition-colors">
-                                                                {order.customer_name} — {order.product_name}
+                                                            <p className="mt-2 font-serif text-base font-semibold text-foreground transition-colors group-hover:text-[#725C30] dark:group-hover:text-[#C5AA74]">
+                                                                {
+                                                                    order.customer_name
+                                                                }{' '}
+                                                                —{' '}
+                                                                {
+                                                                    order.product_name
+                                                                }
                                                             </p>
                                                             <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                                <span>{order.quantity} paket</span>
+                                                                <span>
+                                                                    {
+                                                                        order.quantity
+                                                                    }{' '}
+                                                                    paket
+                                                                </span>
                                                                 <span className="inline-flex items-center gap-1">
                                                                     <Wallet className="size-3 text-[#A88B54]" />
-                                                                    {formatPaymentMethodLabel(order.payment_method)}
+                                                                    {formatPaymentMethodLabel(
+                                                                        order.payment_method,
+                                                                    )}
                                                                 </span>
-                                                                {order.discount_percent && order.discount_percent > 0 ? (
+                                                                {order.discount_percent &&
+                                                                order.discount_percent >
+                                                                    0 ? (
                                                                     <span className="inline-flex items-center gap-1 font-semibold text-[#725C30] dark:text-[#C5AA74]">
                                                                         <Tag className="size-3 text-[#A88B54]" />
-                                                                        -{order.discount_percent}%
+                                                                        -
+                                                                        {
+                                                                            order.discount_percent
+                                                                        }
+                                                                        %
                                                                     </span>
                                                                 ) : null}
                                                                 <span className="inline-flex items-center gap-1">
                                                                     <Clock className="size-3 text-[#A88B54]" />
-                                                                    {new Date(order.created_at).toLocaleDateString('id-ID')}
+                                                                    {new Date(
+                                                                        order.created_at,
+                                                                    ).toLocaleDateString(
+                                                                        'id-ID',
+                                                                    )}
                                                                 </span>
                                                             </div>
                                                         </button>
@@ -816,34 +989,52 @@ export default function Dashboard({
                                                                 type="button"
                                                                 size="sm"
                                                                 variant="ghost"
-                                                                onClick={() => openOrderDetail(order)}
+                                                                onClick={() =>
+                                                                    openOrderDetail(
+                                                                        order,
+                                                                    )
+                                                                }
                                                                 className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
                                                             >
-                                                                Detail &amp; Alamat
+                                                                Detail &amp;
+                                                                Alamat
                                                             </Button>
 
                                                             <div className="flex items-center gap-1.5">
-                                                                {order.status === 'pending' && (
+                                                                {order.status ===
+                                                                    'pending' && (
                                                                     <>
                                                                         <Button
                                                                             type="button"
                                                                             size="sm"
-                                                                            disabled={isBusy}
+                                                                            disabled={
+                                                                                isBusy
+                                                                            }
                                                                             onClick={() =>
-                                                                                handleQuickOrderStatus(order, 'approved')
+                                                                                handleQuickOrderStatus(
+                                                                                    order,
+                                                                                    'approved',
+                                                                                )
                                                                             }
                                                                             className="h-7 px-2.5 text-xs"
                                                                         >
                                                                             <CheckCircle2 className="size-3.5 text-[#C5AA74] dark:text-primary-foreground" />
-                                                                            {isBusy ? 'Proses...' : 'ACC'}
+                                                                            {isBusy
+                                                                                ? 'Proses...'
+                                                                                : 'ACC'}
                                                                         </Button>
                                                                         <Button
                                                                             type="button"
                                                                             size="sm"
                                                                             variant="outline"
-                                                                            disabled={isBusy}
+                                                                            disabled={
+                                                                                isBusy
+                                                                            }
                                                                             onClick={() =>
-                                                                                handleQuickOrderStatus(order, 'rejected')
+                                                                                handleQuickOrderStatus(
+                                                                                    order,
+                                                                                    'rejected',
+                                                                                )
                                                                             }
                                                                             className="h-7 px-2 text-xs hover:border-destructive/60"
                                                                         >
@@ -852,8 +1043,10 @@ export default function Dashboard({
                                                                         </Button>
                                                                     </>
                                                                 )}
-                                                                {(order.status === 'approved' ||
-                                                                    order.status === 'completed') && (
+                                                                {(order.status ===
+                                                                    'approved' ||
+                                                                    order.status ===
+                                                                        'completed') && (
                                                                     <Button
                                                                         type="button"
                                                                         size="sm"
@@ -861,20 +1054,28 @@ export default function Dashboard({
                                                                         asChild
                                                                         className="h-7 px-2.5 text-xs"
                                                                     >
-                                                                        <Link href={shipmentsIndex()}>
+                                                                        <Link
+                                                                            href={shipmentsIndex()}
+                                                                        >
                                                                             <Truck className="size-3.5 text-[#725C30] dark:text-[#C5AA74]" />
                                                                             Lacak
                                                                         </Link>
                                                                     </Button>
                                                                 )}
-                                                                {order.status === 'approved' && (
+                                                                {order.status ===
+                                                                    'approved' && (
                                                                     <Button
                                                                         type="button"
                                                                         size="sm"
                                                                         variant="secondary"
-                                                                        disabled={isBusy}
+                                                                        disabled={
+                                                                            isBusy
+                                                                        }
                                                                         onClick={() =>
-                                                                            handleQuickOrderStatus(order, 'completed')
+                                                                            handleQuickOrderStatus(
+                                                                                order,
+                                                                                'completed',
+                                                                            )
                                                                         }
                                                                         className="h-7 px-2.5 text-xs"
                                                                     >
@@ -892,11 +1093,19 @@ export default function Dashboard({
                                 </div>
                             )}
 
-                            {(activeTab === 'overview' || activeTab === 'products') && (
-                                <div className={activeTab === 'overview' ? 'mt-7 border-t border-border/60 pt-6' : ''}>
+                            {(activeTab === 'overview' ||
+                                activeTab === 'products') && (
+                                <div
+                                    className={
+                                        activeTab === 'overview'
+                                            ? 'mt-7 border-t border-border/60 pt-6'
+                                            : ''
+                                    }
+                                >
                                     <div className="mb-3 flex items-center justify-between">
                                         <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                            Kontrol Cepat Etalase Hampers (Toggle Aktif / Sembunyikan)
+                                            Kontrol Cepat Etalase Hampers
+                                            (Toggle Aktif / Sembunyikan)
                                         </p>
                                         <Link
                                             href={productsIndex()}
@@ -908,12 +1117,15 @@ export default function Dashboard({
 
                                     {filteredProducts.length === 0 ? (
                                         <div className="rounded-xl border border-dashed border-border bg-background/50 py-10 text-center text-sm text-muted-foreground">
-                                            Belum ada produk hampers yang sesuai.
+                                            Belum ada produk hampers yang
+                                            sesuai.
                                         </div>
                                     ) : (
                                         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                             {filteredProducts.map((product) => {
-                                                const isBusy = busyProductId === product.id;
+                                                const isBusy =
+                                                    busyProductId ===
+                                                    product.id;
                                                 return (
                                                     <div
                                                         key={product.id}
@@ -922,26 +1134,43 @@ export default function Dashboard({
                                                         <img
                                                             src={product.image}
                                                             alt={product.name}
-                                                            className="size-14 shrink-0 rounded-lg border border-border object-cover bg-muted"
+                                                            className="size-14 shrink-0 rounded-lg border border-border bg-muted object-cover"
                                                         />
                                                         <div className="min-w-0 flex-1">
                                                             <p className="truncate font-serif text-sm font-semibold text-foreground">
                                                                 {product.name}
                                                             </p>
                                                             <p className="text-xs text-muted-foreground">
-                                                                {product.category} •{' '}
+                                                                {
+                                                                    product.category
+                                                                }{' '}
+                                                                •{' '}
                                                                 <span className="font-medium text-[#725C30] dark:text-[#C5AA74]">
-                                                                    {formatRupiah(product.price_from)}
+                                                                    {formatRupiah(
+                                                                        product.price_from,
+                                                                    )}
                                                                 </span>
                                                             </p>
                                                         </div>
                                                         <Button
                                                             type="button"
                                                             size="icon"
-                                                            variant={product.is_active ? 'outline' : 'secondary'}
+                                                            variant={
+                                                                product.is_active
+                                                                    ? 'outline'
+                                                                    : 'secondary'
+                                                            }
                                                             disabled={isBusy}
-                                                            title={product.is_active ? 'Aktif (Klik untuk sembunyikan)' : 'Disembunyikan (Klik untuk tampilkan)'}
-                                                            onClick={() => handleQuickToggleProduct(product)}
+                                                            title={
+                                                                product.is_active
+                                                                    ? 'Aktif (Klik untuk sembunyikan)'
+                                                                    : 'Disembunyikan (Klik untuk tampilkan)'
+                                                            }
+                                                            onClick={() =>
+                                                                handleQuickToggleProduct(
+                                                                    product,
+                                                                )
+                                                            }
                                                         >
                                                             {product.is_active ? (
                                                                 <Eye className="size-4 text-[#725C30] dark:text-[#C5AA74]" />
@@ -957,11 +1186,19 @@ export default function Dashboard({
                                 </div>
                             )}
 
-                            {(activeTab === 'overview' || activeTab === 'inquiries') && (
-                                <div className={activeTab === 'overview' ? 'mt-7 border-t border-border/60 pt-6' : ''}>
+                            {(activeTab === 'overview' ||
+                                activeTab === 'inquiries') && (
+                                <div
+                                    className={
+                                        activeTab === 'overview'
+                                            ? 'mt-7 border-t border-border/60 pt-6'
+                                            : ''
+                                    }
+                                >
                                     <div className="mb-3 flex items-center justify-between">
                                         <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                            Inquiry Corporate B2B (Klik kartu untuk kontak &amp; catatan)
+                                            Inquiry Corporate B2B (Klik kartu
+                                            untuk kontak &amp; catatan)
                                         </p>
                                         <Link
                                             href={inquiriesIndex()}
@@ -973,7 +1210,8 @@ export default function Dashboard({
 
                                     {filteredInquiries.length === 0 ? (
                                         <div className="rounded-xl border border-dashed border-border bg-background/50 py-10 text-center text-sm text-muted-foreground">
-                                            Belum ada inquiry corporate yang cocok.
+                                            Belum ada inquiry corporate yang
+                                            cocok.
                                         </div>
                                     ) : (
                                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -981,8 +1219,10 @@ export default function Dashboard({
                                                 <button
                                                     key={inq.id}
                                                     type="button"
-                                                    onClick={() => setSelectedInquiry(inq)}
-                                                    className="flex flex-col justify-between gap-2 rounded-xl border border-border bg-background/60 p-4 text-left transition-colors hover:border-[#A88B54] cursor-pointer"
+                                                    onClick={() =>
+                                                        setSelectedInquiry(inq)
+                                                    }
+                                                    className="flex cursor-pointer flex-col justify-between gap-2 rounded-xl border border-border bg-background/60 p-4 text-left transition-colors hover:border-[#A88B54]"
                                                 >
                                                     <div className="flex items-start justify-between gap-2">
                                                         <div className="min-w-0">
@@ -992,17 +1232,27 @@ export default function Dashboard({
                                                             {inq.company && (
                                                                 <p className="inline-flex items-center gap-1 text-xs font-medium text-[#725C30] dark:text-[#C5AA74]">
                                                                     <Building2 className="size-3" />
-                                                                    {inq.company}
+                                                                    {
+                                                                        inq.company
+                                                                    }
                                                                 </p>
                                                             )}
                                                         </div>
-                                                        <Badge variant="outline" className="shrink-0 text-[10px]">
-                                                            {inq.budget_per_package || 'Custom'}
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="shrink-0 text-[10px]"
+                                                        >
+                                                            {inq.budget_per_package ||
+                                                                'Custom'}
                                                         </Badge>
                                                     </div>
                                                     <p className="text-xs text-muted-foreground">
-                                                        {inq.estimated_quantity} •{' '}
-                                                        {formatPaymentMethodLabel(inq.payment_method ?? 'invoice_termin')}
+                                                        {inq.estimated_quantity}{' '}
+                                                        •{' '}
+                                                        {formatPaymentMethodLabel(
+                                                            inq.payment_method ??
+                                                                'invoice_termin',
+                                                        )}
                                                     </p>
                                                 </button>
                                             ))}
@@ -1043,7 +1293,8 @@ export default function Dashboard({
                                         Teks &amp; Gambar Hero Section
                                     </CardTitle>
                                     <CardDescription className="line-clamp-1">
-                                        Headline aktif: &ldquo;{heroHeadline}&rdquo;
+                                        Headline aktif: &ldquo;{heroHeadline}
+                                        &rdquo;
                                     </CardDescription>
                                 </div>
                                 <Button variant="outline" size="sm" asChild>
@@ -1063,7 +1314,8 @@ export default function Dashboard({
                                         Testimoni Pelanggan
                                     </CardTitle>
                                     <CardDescription>
-                                        {stats.activeTestimonials} ulasan aktif dari {stats.totalTestimonials} tersimpan
+                                        {stats.activeTestimonials} ulasan aktif
+                                        dari {stats.totalTestimonials} tersimpan
                                     </CardDescription>
                                 </div>
                                 <Button variant="outline" size="sm" asChild>
@@ -1078,7 +1330,10 @@ export default function Dashboard({
                 </div>
 
                 {/* Order Quick-View & ACC Modal */}
-                <Dialog open={selectedOrder !== null} onOpenChange={(open) => !open && setSelectedOrder(null)}>
+                <Dialog
+                    open={selectedOrder !== null}
+                    onOpenChange={(open) => !open && setSelectedOrder(null)}
+                >
                     <DialogContent className="sm:max-w-lg">
                         {selectedOrder && (
                             <>
@@ -1090,27 +1345,46 @@ export default function Dashboard({
                                         <Badge
                                             variant="outline"
                                             className={
-                                                (ORDER_STATUS_STYLE[selectedOrder.status] ?? ORDER_STATUS_STYLE.pending)
-                                                    .badgeClass
+                                                (
+                                                    ORDER_STATUS_STYLE[
+                                                        selectedOrder.status
+                                                    ] ??
+                                                    ORDER_STATUS_STYLE.pending
+                                                ).badgeClass
                                             }
                                         >
-                                            {(ORDER_STATUS_STYLE[selectedOrder.status] ?? ORDER_STATUS_STYLE.pending).label}
+                                            {
+                                                (
+                                                    ORDER_STATUS_STYLE[
+                                                        selectedOrder.status
+                                                    ] ??
+                                                    ORDER_STATUS_STYLE.pending
+                                                ).label
+                                            }
                                         </Badge>
                                     </div>
                                     <DialogTitle className="font-serif text-xl">
-                                        {selectedOrder.product_name} × {selectedOrder.quantity} paket
+                                        {selectedOrder.product_name} ×{' '}
+                                        {selectedOrder.quantity} paket
                                     </DialogTitle>
                                     <DialogDescription>
                                         Estimasi total:{' '}
                                         <span className="font-semibold text-foreground">
-                                            {formatRupiah(selectedOrder.total_price)}
+                                            {formatRupiah(
+                                                selectedOrder.total_price,
+                                            )}
                                         </span>{' '}
-                                        • {formatPaymentMethodLabel(selectedOrder.payment_method)}
+                                        •{' '}
+                                        {formatPaymentMethodLabel(
+                                            selectedOrder.payment_method,
+                                        )}
                                     </DialogDescription>
                                 </DialogHeader>
 
                                 <div className="space-y-3 rounded-xl border border-border bg-background/70 p-4 text-xs text-muted-foreground">
-                                    <p className="text-sm font-semibold text-foreground">{selectedOrder.customer_name}</p>
+                                    <p className="text-sm font-semibold text-foreground">
+                                        {selectedOrder.customer_name}
+                                    </p>
                                     <div className="flex flex-wrap gap-3">
                                         <span className="inline-flex items-center gap-1.5">
                                             <Phone className="size-3.5 text-[#A88B54]" />
@@ -1125,18 +1399,29 @@ export default function Dashboard({
                                         {selectedOrder.delivery_date && (
                                             <span className="inline-flex items-center gap-1.5">
                                                 <Calendar className="size-3.5 text-[#A88B54]" />
-                                                Target: {new Date(selectedOrder.delivery_date).toLocaleDateString('id-ID')}
+                                                Target:{' '}
+                                                {new Date(
+                                                    selectedOrder.delivery_date,
+                                                ).toLocaleDateString('id-ID')}
                                             </span>
                                         )}
                                     </div>
                                     <p className="flex items-start gap-1.5 pt-1">
                                         <MapPin className="mt-0.5 size-3.5 shrink-0 text-[#A88B54]" />
-                                        <span>{selectedOrder.shipping_address}</span>
+                                        <span>
+                                            {selectedOrder.shipping_address}
+                                        </span>
                                     </p>
                                     {selectedOrder.greeting_card_note && (
                                         <p className="flex items-start gap-1.5 rounded-lg bg-secondary/70 p-2.5 text-foreground">
                                             <MessageSquareText className="mt-0.5 size-3.5 shrink-0 text-[#A88B54]" />
-                                            <span>&ldquo;{selectedOrder.greeting_card_note}&rdquo;</span>
+                                            <span>
+                                                &ldquo;
+                                                {
+                                                    selectedOrder.greeting_card_note
+                                                }
+                                                &rdquo;
+                                            </span>
                                         </p>
                                     )}
                                 </div>
@@ -1147,7 +1432,9 @@ export default function Dashboard({
                                     </label>
                                     <Input
                                         value={orderAdminNote}
-                                        onChange={(e) => setOrderAdminNote(e.target.value)}
+                                        onChange={(e) =>
+                                            setOrderAdminNote(e.target.value)
+                                        }
                                         placeholder="Misal: Stok siap, rekening BCA sudah dikonfirmasi..."
                                     />
                                 </div>
@@ -1156,7 +1443,7 @@ export default function Dashboard({
                                     <Button variant="outline" size="sm" asChild>
                                         <a
                                             href={`https://wa.me/${selectedOrder.customer_whatsapp.replace(/[^0-9]/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(
-                                                `Halo ${selectedOrder.customer_name}, kami dari GALUH & CO. mengonfirmasi pesanan ${selectedOrder.order_code} (${selectedOrder.product_name} × ${selectedOrder.quantity}).`
+                                                `Halo ${selectedOrder.customer_name}, kami dari GALUH & CO. mengonfirmasi pesanan ${selectedOrder.order_code} (${selectedOrder.product_name} × ${selectedOrder.quantity}).`,
                                             )}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -1166,28 +1453,43 @@ export default function Dashboard({
                                         </a>
                                     </Button>
 
-                                    {selectedOrder.status !== 'approved' && selectedOrder.status !== 'completed' && (
-                                        <Button
-                                            type="button"
-                                            size="sm"
-                                            disabled={busyOrderId === selectedOrder.id}
-                                            onClick={() =>
-                                                handleQuickOrderStatus(selectedOrder, 'approved', orderAdminNote)
-                                            }
-                                        >
-                                            <CheckCircle2 className="size-4 text-[#C5AA74] dark:text-primary-foreground" />
-                                            ACC Pesanan
-                                        </Button>
-                                    )}
+                                    {selectedOrder.status !== 'approved' &&
+                                        selectedOrder.status !==
+                                            'completed' && (
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                disabled={
+                                                    busyOrderId ===
+                                                    selectedOrder.id
+                                                }
+                                                onClick={() =>
+                                                    handleQuickOrderStatus(
+                                                        selectedOrder,
+                                                        'approved',
+                                                        orderAdminNote,
+                                                    )
+                                                }
+                                            >
+                                                <CheckCircle2 className="size-4 text-[#C5AA74] dark:text-primary-foreground" />
+                                                ACC Pesanan
+                                            </Button>
+                                        )}
 
                                     {selectedOrder.status === 'approved' && (
                                         <Button
                                             type="button"
                                             size="sm"
                                             variant="secondary"
-                                            disabled={busyOrderId === selectedOrder.id}
+                                            disabled={
+                                                busyOrderId === selectedOrder.id
+                                            }
                                             onClick={() =>
-                                                handleQuickOrderStatus(selectedOrder, 'completed', orderAdminNote)
+                                                handleQuickOrderStatus(
+                                                    selectedOrder,
+                                                    'completed',
+                                                    orderAdminNote,
+                                                )
                                             }
                                         >
                                             <PackageCheck className="size-4" />
@@ -1195,14 +1497,22 @@ export default function Dashboard({
                                         </Button>
                                     )}
 
-                                    {(selectedOrder.status === 'pending' || selectedOrder.status === 'approved') && (
+                                    {(selectedOrder.status === 'pending' ||
+                                        selectedOrder.status ===
+                                            'approved') && (
                                         <Button
                                             type="button"
                                             size="sm"
                                             variant="destructive"
-                                            disabled={busyOrderId === selectedOrder.id}
+                                            disabled={
+                                                busyOrderId === selectedOrder.id
+                                            }
                                             onClick={() =>
-                                                handleQuickOrderStatus(selectedOrder, 'rejected', orderAdminNote)
+                                                handleQuickOrderStatus(
+                                                    selectedOrder,
+                                                    'rejected',
+                                                    orderAdminNote,
+                                                )
                                             }
                                         >
                                             <XCircle className="size-4" />
@@ -1216,7 +1526,10 @@ export default function Dashboard({
                 </Dialog>
 
                 {/* Inquiry Quick-View Modal */}
-                <Dialog open={selectedInquiry !== null} onOpenChange={(open) => !open && setSelectedInquiry(null)}>
+                <Dialog
+                    open={selectedInquiry !== null}
+                    onOpenChange={(open) => !open && setSelectedInquiry(null)}
+                >
                     <DialogContent className="sm:max-w-lg">
                         {selectedInquiry && (
                             <>
@@ -1225,9 +1538,11 @@ export default function Dashboard({
                                         {selectedInquiry.name}
                                     </DialogTitle>
                                     <DialogDescription>
-                                        {selectedInquiry.company || 'Klien Korporat'} •{' '}
-                                        {selectedInquiry.estimated_quantity} •{' '}
-                                        {selectedInquiry.budget_per_package || 'Budget Custom'}
+                                        {selectedInquiry.company ||
+                                            'Klien Korporat'}{' '}
+                                        • {selectedInquiry.estimated_quantity} •{' '}
+                                        {selectedInquiry.budget_per_package ||
+                                            'Budget Custom'}
                                     </DialogDescription>
                                 </DialogHeader>
 
@@ -1246,29 +1561,38 @@ export default function Dashboard({
                                         {selectedInquiry.needed_date && (
                                             <span className="inline-flex items-center gap-1.5">
                                                 <Calendar className="size-3.5 text-[#A88B54]" />
-                                                Target: {new Date(selectedInquiry.needed_date).toLocaleDateString('id-ID')}
+                                                Target:{' '}
+                                                {new Date(
+                                                    selectedInquiry.needed_date,
+                                                ).toLocaleDateString('id-ID')}
                                             </span>
                                         )}
                                     </div>
                                     <p className="inline-flex items-center gap-1.5 font-medium text-[#725C30] dark:text-[#C5AA74]">
                                         <Wallet className="size-3.5 text-[#A88B54]" />
-                                        {formatPaymentMethodLabel(selectedInquiry.payment_method ?? 'invoice_termin')}
+                                        {formatPaymentMethodLabel(
+                                            selectedInquiry.payment_method ??
+                                                'invoice_termin',
+                                        )}
                                     </p>
                                     {selectedInquiry.notes && (
-                                        <div className="rounded-lg bg-secondary/70 p-3 text-sm text-foreground whitespace-pre-line">
+                                        <div className="rounded-lg bg-secondary/70 p-3 text-sm whitespace-pre-line text-foreground">
                                             {selectedInquiry.notes}
                                         </div>
                                     )}
                                 </div>
 
                                 <DialogFooter>
-                                    <Button variant="outline" onClick={() => setSelectedInquiry(null)}>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setSelectedInquiry(null)}
+                                    >
                                         Tutup
                                     </Button>
                                     <Button asChild>
                                         <a
                                             href={`https://wa.me/${selectedInquiry.whatsapp_number.replace(/[^0-9]/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(
-                                                `Halo ${selectedInquiry.name}${selectedInquiry.company ? ` dari ${selectedInquiry.company}` : ''}, kami dari tim corporate GALUH & CO. menindaklanjuti permintaan penawaran (${selectedInquiry.estimated_quantity}).`
+                                                `Halo ${selectedInquiry.name}${selectedInquiry.company ? ` dari ${selectedInquiry.company}` : ''}, kami dari tim corporate GALUH & CO. menindaklanjuti permintaan penawaran (${selectedInquiry.estimated_quantity}).`,
                                             )}`}
                                             target="_blank"
                                             rel="noopener noreferrer"

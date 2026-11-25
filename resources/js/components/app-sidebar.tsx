@@ -1,5 +1,15 @@
-import { Link } from '@inertiajs/react';
-import { ExternalLink, Inbox, LayoutGrid, MessageSquareQuote, Package, Percent, ShoppingBag, Sparkles, Truck } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    ExternalLink,
+    Inbox,
+    LayoutGrid,
+    MessageSquareQuote,
+    Package,
+    Percent,
+    ShoppingBag,
+    Sparkles,
+    Truck,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -21,7 +31,8 @@ import { index as productsIndex } from '@/routes/admin/products';
 import { index as promosIndex } from '@/routes/admin/promos';
 import { index as shipmentsIndex } from '@/routes/admin/shipments';
 import { index as testimonialsIndex } from '@/routes/admin/testimonials';
-import type { NavItem } from '@/types';
+import { mine as ordersMine } from '@/routes/orders';
+import type { NavItem, User } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
@@ -66,6 +77,19 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+const customerNavItems: NavItem[] = [
+    {
+        title: 'Pesanan Saya',
+        href: ordersMine(),
+        icon: ShoppingBag,
+    },
+    {
+        title: 'Beranda Katalog',
+        href: home(),
+        icon: ExternalLink,
+    },
+];
+
 const footerNavItems: NavItem[] = [
     {
         title: 'Lihat Landing Page',
@@ -75,13 +99,20 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<{ auth?: { user?: User | null } }>().props;
+    const isAdmin = auth?.user?.role === 'admin';
+    const navItems = isAdmin ? mainNavItems : customerNavItems;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link
+                                href={isAdmin ? dashboard() : home()}
+                                prefetch
+                            >
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -90,7 +121,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>

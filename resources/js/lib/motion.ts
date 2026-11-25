@@ -108,7 +108,10 @@ export const staggerContainer: Variants = {
 /**
  * Custom stagger container helper
  */
-export const createStaggerContainer = (stagger = 0.08, delay = 0): Variants => ({
+export const createStaggerContainer = (
+    stagger = 0.08,
+    delay = 0,
+): Variants => ({
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,

@@ -67,50 +67,61 @@ export const HowToOrderSection: React.FC = () => {
         <section
             id="cara-pesan"
             aria-label="Cara Pemesanan"
-            className="py-20 md:py-28 bg-[#F2EBDC] relative overflow-hidden"
+            className="relative overflow-hidden bg-[#F2EBDC] py-20 md:py-28"
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <m.div
-                    className="text-center max-w-2xl mx-auto mb-16"
+                    className="mx-auto mb-16 max-w-2xl text-center"
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold mb-3">
+                    <p className="mb-3 text-xs font-semibold tracking-[0.25em] text-[#725C30] uppercase">
                         Alur Pemesanan
                     </p>
-                    <h2 className="font-serif text-3xl sm:text-4xl text-[#16233B] font-bold tracking-tight mb-4">
+                    <h2 className="mb-4 font-serif text-3xl font-bold tracking-tight text-[#16233B] sm:text-4xl">
                         Langkah Mudah Menghadirkan Kebahagiaan
                     </h2>
-                    <div className="w-12 h-0.5 bg-[#A88B54] mx-auto mb-5" />
-                    <p className="text-[#6E675D] text-base">
-                        Proses pemesanan yang terstruktur, transparan, dan terarah dari awal konsultasi hingga paket
-                        sampai di tangan penerima.
+                    <div className="mx-auto mb-5 h-0.5 w-12 bg-[#A88B54]" />
+                    <p className="text-base text-[#6E675D]">
+                        Proses pemesanan yang terstruktur, transparan, dan
+                        terarah dari awal konsultasi hingga paket sampai di
+                        tangan penerima.
                     </p>
                 </m.div>
 
                 <div ref={stepperRef}>
                     {/* Desktop Horizontal Connected Pipe Stepper */}
-                    <div className="hidden lg:block relative">
+                    <div className="relative hidden lg:block">
                         {/* 3 Pipe Segments Connecting Centers of 4 Columns (12.5% to 87.5%) */}
                         <div
                             aria-hidden="true"
-                            className="absolute top-10 left-[12.5%] right-[12.5%] -translate-y-1/2 grid grid-cols-3 z-0"
+                            className="absolute top-10 right-[12.5%] left-[12.5%] z-0 grid -translate-y-1/2 grid-cols-3"
                         >
                             {[0, 1, 2].map((segIdx) => {
                                 const isFlowingOrFilled = phase >= segIdx + 1;
                                 return (
                                     <div
                                         key={segIdx}
-                                        className="h-2.5 bg-[#D8CEBA] border-y border-[#CFC4AE] overflow-hidden relative"
+                                        className="relative h-2.5 overflow-hidden border-y border-[#CFC4AE] bg-[#D8CEBA]"
                                     >
                                         <m.div
-                                            initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
-                                            animate={{ scaleX: isFlowingOrFilled ? 1 : 0 }}
+                                            initial={{
+                                                scaleX: prefersReducedMotion
+                                                    ? 1
+                                                    : 0,
+                                            }}
+                                            animate={{
+                                                scaleX: isFlowingOrFilled
+                                                    ? 1
+                                                    : 0,
+                                            }}
                                             transition={{
-                                                duration: isFlowingOrFilled ? 1.0 : 0.25,
+                                                duration: isFlowingOrFilled
+                                                    ? 1.0
+                                                    : 0.25,
                                                 ease: [0.37, 0, 0.63, 1],
                                             }}
                                             style={{ originX: 0 }}
@@ -122,36 +133,47 @@ export const HowToOrderSection: React.FC = () => {
                         </div>
 
                         {/* 4 Step Nodes + Text */}
-                        <ol className="grid grid-cols-4 gap-8 relative z-10">
+                        <ol className="relative z-10 grid grid-cols-4 gap-8">
                             {steps.map((step, idx) => {
                                 const Icon = step.icon;
                                 const isCompleted = phase >= idx + 1;
 
                                 return (
-                                    <li key={step.number} className="flex flex-col items-center text-center">
+                                    <li
+                                        key={step.number}
+                                        className="flex flex-col items-center text-center"
+                                    >
                                         {/* Outer Ivory Mask Ring so the pipe connects seamlessly into the circle */}
-                                        <div className="relative mb-6 p-1.5 rounded-full bg-[#F2EBDC]">
+                                        <div className="relative mb-6 rounded-full bg-[#F2EBDC] p-1.5">
                                             <m.div
                                                 animate={
-                                                    isCompleted && !prefersReducedMotion
-                                                        ? { scale: [1, 1.07, 1] }
+                                                    isCompleted &&
+                                                    !prefersReducedMotion
+                                                        ? {
+                                                              scale: [
+                                                                  1, 1.07, 1,
+                                                              ],
+                                                          }
                                                         : { scale: 1 }
                                                 }
-                                                transition={{ duration: 0.35, ease: 'easeOut' }}
-                                                className={`w-17 h-17 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
+                                                transition={{
+                                                    duration: 0.35,
+                                                    ease: 'easeOut',
+                                                }}
+                                                className={`flex h-17 w-17 items-center justify-center rounded-full border-2 transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#16233B] border-[#A88B54] text-[#C5AA74] shadow-[0_10px_25px_-6px_rgba(22,35,59,0.45)]'
-                                                        : 'bg-[#EAE1CE] border-[#D8CEBA] text-[#6E675D]'
+                                                        ? 'border-[#A88B54] bg-[#16233B] text-[#C5AA74] shadow-[0_10px_25px_-6px_rgba(22,35,59,0.45)]'
+                                                        : 'border-[#D8CEBA] bg-[#EAE1CE] text-[#6E675D]'
                                                 }`}
                                             >
-                                                <Icon className="w-7 h-7" />
+                                                <Icon className="h-7 w-7" />
                                             </m.div>
 
                                             <span
-                                                className={`absolute top-0 right-0 w-7 h-7 rounded-full text-xs font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
+                                                className={`absolute top-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border font-serif text-xs font-bold transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#A88B54] text-[#0B1322] border-[#F2EBDC]'
-                                                        : 'bg-[#D8CEBA] text-[#6E675D] border-[#F2EBDC]'
+                                                        ? 'border-[#F2EBDC] bg-[#A88B54] text-[#0B1322]'
+                                                        : 'border-[#F2EBDC] bg-[#D8CEBA] text-[#6E675D]'
                                                 }`}
                                             >
                                                 {step.number}
@@ -159,14 +181,16 @@ export const HowToOrderSection: React.FC = () => {
                                         </div>
 
                                         <h3
-                                            className={`font-serif text-lg font-bold mb-2.5 transition-colors duration-300 ${
-                                                isCompleted ? 'text-[#16233B]' : 'text-[#6E675D]'
+                                            className={`mb-2.5 font-serif text-lg font-bold transition-colors duration-300 ${
+                                                isCompleted
+                                                    ? 'text-[#16233B]'
+                                                    : 'text-[#6E675D]'
                                             }`}
                                         >
                                             {step.title}
                                         </h3>
 
-                                        <p className="text-sm text-[#6E675D] leading-relaxed px-2">
+                                        <p className="px-2 text-sm leading-relaxed text-[#6E675D]">
                                             {step.description}
                                         </p>
                                     </li>
@@ -176,7 +200,7 @@ export const HowToOrderSection: React.FC = () => {
                     </div>
 
                     {/* Mobile & Tablet Vertical Connected Pipe Stepper */}
-                    <ol className="lg:hidden flex flex-col max-w-xl mx-auto">
+                    <ol className="mx-auto flex max-w-xl flex-col lg:hidden">
                         {steps.map((step, idx) => {
                             const Icon = step.icon;
                             const isCompleted = phase >= idx + 1;
@@ -184,31 +208,42 @@ export const HowToOrderSection: React.FC = () => {
                             const isLast = idx === steps.length - 1;
 
                             return (
-                                <li key={step.number} className="flex items-stretch gap-5">
+                                <li
+                                    key={step.number}
+                                    className="flex items-stretch gap-5"
+                                >
                                     {/* Left Column: Icon Circle + Vertical Flowing Pipe */}
-                                    <div className="flex flex-col items-center shrink-0">
-                                        <div className="relative z-10 p-1 rounded-full bg-[#F2EBDC]">
+                                    <div className="flex shrink-0 flex-col items-center">
+                                        <div className="relative z-10 rounded-full bg-[#F2EBDC] p-1">
                                             <m.div
                                                 animate={
-                                                    isCompleted && !prefersReducedMotion
-                                                        ? { scale: [1, 1.07, 1] }
+                                                    isCompleted &&
+                                                    !prefersReducedMotion
+                                                        ? {
+                                                              scale: [
+                                                                  1, 1.07, 1,
+                                                              ],
+                                                          }
                                                         : { scale: 1 }
                                                 }
-                                                transition={{ duration: 0.35, ease: 'easeOut' }}
-                                                className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${
+                                                transition={{
+                                                    duration: 0.35,
+                                                    ease: 'easeOut',
+                                                }}
+                                                className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#16233B] border-[#A88B54] text-[#C5AA74] shadow-[0_8px_20px_-6px_rgba(22,35,59,0.4)]'
-                                                        : 'bg-[#EAE1CE] border-[#D8CEBA] text-[#6E675D]'
+                                                        ? 'border-[#A88B54] bg-[#16233B] text-[#C5AA74] shadow-[0_8px_20px_-6px_rgba(22,35,59,0.4)]'
+                                                        : 'border-[#D8CEBA] bg-[#EAE1CE] text-[#6E675D]'
                                                 }`}
                                             >
-                                                <Icon className="w-6 h-6" />
+                                                <Icon className="h-6 w-6" />
                                             </m.div>
 
                                             <span
-                                                className={`absolute -top-0.5 -right-0.5 w-6 h-6 rounded-full text-[11px] font-serif font-bold flex items-center justify-center border transition-colors duration-300 ${
+                                                className={`absolute -top-0.5 -right-0.5 flex h-6 w-6 items-center justify-center rounded-full border font-serif text-[11px] font-bold transition-colors duration-300 ${
                                                     isCompleted
-                                                        ? 'bg-[#A88B54] text-[#0B1322] border-[#F2EBDC]'
-                                                        : 'bg-[#D8CEBA] text-[#6E675D] border-[#F2EBDC]'
+                                                        ? 'border-[#F2EBDC] bg-[#A88B54] text-[#0B1322]'
+                                                        : 'border-[#F2EBDC] bg-[#D8CEBA] text-[#6E675D]'
                                                 }`}
                                             >
                                                 {step.number}
@@ -218,32 +253,50 @@ export const HowToOrderSection: React.FC = () => {
                                         {!isLast && (
                                             <div
                                                 aria-hidden="true"
-                                                className="w-2 flex-1 min-h-10 -my-1 bg-[#D8CEBA] border-x border-[#CFC4AE] overflow-hidden relative z-0"
+                                                className="relative z-0 -my-1 min-h-10 w-2 flex-1 overflow-hidden border-x border-[#CFC4AE] bg-[#D8CEBA]"
                                             >
                                                 <m.div
-                                                    initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
-                                                    animate={{ scaleY: isPipeFilled ? 1 : 0 }}
+                                                    initial={{
+                                                        scaleY: prefersReducedMotion
+                                                            ? 1
+                                                            : 0,
+                                                    }}
+                                                    animate={{
+                                                        scaleY: isPipeFilled
+                                                            ? 1
+                                                            : 0,
+                                                    }}
                                                     transition={{
-                                                        duration: isPipeFilled ? 1.0 : 0.25,
-                                                        ease: [0.37, 0, 0.63, 1],
+                                                        duration: isPipeFilled
+                                                            ? 1.0
+                                                            : 0.25,
+                                                        ease: [
+                                                            0.37, 0, 0.63, 1,
+                                                        ],
                                                     }}
                                                     style={{ originY: 0 }}
-                                                    className="w-full h-full bg-gradient-to-b from-[#16233B] via-[#203252] to-[#A88B54] will-change-transform"
+                                                    className="h-full w-full bg-gradient-to-b from-[#16233B] via-[#203252] to-[#A88B54] will-change-transform"
                                                 />
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Right Column: Step Title & Description */}
-                                    <div className={isLast ? 'pt-2 pb-2' : 'pt-2 pb-10'}>
+                                    <div
+                                        className={
+                                            isLast ? 'pt-2 pb-2' : 'pt-2 pb-10'
+                                        }
+                                    >
                                         <h3
-                                            className={`font-serif text-lg font-bold mb-1.5 transition-colors duration-300 ${
-                                                isCompleted ? 'text-[#16233B]' : 'text-[#6E675D]'
+                                            className={`mb-1.5 font-serif text-lg font-bold transition-colors duration-300 ${
+                                                isCompleted
+                                                    ? 'text-[#16233B]'
+                                                    : 'text-[#6E675D]'
                                             }`}
                                         >
                                             {step.title}
                                         </h3>
-                                        <p className="text-sm text-[#6E675D] leading-relaxed">
+                                        <p className="text-sm leading-relaxed text-[#6E675D]">
                                             {step.description}
                                         </p>
                                     </div>

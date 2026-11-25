@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Eye, EyeOff, ImagePlus, Pencil, Plus, Search, Trash2, Upload } from 'lucide-react';
+import {
+    Eye,
+    EyeOff,
+    ImagePlus,
+    Pencil,
+    Plus,
+    Search,
+    Trash2,
+    Upload,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import InputError from '@/components/input-error';
@@ -68,7 +77,10 @@ const formatRupiah = (amount: number) =>
         maximumFractionDigits: 0,
     }).format(amount);
 
-export default function AdminProducts({ products, categories }: ProductsPageProps) {
+export default function AdminProducts({
+    products,
+    categories,
+}: ProductsPageProps) {
     const { flash } = usePage<FlashProps>().props;
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('Semua');
@@ -79,18 +91,26 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
     const [contentsText, setContentsText] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    const { data, setData, post, processing, errors, reset, clearErrors, transform } =
-        useForm<ProductFormState>({
-            name: '',
-            category: categories[0] ?? 'Lebaran',
-            short_description: '',
-            contents: [],
-            price_from: '500000',
-            sort_order: '0',
-            is_active: true,
-            image_url: '',
-            image_file: null,
-        });
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+        transform,
+    } = useForm<ProductFormState>({
+        name: '',
+        category: categories[0] ?? 'Lebaran',
+        short_description: '',
+        contents: [],
+        price_from: '500000',
+        sort_order: '0',
+        is_active: true,
+        image_url: '',
+        image_file: null,
+    });
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -172,7 +192,11 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
     };
 
     const handleToggleVisibility = (product: Product) => {
-        router.patch(toggleProduct.url(product.id), {}, { preserveScroll: true });
+        router.patch(
+            toggleProduct.url(product.id),
+            {},
+            { preserveScroll: true },
+        );
     };
 
     const handleConfirmDelete = () => {
@@ -195,7 +219,9 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
         const matchesSearch =
             searchQuery.trim() === '' ||
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.short_description.toLowerCase().includes(searchQuery.toLowerCase());
+            item.short_description
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
         return matchesCat && matchesSearch;
     });
 
@@ -207,7 +233,10 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                 <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span
+                                className="h-px w-6 bg-[#A88B54]"
+                                aria-hidden="true"
+                            />
                             <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
                                 Koleksi Hampers
                             </span>
@@ -216,7 +245,8 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                             Kelola Katalog &amp; Foto Produk
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Unggah atau ganti foto hampers, ubah harga, daftar isi paket, dan visibilitas di landing page.
+                            Unggah atau ganti foto hampers, ubah harga, daftar
+                            isi paket, dan visibilitas di landing page.
                         </p>
                     </div>
                     <Button onClick={openCreateDialog}>
@@ -233,7 +263,11 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                 key={cat}
                                 type="button"
                                 size="sm"
-                                variant={categoryFilter === cat ? 'default' : 'outline'}
+                                variant={
+                                    categoryFilter === cat
+                                        ? 'default'
+                                        : 'outline'
+                                }
                                 onClick={() => setCategoryFilter(cat)}
                             >
                                 {cat}
@@ -262,7 +296,10 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                 ) : (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredProducts.map((product) => (
-                            <Card key={product.id} className="flex flex-col overflow-hidden hover:border-[#A88B54]/70">
+                            <Card
+                                key={product.id}
+                                className="flex flex-col overflow-hidden hover:border-[#A88B54]/70"
+                            >
                                 <div className="relative aspect-[4/3] bg-secondary">
                                     <img
                                         src={product.image}
@@ -271,8 +308,16 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                     />
                                     <div className="absolute top-2.5 left-2.5 flex gap-1.5">
                                         <Badge>{product.category}</Badge>
-                                        <Badge variant={product.is_active ? 'secondary' : 'destructive'}>
-                                            {product.is_active ? 'Aktif' : 'Disembunyikan'}
+                                        <Badge
+                                            variant={
+                                                product.is_active
+                                                    ? 'secondary'
+                                                    : 'destructive'
+                                            }
+                                        >
+                                            {product.is_active
+                                                ? 'Aktif'
+                                                : 'Disembunyikan'}
                                         </Badge>
                                     </div>
                                     <Badge
@@ -286,7 +331,7 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                 <CardContent className="flex flex-1 flex-col justify-between gap-4 p-5">
                                     <div>
                                         <div className="flex items-start justify-between gap-2">
-                                            <h2 className="font-serif text-lg font-semibold leading-snug text-foreground">
+                                            <h2 className="font-serif text-lg leading-snug font-semibold text-foreground">
                                                 {product.name}
                                             </h2>
                                         </div>
@@ -304,7 +349,9 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                             size="sm"
                                             variant="outline"
                                             className="flex-1"
-                                            onClick={() => openEditDialog(product)}
+                                            onClick={() =>
+                                                openEditDialog(product)
+                                            }
                                         >
                                             <Pencil className="size-3.5" />
                                             Edit / Foto
@@ -313,8 +360,14 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                             type="button"
                                             size="icon"
                                             variant="outline"
-                                            title={product.is_active ? 'Sembunyikan' : 'Tampilkan'}
-                                            onClick={() => handleToggleVisibility(product)}
+                                            title={
+                                                product.is_active
+                                                    ? 'Sembunyikan'
+                                                    : 'Tampilkan'
+                                            }
+                                            onClick={() =>
+                                                handleToggleVisibility(product)
+                                            }
                                         >
                                             {product.is_active ? (
                                                 <Eye className="size-4" />
@@ -328,7 +381,9 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                             variant="outline"
                                             title="Hapus"
                                             className="hover:border-destructive/60 hover:bg-destructive/10"
-                                            onClick={() => setPendingDelete(product)}
+                                            onClick={() =>
+                                                setPendingDelete(product)
+                                            }
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
@@ -345,18 +400,21 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                 <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
                     <DialogHeader>
                         <DialogTitle>
-                            {editingProduct ? `Edit "${editingProduct.name}"` : 'Tambah Produk Hampers Baru'}
+                            {editingProduct
+                                ? `Edit "${editingProduct.name}"`
+                                : 'Tambah Produk Hampers Baru'}
                         </DialogTitle>
                         <DialogDescription>
-                            Unggah foto langsung dari perangkat Anda atau tempel URL gambar. Perubahan langsung tampil di
-                            katalog utama.
+                            Unggah foto langsung dari perangkat Anda atau tempel
+                            URL gambar. Perubahan langsung tampil di katalog
+                            utama.
                         </DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Photo Preview & Upload */}
                         <div className="grid gap-3 rounded-lg border bg-muted/30 p-3 sm:grid-cols-[140px_1fr]">
-                            <div className="aspect-[4/3] overflow-hidden rounded-md border bg-muted flex items-center justify-center">
+                            <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-md border bg-muted">
                                 {previewUrl ? (
                                     <img
                                         src={previewUrl}
@@ -369,9 +427,13 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                             </div>
                             <div className="space-y-2.5">
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="image_file" className="flex items-center gap-1.5">
+                                    <Label
+                                        htmlFor="image_file"
+                                        className="flex items-center gap-1.5"
+                                    >
                                         <Upload className="size-3.5" />
-                                        Upload Foto Baru (JPG/PNG/WebP, maks 4MB)
+                                        Upload Foto Baru (JPG/PNG/WebP, maks
+                                        4MB)
                                     </Label>
                                     <Input
                                         id="image_file"
@@ -383,14 +445,21 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                 </div>
 
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="image_url">Atau URL Foto Gambar</Label>
+                                    <Label htmlFor="image_url">
+                                        Atau URL Foto Gambar
+                                    </Label>
                                     <Input
                                         id="image_url"
                                         value={data.image_url}
                                         onChange={(e) => {
-                                            setData('image_url', e.target.value);
+                                            setData(
+                                                'image_url',
+                                                e.target.value,
+                                            );
                                             if (!data.image_file) {
-                                                setPreviewUrl(e.target.value || null);
+                                                setPreviewUrl(
+                                                    e.target.value || null,
+                                                );
                                             }
                                         }}
                                         placeholder="https://... atau /images/..."
@@ -406,7 +475,9 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                 <Input
                                     id="name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     placeholder="The Royal Fitr"
                                     required
                                 />
@@ -417,7 +488,9 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                 <Label htmlFor="category">Kategori</Label>
                                 <Select
                                     value={data.category}
-                                    onValueChange={(val) => setData('category', val)}
+                                    onValueChange={(val) =>
+                                        setData('category', val)
+                                    }
                                 >
                                     <SelectTrigger id="category">
                                         <SelectValue placeholder="Pilih kategori" />
@@ -436,54 +509,72 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
 
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="grid gap-1.5">
-                                <Label htmlFor="price_from">Harga Mulai (IDR)</Label>
+                                <Label htmlFor="price_from">
+                                    Harga Mulai (IDR)
+                                </Label>
                                 <Input
                                     id="price_from"
                                     type="number"
                                     min={0}
                                     value={data.price_from}
-                                    onChange={(e) => setData('price_from', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('price_from', e.target.value)
+                                    }
                                     required
                                 />
                                 <InputError message={errors.price_from} />
                             </div>
 
                             <div className="grid gap-1.5">
-                                <Label htmlFor="sort_order">Urutan Tampil</Label>
+                                <Label htmlFor="sort_order">
+                                    Urutan Tampil
+                                </Label>
                                 <Input
                                     id="sort_order"
                                     type="number"
                                     min={0}
                                     value={data.sort_order}
-                                    onChange={(e) => setData('sort_order', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('sort_order', e.target.value)
+                                    }
                                 />
                                 <InputError message={errors.sort_order} />
                             </div>
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="short_description">Deskripsi Singkat</Label>
+                            <Label htmlFor="short_description">
+                                Deskripsi Singkat
+                            </Label>
                             <textarea
                                 id="short_description"
                                 rows={2}
                                 value={data.short_description}
-                                onChange={(e) => setData('short_description', e.target.value)}
+                                onChange={(e) =>
+                                    setData('short_description', e.target.value)
+                                }
                                 required
-                                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+                                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground shadow-xs placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                             />
                             <InputError message={errors.short_description} />
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="contents">Daftar Isi Paket (1 item per baris)</Label>
+                            <Label htmlFor="contents">
+                                Daftar Isi Paket (1 item per baris)
+                            </Label>
                             <textarea
                                 id="contents"
                                 rows={4}
                                 value={contentsText}
-                                onChange={(e) => setContentsText(e.target.value)}
-                                placeholder={'Nastar Gold Leaf Wysman\nKastengel Keju Edam Tua\nKartu Ucapan Kaligrafi'}
+                                onChange={(e) =>
+                                    setContentsText(e.target.value)
+                                }
+                                placeholder={
+                                    'Nastar Gold Leaf Wysman\nKastengel Keju Edam Tua\nKartu Ucapan Kaligrafi'
+                                }
                                 required
-                                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+                                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground shadow-xs placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                             />
                             <InputError message={errors.contents} />
                         </div>
@@ -492,9 +583,14 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                             <Checkbox
                                 id="is_active"
                                 checked={data.is_active}
-                                onCheckedChange={(checked) => setData('is_active', checked === true)}
+                                onCheckedChange={(checked) =>
+                                    setData('is_active', checked === true)
+                                }
                             />
-                            <Label htmlFor="is_active" className="cursor-pointer font-normal">
+                            <Label
+                                htmlFor="is_active"
+                                className="cursor-pointer font-normal"
+                            >
                                 Tampilkan langsung di katalog publik
                             </Label>
                         </div>
@@ -508,7 +604,11 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                 Batal
                             </Button>
                             <Button type="submit" disabled={processing}>
-                                {processing ? 'Menyimpan...' : editingProduct ? 'Simpan Perubahan' : 'Tambah Produk'}
+                                {processing
+                                    ? 'Menyimpan...'
+                                    : editingProduct
+                                      ? 'Simpan Perubahan'
+                                      : 'Tambah Produk'}
                             </Button>
                         </DialogFooter>
                     </form>

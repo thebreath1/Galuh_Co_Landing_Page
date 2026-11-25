@@ -18,6 +18,7 @@ class LandingPageController extends Controller
     {
         $activePromos = Promo::query()
             ->currentlyActive()
+            ->with('product:id,name')
             ->orderByDesc('discount_percent')
             ->get();
 
@@ -33,6 +34,22 @@ class LandingPageController extends Controller
             })
             ->values();
 
+        $activePromoBanners = [];
+        foreach ($activePromos as $promo) {
+            /** @var Promo $promo */
+            $activePromoBanners[] = [
+                'id' => $promo->id,
+                'name' => $promo->name,
+                'description' => $promo->description,
+                'discount_percent' => $promo->discount_percent,
+                'scope' => $promo->scope,
+                'target_category' => $promo->target_category,
+                'product_name' => $promo->product?->name,
+                'starts_at' => $promo->starts_at->toIso8601String(),
+                'ends_at' => $promo->ends_at->toIso8601String(),
+            ];
+        }
+
         $testimonials = Testimonial::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
@@ -44,6 +61,7 @@ class LandingPageController extends Controller
 
         return Inertia::render('welcome', [
             'products' => $products,
+            'activePromos' => $activePromoBanners,
             'testimonials' => $testimonials,
             'whatsappNumber' => $whatsappNumber,
             'siteSettings' => $siteSettings,

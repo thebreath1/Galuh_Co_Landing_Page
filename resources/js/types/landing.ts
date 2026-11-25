@@ -165,8 +165,21 @@ export interface OrderRecord {
     } | null;
 }
 
+export interface ActivePromoBanner {
+    id: number;
+    name: string;
+    description: string | null;
+    discount_percent: number;
+    scope: PromoScope;
+    target_category: string | null;
+    product_name: string | null;
+    starts_at: string;
+    ends_at: string;
+}
+
 export interface LandingPageProps {
     products: Product[];
+    activePromos?: ActivePromoBanner[];
     testimonials?: TestimonialRecord[];
     whatsappNumber: string;
     siteSettings?: SiteSettings;

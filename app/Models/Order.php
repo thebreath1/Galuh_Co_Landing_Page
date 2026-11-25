@@ -11,8 +11,11 @@ class Order extends Model
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_APPROVED = 'approved';
+
     public const STATUS_REJECTED = 'rejected';
+
     public const STATUS_COMPLETED = 'completed';
 
     public const STATUSES = [
@@ -23,8 +26,11 @@ class Order extends Model
     ];
 
     public const STAGE_CURATING = 'curating';
+
     public const STAGE_PACKED = 'packed';
+
     public const STAGE_SHIPPED = 'shipped';
+
     public const STAGE_DELIVERED = 'delivered';
 
     public const FULFILLMENT_STAGES = [
@@ -44,6 +50,7 @@ class Order extends Model
 
     protected $fillable = [
         'order_code',
+        'user_id',
         'product_id',
         'product_name',
         'unit_price',
@@ -87,6 +94,12 @@ class Order extends Model
         'shipped_at' => 'datetime',
         'delivered_at' => 'datetime',
     ];
+
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function product(): BelongsTo
     {

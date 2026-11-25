@@ -17,10 +17,10 @@ interface RetroEasterEggDialogProps {
  * Easily swappable with an actual sprite/image via `avatarSrc`.
  */
 const PixelCharacterPlaceholder: React.FC<{ title: string }> = ({ title }) => (
-    <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-[#0B0D14] border-2 border-[#161925] shadow-[inset_0_0_0_2px_#7E84A3,0_2px_0_#161925] flex flex-col items-center justify-center relative overflow-hidden select-none">
+    <div className="relative flex h-20 w-20 shrink-0 flex-col items-center justify-center overflow-hidden border-2 border-[#161925] bg-[#0B0D14] shadow-[inset_0_0_0_2px_#7E84A3,0_2px_0_#161925] select-none sm:h-24 sm:w-24">
         <svg
             viewBox="0 0 16 16"
-            className="w-14 h-14 sm:w-16 sm:h-16"
+            className="h-14 w-14 sm:h-16 sm:w-16"
             shapeRendering="crispEdges"
             aria-hidden="true"
         >
@@ -46,14 +46,17 @@ const PixelCharacterPlaceholder: React.FC<{ title: string }> = ({ title }) => (
         </svg>
         <span
             title={`Placeholder karakter untuk ${title}`}
-            className="absolute bottom-0.5 inset-x-0 text-center font-mono text-[8px] font-bold tracking-widest text-[#9BA1BC]/85 uppercase leading-none"
+            className="absolute inset-x-0 bottom-0.5 text-center font-mono text-[8px] leading-none font-bold tracking-widest text-[#9BA1BC]/85 uppercase"
         >
             CHAR SLOT
         </span>
     </div>
 );
 
-export const RetroEasterEggDialog: React.FC<RetroEasterEggDialogProps> = ({ content, onClose }) => {
+export const RetroEasterEggDialog: React.FC<RetroEasterEggDialogProps> = ({
+    content,
+    onClose,
+}) => {
     const prefersReducedMotion = useReducedMotion();
     const okButtonRef = useRef<HTMLButtonElement>(null);
     const fullText = content ? content.lines.join('\n') : '';
@@ -122,40 +125,53 @@ export const RetroEasterEggDialog: React.FC<RetroEasterEggDialogProps> = ({ cont
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.18 }}
                     onClick={onClose}
-                    className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 bg-[#090A0F]/65 backdrop-blur-[2px]"
+                    className="fixed inset-0 z-50 flex items-end justify-center bg-[#090A0F]/65 p-4 backdrop-blur-[2px] sm:items-center sm:p-6"
                     role="dialog"
                     aria-modal="true"
                     aria-label={`Secret dialog: ${content.title}`}
                 >
                     <m.div
-                        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 18, scale: 0.96 }}
+                        initial={
+                            prefersReducedMotion
+                                ? { opacity: 1 }
+                                : { opacity: 0, y: 18, scale: 0.96 }
+                        }
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.97 }}
-                        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                        exit={
+                            prefersReducedMotion
+                                ? { opacity: 0 }
+                                : { opacity: 0, y: 12, scale: 0.97 }
+                        }
+                        transition={{
+                            duration: 0.22,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
                         onClick={(e) => {
                             e.stopPropagation();
                             handleBoxClick();
                         }}
-                        className="w-full max-w-2xl bg-[#434668] border-4 border-[#090A0F] shadow-[inset_0_4px_0_#A6ACC6,inset_0_-4px_0_#272941,inset_4px_0_0_#7F85A3,inset_-4px_0_0_#272941,0_16px_44px_rgba(0,0,0,0.6)] p-5 sm:p-7 select-none"
+                        className="w-full max-w-2xl border-4 border-[#090A0F] bg-[#434668] p-5 shadow-[inset_0_4px_0_#A6ACC6,inset_0_-4px_0_#272941,inset_4px_0_0_#7F85A3,inset_-4px_0_0_#272941,0_16px_44px_rgba(0,0,0,0.6)] select-none sm:p-7"
                     >
-                        <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+                        <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-6">
                             {/* Character Portrait Slot (Placeholder) */}
                             {content.avatarSrc ? (
                                 <img
                                     src={content.avatarSrc}
                                     alt={content.title}
-                                    className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 object-cover border-2 border-[#161925] shadow-[inset_0_0_0_2px_#7E84A3]"
+                                    className="h-20 w-20 shrink-0 border-2 border-[#161925] object-cover shadow-[inset_0_0_0_2px_#7E84A3] sm:h-24 sm:w-24"
                                 />
                             ) : (
-                                <PixelCharacterPlaceholder title={content.title} />
+                                <PixelCharacterPlaceholder
+                                    title={content.title}
+                                />
                             )}
 
                             {/* Dialog Text & OK Button */}
-                            <div className="flex-1 min-w-0 w-full flex flex-col justify-between">
-                                <p className="font-mono text-sm sm:text-base font-bold uppercase tracking-wider leading-relaxed text-[#F8FAFC] whitespace-pre-line [text-shadow:2px_2px_0_#090A0F] min-h-[5.5rem]">
+                            <div className="flex w-full min-w-0 flex-1 flex-col justify-between">
+                                <p className="min-h-[5.5rem] font-mono text-sm leading-relaxed font-bold tracking-wider whitespace-pre-line text-[#F8FAFC] uppercase [text-shadow:2px_2px_0_#090A0F] sm:text-base">
                                     {fullText.slice(0, visibleCount)}
                                     {isTyping && (
-                                        <span className="inline-block w-2 h-4 ml-1 align-middle bg-[#F8FAFC] animate-pulse" />
+                                        <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-[#F8FAFC] align-middle" />
                                     )}
                                 </p>
 
@@ -167,11 +183,11 @@ export const RetroEasterEggDialog: React.FC<RetroEasterEggDialogProps> = ({ cont
                                             e.stopPropagation();
                                             onClose();
                                         }}
-                                        className="group inline-flex items-center gap-2.5 font-mono text-sm sm:text-base font-bold uppercase tracking-widest text-[#F8FAFC] hover:text-[#C5AA74] focus:outline-none focus-visible:text-[#C5AA74] [text-shadow:2px_2px_0_#090A0F] cursor-pointer transition-colors"
+                                        className="group inline-flex cursor-pointer items-center gap-2.5 font-mono text-sm font-bold tracking-widest text-[#F8FAFC] uppercase transition-colors [text-shadow:2px_2px_0_#090A0F] hover:text-[#C5AA74] focus:outline-none focus-visible:text-[#C5AA74] sm:text-base"
                                     >
                                         <span
                                             aria-hidden="true"
-                                            className="inline-block w-2.5 h-2.5 bg-[#F8FAFC] group-hover:bg-[#C5AA74] group-focus-visible:bg-[#C5AA74] shadow-[2px_2px_0_#090A0F]"
+                                            className="inline-block h-2.5 w-2.5 bg-[#F8FAFC] shadow-[2px_2px_0_#090A0F] group-hover:bg-[#C5AA74] group-focus-visible:bg-[#C5AA74]"
                                         />
                                         <span>OK</span>
                                     </button>

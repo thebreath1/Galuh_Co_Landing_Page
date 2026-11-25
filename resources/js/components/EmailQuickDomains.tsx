@@ -42,10 +42,10 @@ export const EmailQuickDomains: React.FC<EmailQuickDomainsProps> = ({
                         onClick={() => handleDomainClick(domain)}
                         className={
                             buttonClassName ??
-                            `px-2 py-0.5 rounded-full text-[10px] font-medium border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] ${
+                            `cursor-pointer rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] ${
                                 isActive
-                                    ? 'bg-[#16233B] text-[#F2EBDC] border-[#16233B]'
-                                    : 'bg-[#FFFFFF] text-[#16233B] border-[#D8CEBA] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60'
+                                    ? 'border-[#16233B] bg-[#16233B] text-[#F2EBDC]'
+                                    : 'border-[#D8CEBA] bg-[#FFFFFF] text-[#16233B] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60'
                             }`
                         }
                     >

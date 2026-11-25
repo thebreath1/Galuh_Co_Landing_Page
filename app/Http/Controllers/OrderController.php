@@ -35,6 +35,7 @@ class OrderController extends Controller
 
         $order = Order::query()->create([
             'order_code' => $this->generateOrderCode(),
+            'user_id' => $request->user()?->id,
             'product_id' => $product->id,
             'product_name' => $product->name,
             'unit_price' => $unitPrice,
@@ -46,7 +47,7 @@ class OrderController extends Controller
             'discount_amount' => $discountAmount,
             'customer_name' => $validated['customer_name'],
             'customer_whatsapp' => $validated['customer_whatsapp'],
-            'customer_email' => ($validated['customer_email'] ?? null) ?: null,
+            'customer_email' => ($validated['customer_email'] ?? null) ?: $request->user()?->email,
             'delivery_date' => ($validated['delivery_date'] ?? null) ?: null,
             'shipping_address' => $validated['shipping_address'],
             'greeting_card_note' => ($validated['greeting_card_note'] ?? null) ?: null,
@@ -63,7 +64,7 @@ class OrderController extends Controller
     private function generateOrderCode(): string
     {
         do {
-            $code = 'GC-' . now()->format('ymd') . '-' . Str::upper(Str::random(4));
+            $code = 'GC-'.now()->format('ymd').'-'.Str::upper(Str::random(4));
         } while (Order::query()->where('order_code', $code)->exists());
 
         return $code;

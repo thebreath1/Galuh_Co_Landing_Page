@@ -13,7 +13,10 @@ export function AppSidebarHeader({
         <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/80 bg-card/80 px-6 backdrop-blur-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:rounded-t-xl md:px-5">
             <div className="flex items-center gap-2.5">
                 <SidebarTrigger className="-ml-1 text-foreground hover:bg-secondary hover:text-foreground" />
-                <span className="hidden h-4 w-px bg-[#A88B54]/40 sm:inline-block" aria-hidden="true" />
+                <span
+                    className="hidden h-4 w-px bg-[#A88B54]/40 sm:inline-block"
+                    aria-hidden="true"
+                />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
 

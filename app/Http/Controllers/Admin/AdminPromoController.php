@@ -127,13 +127,13 @@ class AdminPromoController extends Controller
             'scope' => ['required', 'string', Rule::in(Promo::SCOPES)],
             'target_category' => [
                 'nullable',
-                'required_if:scope,' . Promo::SCOPE_CATEGORY,
+                'required_if:scope,'.Promo::SCOPE_CATEGORY,
                 'string',
                 Rule::in(self::CATEGORIES),
             ],
             'product_id' => [
                 'nullable',
-                'required_if:scope,' . Promo::SCOPE_PRODUCT,
+                'required_if:scope,'.Promo::SCOPE_PRODUCT,
                 'integer',
                 'exists:products,id',
             ],

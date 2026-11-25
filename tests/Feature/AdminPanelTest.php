@@ -19,8 +19,22 @@ test('guests cannot access admin routes', function () {
     $this->get(route('admin.inquiries.index'))->assertRedirect(route('login'));
 });
 
+test('customers are forbidden from accessing admin routes', function () {
+    $customer = User::factory()->create();
+    $this->actingAs($customer);
+
+    $this->get(route('dashboard'))->assertForbidden();
+    $this->get(route('admin.orders.index'))->assertForbidden();
+    $this->get(route('admin.shipments.index'))->assertForbidden();
+    $this->get(route('admin.products.index'))->assertForbidden();
+    $this->get(route('admin.promos.index'))->assertForbidden();
+    $this->get(route('admin.content.index'))->assertForbidden();
+    $this->get(route('admin.testimonials.index'))->assertForbidden();
+    $this->get(route('admin.inquiries.index'))->assertForbidden();
+});
+
 test('authenticated admin can view all admin pages', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $this->get(route('dashboard'))->assertOk();
@@ -41,7 +55,7 @@ function fakePngUpload(string $filename): UploadedFile
 
 test('admin can create, update with uploaded image, toggle, and delete catalog product', function () {
     Storage::fake('public');
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $createResponse = $this->post(route('admin.products.store'), [
@@ -87,7 +101,7 @@ test('admin can create, update with uploaded image, toggle, and delete catalog p
 
 test('admin can update hero texts and images and reflect them on landing page', function () {
     Storage::fake('public');
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $payload = array_merge(SiteSetting::defaults(), [
@@ -113,7 +127,7 @@ test('admin can update hero texts and images and reflect them on landing page', 
 });
 
 test('admin can delete corporate inquiry', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $inquiry = Inquiry::query()->create([
@@ -131,7 +145,7 @@ test('admin can delete corporate inquiry', function () {
 });
 
 test('admin can create, update, toggle, and delete testimonials and reflect active ones on home', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $this->post(route('admin.testimonials.store'), [
@@ -180,6 +194,7 @@ test('admin can create, update, toggle, and delete testimonials and reflect acti
 });
 
 test('customer can submit manual order and admin can monitor, ACC, complete, and delete it', function () {
+    $customer = User::factory()->create();
     $product = Product::query()->create([
         'name' => 'The Royal Fitr Test',
         'slug' => 'the-royal-fitr-test',
@@ -192,7 +207,7 @@ test('customer can submit manual order and admin can monitor, ACC, complete, and
         'is_active' => true,
     ]);
 
-    $this->post(route('orders.store'), [
+    $this->actingAs($customer)->post(route('orders.store'), [
         'product_id' => $product->id,
         'customer_name' => 'Ibu Rina',
         'customer_whatsapp' => '081234567890',
@@ -205,11 +220,12 @@ test('customer can submit manual order and admin can monitor, ACC, complete, and
     ])->assertRedirect();
 
     $order = Order::query()->where('customer_name', 'Ibu Rina')->firstOrFail();
+    expect($order->user_id)->toBe($customer->id);
     expect($order->status)->toBe(Order::STATUS_PENDING);
     expect($order->total_price)->toBe(2550000);
     expect($order->payment_method)->toBe('qris');
 
-    $admin = User::factory()->create();
+    $admin = User::factory()->admin()->create();
     $this->actingAs($admin);
 
     $this->patch(route('admin.orders.updateStatus', $order), [
@@ -280,7 +296,7 @@ test('geocode endpoints return formatted indonesian street addresses and search 
 });
 
 test('admin can manage scheduled promos and active promo automatically discounts catalog and orders', function () {
-    $admin = User::factory()->create();
+    $admin = User::factory()->admin()->create();
     $this->actingAs($admin);
 
     $product = Product::query()->create([
@@ -321,9 +337,11 @@ test('admin can manage scheduled promos and active promo automatically discounts
 
     $activePromo = Promo::query()->where('name', 'Promo Lebaran 20%')->firstOrFail();
 
-    // Landing page reflects active promo price (1,000,000 -> 800,000)
+    // Landing page reflects active promo price (1,000,000 -> 800,000) and activePromos banner
     $this->get(route('home'))->assertOk()->assertInertia(fn ($page) => $page
         ->component('welcome')
+        ->has('activePromos', 1)
+        ->where('activePromos.0.name', 'Promo Lebaran 20%')
         ->where('products.0.active_promo.promo_name', 'Promo Lebaran 20%')
         ->where('products.0.active_promo.discount_percent', 20)
         ->where('products.0.active_promo.discounted_price', 800000)
@@ -346,12 +364,13 @@ test('admin can manage scheduled promos and active promo automatically discounts
     expect($order->discount_amount)->toBe(400000);
     expect($order->promo_name)->toBe('Promo Lebaran 20%');
 
-    // Toggle off -> landing price returns to normal (no active_promo)
+    // Toggle off -> landing price returns to normal (no active_promo and empty activePromos)
     $this->patch(route('admin.promos.toggle', $activePromo))->assertRedirect();
     expect($activePromo->fresh()->is_active)->toBeFalse();
 
     $this->get(route('home'))->assertInertia(fn ($page) => $page
         ->component('welcome')
+        ->has('activePromos', 0)
         ->where('products.0.active_promo', null)
     );
 
@@ -361,7 +380,7 @@ test('admin can manage scheduled promos and active promo automatically discounts
 });
 
 test('approved orders move out of inbox into shipments tracking where admin updates delivery stages', function () {
-    $admin = User::factory()->create();
+    $admin = User::factory()->admin()->create();
     $this->actingAs($admin);
 
     $product = Product::query()->create([
@@ -444,7 +463,7 @@ test('approved orders move out of inbox into shipments tracking where admin upda
 });
 
 test('promo iso timestamps preserve exact Asia/Jakarta wall-clock date and time', function () {
-    $admin = User::factory()->create();
+    $admin = User::factory()->admin()->create();
     $this->actingAs($admin);
 
     // 22:30 WIB on 25 Nov 2026 is 15:30Z

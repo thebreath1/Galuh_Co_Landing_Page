@@ -108,7 +108,8 @@ function getPromoLifecycle(promo: PromoRecord): {
         return {
             key: 'inactive',
             label: 'Nonaktif',
-            badgeClass: 'border-destructive/30 bg-destructive/15 text-destructive',
+            badgeClass:
+                'border-destructive/30 bg-destructive/15 text-destructive',
         };
     }
 
@@ -120,7 +121,8 @@ function getPromoLifecycle(promo: PromoRecord): {
         return {
             key: 'scheduled',
             label: 'Terjadwal',
-            badgeClass: 'border-[#A88B54]/60 bg-[#EAE1CE]/85 text-[#725C30] dark:bg-[#203252] dark:text-[#C5AA74]',
+            badgeClass:
+                'border-[#A88B54]/60 bg-[#EAE1CE]/85 text-[#725C30] dark:bg-[#203252] dark:text-[#C5AA74]',
         };
     }
 
@@ -135,33 +137,50 @@ function getPromoLifecycle(promo: PromoRecord): {
     return {
         key: 'running',
         label: 'Sedang Berjalan',
-        badgeClass: 'border-emerald-700/25 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+        badgeClass:
+            'border-emerald-700/25 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
     };
 }
 
 const DISCOUNT_PRESETS = [5, 10, 15, 20, 25, 30];
 
-export default function AdminPromos({ promos, products, categories }: AdminPromosProps) {
+export default function AdminPromos({
+    promos,
+    products,
+    categories,
+}: AdminPromosProps) {
     const { flash } = usePage<FlashProps>().props;
-    const [statusFilter, setStatusFilter] = useState<'all' | LifecycleKey>('all');
+    const [statusFilter, setStatusFilter] = useState<'all' | LifecycleKey>(
+        'all',
+    );
     const [searchQuery, setSearchQuery] = useState('');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingPromo, setEditingPromo] = useState<PromoRecord | null>(null);
-    const [pendingDelete, setPendingDelete] = useState<PromoRecord | null>(null);
+    const [pendingDelete, setPendingDelete] = useState<PromoRecord | null>(
+        null,
+    );
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const { data, setData, post, put, processing, errors, clearErrors, transform } =
-        useForm<PromoFormState>({
-            name: '',
-            description: '',
-            discount_percent: '15',
-            scope: 'all',
-            target_category: categories[0] ?? 'Lebaran',
-            product_id: products[0] ? String(products[0].id) : '',
-            starts_at: '',
-            ends_at: '',
-            is_active: true,
-        });
+    const {
+        data,
+        setData,
+        post,
+        put,
+        processing,
+        errors,
+        clearErrors,
+        transform,
+    } = useForm<PromoFormState>({
+        name: '',
+        description: '',
+        discount_percent: '15',
+        scope: 'all',
+        target_category: categories[0] ?? 'Lebaran',
+        product_id: products[0] ? String(products[0].id) : '',
+        starts_at: '',
+        ends_at: '',
+        is_active: true,
+    });
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -205,8 +224,13 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
             description: promo.description ?? '',
             discount_percent: String(promo.discount_percent),
             scope: promo.scope,
-            target_category: promo.target_category ?? (categories[0] ?? 'Lebaran'),
-            product_id: promo.product_id ? String(promo.product_id) : (products[0] ? String(products[0].id) : ''),
+            target_category:
+                promo.target_category ?? categories[0] ?? 'Lebaran',
+            product_id: promo.product_id
+                ? String(promo.product_id)
+                : products[0]
+                  ? String(products[0].id)
+                  : '',
             starts_at: isoToLocalInputValue(promo.starts_at),
             ends_at: isoToLocalInputValue(promo.ends_at),
             is_active: promo.is_active,
@@ -219,8 +243,12 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
         transform((current) => ({
             ...current,
             discount_percent: Number(current.discount_percent || 0),
-            target_category: current.scope === 'category' ? current.target_category : null,
-            product_id: current.scope === 'product' && current.product_id ? Number(current.product_id) : null,
+            target_category:
+                current.scope === 'category' ? current.target_category : null,
+            product_id:
+                current.scope === 'product' && current.product_id
+                    ? Number(current.product_id)
+                    : null,
             starts_at: localInputToIsoString(current.starts_at),
             ends_at: localInputToIsoString(current.ends_at),
         }));
@@ -262,14 +290,16 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
     };
 
     const enrichedPromos = useMemo(
-        () => promos.map((p) => ({ promo: p, lifecycle: getPromoLifecycle(p) })),
-        [promos]
+        () =>
+            promos.map((p) => ({ promo: p, lifecycle: getPromoLifecycle(p) })),
+        [promos],
     );
 
     const filteredPromos = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
         return enrichedPromos.filter(({ promo, lifecycle }) => {
-            const matchesStatus = statusFilter === 'all' || lifecycle.key === statusFilter;
+            const matchesStatus =
+                statusFilter === 'all' || lifecycle.key === statusFilter;
             const matchesSearch =
                 q === '' ||
                 promo.name.toLowerCase().includes(q) ||
@@ -280,13 +310,20 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
         });
     }, [enrichedPromos, statusFilter, searchQuery]);
 
-    const runningCount = enrichedPromos.filter((i) => i.lifecycle.key === 'running').length;
-    const scheduledCount = enrichedPromos.filter((i) => i.lifecycle.key === 'scheduled').length;
+    const runningCount = enrichedPromos.filter(
+        (i) => i.lifecycle.key === 'running',
+    ).length;
+    const scheduledCount = enrichedPromos.filter(
+        (i) => i.lifecycle.key === 'scheduled',
+    ).length;
 
     const formatScopeLabel = (promo: PromoRecord) => {
         if (promo.scope === 'all') return 'Semua Hampers';
-        if (promo.scope === 'category') return `Kategori ${promo.target_category ?? '-'}`;
-        return promo.product ? `Produk: ${promo.product.name}` : 'Produk Khusus';
+        if (promo.scope === 'category')
+            return `Kategori ${promo.target_category ?? '-'}`;
+        return promo.product
+            ? `Produk: ${promo.product.name}`
+            : 'Produk Khusus';
     };
 
     return (
@@ -297,7 +334,10 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                 <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span
+                                className="h-px w-6 bg-[#A88B54]"
+                                aria-hidden="true"
+                            />
                             <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
                                 Campaign Otomatis
                             </span>
@@ -306,7 +346,9 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                             Promo &amp; Diskon Terjadwal
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Atur diskon persentase otomatis sesuai rentang tanggal. Harga di katalog &amp; form pesanan terpotong otomatis saat jadwal aktif.
+                            Atur diskon persentase otomatis sesuai rentang
+                            tanggal. Harga di katalog &amp; form pesanan
+                            terpotong otomatis saat jadwal aktif.
                         </p>
                     </div>
                     <Button onClick={openCreateDialog}>
@@ -320,9 +362,18 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                     <div className="flex flex-wrap gap-1.5">
                         {(
                             [
-                                { key: 'all', label: `Semua (${promos.length})` },
-                                { key: 'running', label: `Sedang Berjalan (${runningCount})` },
-                                { key: 'scheduled', label: `Terjadwal (${scheduledCount})` },
+                                {
+                                    key: 'all',
+                                    label: `Semua (${promos.length})`,
+                                },
+                                {
+                                    key: 'running',
+                                    label: `Sedang Berjalan (${runningCount})`,
+                                },
+                                {
+                                    key: 'scheduled',
+                                    label: `Terjadwal (${scheduledCount})`,
+                                },
                                 { key: 'ended', label: 'Berakhir' },
                                 { key: 'inactive', label: 'Nonaktif' },
                             ] as const
@@ -331,7 +382,11 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                 key={tab.key}
                                 type="button"
                                 size="sm"
-                                variant={statusFilter === tab.key ? 'default' : 'outline'}
+                                variant={
+                                    statusFilter === tab.key
+                                        ? 'default'
+                                        : 'outline'
+                                }
                                 onClick={() => setStatusFilter(tab.key)}
                             >
                                 {tab.label}
@@ -354,33 +409,51 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                 {filteredPromos.length === 0 ? (
                     <Card>
                         <CardContent className="py-12 text-center text-sm text-muted-foreground">
-                            Belum ada promo terjadwal yang sesuai filter. Klik &ldquo;Buat Promo Baru&rdquo; untuk membuat diskon otomatis.
+                            Belum ada promo terjadwal yang sesuai filter. Klik
+                            &ldquo;Buat Promo Baru&rdquo; untuk membuat diskon
+                            otomatis.
                         </CardContent>
                     </Card>
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2">
                         {filteredPromos.map(({ promo, lifecycle }) => (
-                            <Card key={promo.id} className="hover:border-[#A88B54]/70">
+                            <Card
+                                key={promo.id}
+                                className="hover:border-[#A88B54]/70"
+                            >
                                 <CardContent className="flex flex-1 flex-col justify-between gap-4 p-5">
                                     <div className="space-y-3">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="space-y-1.5">
                                                 <div className="flex flex-wrap items-center gap-2">
-                                                    <Badge variant="outline" className={lifecycle.badgeClass}>
-                                                        {lifecycle.key === 'running' && (
-                                                            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                    <Badge
+                                                        variant="outline"
+                                                        className={
+                                                            lifecycle.badgeClass
+                                                        }
+                                                    >
+                                                        {lifecycle.key ===
+                                                            'running' && (
+                                                            <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                                                         )}
                                                         {lifecycle.label}
                                                     </Badge>
-                                                    <Badge variant="outline" className="gap-1">
-                                                        {promo.scope === 'all' ? (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="gap-1"
+                                                    >
+                                                        {promo.scope ===
+                                                        'all' ? (
                                                             <Sparkles className="size-3 text-[#A88B54]" />
-                                                        ) : promo.scope === 'category' ? (
+                                                        ) : promo.scope ===
+                                                          'category' ? (
                                                             <Layers className="size-3 text-[#A88B54]" />
                                                         ) : (
                                                             <Package className="size-3 text-[#A88B54]" />
                                                         )}
-                                                        {formatScopeLabel(promo)}
+                                                        {formatScopeLabel(
+                                                            promo,
+                                                        )}
                                                     </Badge>
                                                 </div>
                                                 <h2 className="font-serif text-xl font-bold text-foreground">
@@ -388,11 +461,11 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                                 </h2>
                                             </div>
 
-                                            <div className="flex flex-col items-center justify-center rounded-xl border border-[#A88B54]/45 bg-[#16233B] px-3 py-2 text-center text-[#F2EBDC] shrink-0">
-                                                <span className="font-serif text-xl font-bold leading-none text-[#C5AA74]">
+                                            <div className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-[#A88B54]/45 bg-[#16233B] px-3 py-2 text-center text-[#F2EBDC]">
+                                                <span className="font-serif text-xl leading-none font-bold text-[#C5AA74]">
                                                     -{promo.discount_percent}%
                                                 </span>
-                                                <span className="mt-0.5 text-[9px] uppercase tracking-wider text-[#D8CEBA]">
+                                                <span className="mt-0.5 text-[9px] tracking-wider text-[#D8CEBA] uppercase">
                                                     Diskon
                                                 </span>
                                             </div>
@@ -405,16 +478,20 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                         )}
 
                                         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/60 px-3 py-2 text-xs text-muted-foreground">
-                                            <CalendarRange className="size-3.5 text-[#A88B54] shrink-0" />
+                                            <CalendarRange className="size-3.5 shrink-0 text-[#A88B54]" />
                                             <span>
-                                                {new Date(promo.starts_at).toLocaleString('id-ID', {
+                                                {new Date(
+                                                    promo.starts_at,
+                                                ).toLocaleString('id-ID', {
                                                     dateStyle: 'medium',
                                                     timeStyle: 'short',
                                                 })}
                                             </span>
                                             <span>→</span>
                                             <span className="font-medium text-foreground">
-                                                {new Date(promo.ends_at).toLocaleString('id-ID', {
+                                                {new Date(
+                                                    promo.ends_at,
+                                                ).toLocaleString('id-ID', {
                                                     dateStyle: 'medium',
                                                     timeStyle: 'short',
                                                 })}
@@ -428,7 +505,9 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                             size="sm"
                                             variant="outline"
                                             className="flex-1"
-                                            onClick={() => openEditDialog(promo)}
+                                            onClick={() =>
+                                                openEditDialog(promo)
+                                            }
                                         >
                                             <Pencil className="size-3.5" />
                                             Edit Promo
@@ -436,8 +515,16 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                         <Button
                                             type="button"
                                             size="icon"
-                                            variant={promo.is_active ? 'outline' : 'secondary'}
-                                            title={promo.is_active ? 'Nonaktifkan promo' : 'Aktifkan promo'}
+                                            variant={
+                                                promo.is_active
+                                                    ? 'outline'
+                                                    : 'secondary'
+                                            }
+                                            title={
+                                                promo.is_active
+                                                    ? 'Nonaktifkan promo'
+                                                    : 'Aktifkan promo'
+                                            }
                                             onClick={() => handleToggle(promo)}
                                         >
                                             <Power
@@ -454,7 +541,9 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                             variant="outline"
                                             title="Hapus promo"
                                             className="hover:border-destructive/60 hover:bg-destructive/10"
-                                            onClick={() => setPendingDelete(promo)}
+                                            onClick={() =>
+                                                setPendingDelete(promo)
+                                            }
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
@@ -472,20 +561,27 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 font-serif text-xl">
                             <Tag className="size-4 text-[#A88B54]" />
-                            {editingPromo ? `Edit "${editingPromo.name}"` : 'Buat Promo Diskon Terjadwal'}
+                            {editingPromo
+                                ? `Edit "${editingPromo.name}"`
+                                : 'Buat Promo Diskon Terjadwal'}
                         </DialogTitle>
                         <DialogDescription>
-                            Harga katalog &amp; total pemesanan akan otomatis terpotong selama periode tanggal yang Anda tentukan.
+                            Harga katalog &amp; total pemesanan akan otomatis
+                            terpotong selama periode tanggal yang Anda tentukan.
                         </DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-1.5">
-                            <Label htmlFor="promo_name">Nama Campaign Promo *</Label>
+                            <Label htmlFor="promo_name">
+                                Nama Campaign Promo *
+                            </Label>
                             <Input
                                 id="promo_name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 placeholder="Contoh: Early Bird Lebaran 15%"
                                 required
                             />
@@ -494,8 +590,12 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
 
                         <div className="grid gap-1.5">
                             <div className="flex items-center justify-between gap-2">
-                                <Label htmlFor="discount_percent">Besar Diskon (%) *</Label>
-                                <span className="text-[11px] text-muted-foreground">1% – 90%</span>
+                                <Label htmlFor="discount_percent">
+                                    Besar Diskon (%) *
+                                </Label>
+                                <span className="text-[11px] text-muted-foreground">
+                                    1% – 90%
+                                </span>
                             </div>
                             <div className="relative">
                                 <Percent className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -505,7 +605,12 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                     min={1}
                                     max={90}
                                     value={data.discount_percent}
-                                    onChange={(e) => setData('discount_percent', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'discount_percent',
+                                            e.target.value,
+                                        )
+                                    }
                                     className="pr-9"
                                     required
                                 />
@@ -515,9 +620,15 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                     <button
                                         key={pct}
                                         type="button"
-                                        onClick={() => setData('discount_percent', String(pct))}
-                                        className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
-                                            Number(data.discount_percent) === pct
+                                        onClick={() =>
+                                            setData(
+                                                'discount_percent',
+                                                String(pct),
+                                            )
+                                        }
+                                        className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+                                            Number(data.discount_percent) ===
+                                            pct
                                                 ? 'border-[#16233B] bg-[#16233B] text-[#F2EBDC]'
                                                 : 'border-border bg-background text-foreground hover:border-[#A88B54]'
                                         }`}
@@ -531,18 +642,28 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
 
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="grid gap-1.5">
-                                <Label htmlFor="promo_scope">Target Promo *</Label>
+                                <Label htmlFor="promo_scope">
+                                    Target Promo *
+                                </Label>
                                 <Select
                                     value={data.scope}
-                                    onValueChange={(val: PromoScope) => setData('scope', val)}
+                                    onValueChange={(val: PromoScope) =>
+                                        setData('scope', val)
+                                    }
                                 >
                                     <SelectTrigger id="promo_scope">
                                         <SelectValue placeholder="Pilih target" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">Semua Hampers di Katalog</SelectItem>
-                                        <SelectItem value="category">Berdasarkan Kategori</SelectItem>
-                                        <SelectItem value="product">Produk Hampers Tertentu</SelectItem>
+                                        <SelectItem value="all">
+                                            Semua Hampers di Katalog
+                                        </SelectItem>
+                                        <SelectItem value="category">
+                                            Berdasarkan Kategori
+                                        </SelectItem>
+                                        <SelectItem value="product">
+                                            Produk Hampers Tertentu
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <InputError message={errors.scope} />
@@ -550,40 +671,57 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
 
                             {data.scope === 'category' && (
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="target_category">Kategori Target *</Label>
+                                    <Label htmlFor="target_category">
+                                        Kategori Target *
+                                    </Label>
                                     <Select
                                         value={data.target_category}
-                                        onValueChange={(val) => setData('target_category', val)}
+                                        onValueChange={(val) =>
+                                            setData('target_category', val)
+                                        }
                                     >
                                         <SelectTrigger id="target_category">
                                             <SelectValue placeholder="Pilih kategori" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {categories.map((cat) => (
-                                                <SelectItem key={cat} value={cat}>
+                                                <SelectItem
+                                                    key={cat}
+                                                    value={cat}
+                                                >
                                                     {cat}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <InputError message={errors.target_category} />
+                                    <InputError
+                                        message={errors.target_category}
+                                    />
                                 </div>
                             )}
 
                             {data.scope === 'product' && (
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="target_product">Pilih Produk *</Label>
+                                    <Label htmlFor="target_product">
+                                        Pilih Produk *
+                                    </Label>
                                     <Select
                                         value={data.product_id}
-                                        onValueChange={(val) => setData('product_id', val)}
+                                        onValueChange={(val) =>
+                                            setData('product_id', val)
+                                        }
                                     >
                                         <SelectTrigger id="target_product">
                                             <SelectValue placeholder="Pilih produk hampers" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {products.map((prod) => (
-                                                <SelectItem key={prod.id} value={String(prod.id)}>
-                                                    {prod.name} ({prod.category})
+                                                <SelectItem
+                                                    key={prod.id}
+                                                    value={String(prod.id)}
+                                                >
+                                                    {prod.name} ({prod.category}
+                                                    )
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -608,8 +746,10 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                                         <button
                                             key={preset.label}
                                             type="button"
-                                            onClick={() => applyDurationPreset(preset.days)}
-                                            className="rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground hover:border-[#A88B54] cursor-pointer"
+                                            onClick={() =>
+                                                applyDurationPreset(preset.days)
+                                            }
+                                            className="cursor-pointer rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-foreground hover:border-[#A88B54]"
                                         >
                                             {preset.label}
                                         </button>
@@ -619,28 +759,38 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
 
                             <div className="grid gap-3 sm:grid-cols-2">
                                 <div className="grid gap-1">
-                                    <Label htmlFor="starts_at" className="text-xs">
+                                    <Label
+                                        htmlFor="starts_at"
+                                        className="text-xs"
+                                    >
                                         Mulai Berlaku *
                                     </Label>
                                     <Input
                                         id="starts_at"
                                         type="datetime-local"
                                         value={data.starts_at}
-                                        onChange={(e) => setData('starts_at', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('starts_at', e.target.value)
+                                        }
                                         required
                                     />
                                     <InputError message={errors.starts_at} />
                                 </div>
 
                                 <div className="grid gap-1">
-                                    <Label htmlFor="ends_at" className="text-xs">
+                                    <Label
+                                        htmlFor="ends_at"
+                                        className="text-xs"
+                                    >
                                         Berakhir Pada *
                                     </Label>
                                     <Input
                                         id="ends_at"
                                         type="datetime-local"
                                         value={data.ends_at}
-                                        onChange={(e) => setData('ends_at', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('ends_at', e.target.value)
+                                        }
                                         required
                                     />
                                     <InputError message={errors.ends_at} />
@@ -649,11 +799,15 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                         </div>
 
                         <div className="grid gap-1.5">
-                            <Label htmlFor="promo_description">Keterangan Singkat (Opsional)</Label>
+                            <Label htmlFor="promo_description">
+                                Keterangan Singkat (Opsional)
+                            </Label>
                             <Input
                                 id="promo_description"
                                 value={data.description}
-                                onChange={(e) => setData('description', e.target.value)}
+                                onChange={(e) =>
+                                    setData('description', e.target.value)
+                                }
                                 placeholder="Contoh: Berlaku otomatis untuk pemesanan hampers sebelum H-14 Lebaran"
                             />
                             <InputError message={errors.description} />
@@ -663,19 +817,32 @@ export default function AdminPromos({ promos, products, categories }: AdminPromo
                             <Checkbox
                                 id="promo_is_active"
                                 checked={data.is_active}
-                                onCheckedChange={(checked) => setData('is_active', checked === true)}
+                                onCheckedChange={(checked) =>
+                                    setData('is_active', checked === true)
+                                }
                             />
-                            <Label htmlFor="promo_is_active" className="cursor-pointer font-normal">
+                            <Label
+                                htmlFor="promo_is_active"
+                                className="cursor-pointer font-normal"
+                            >
                                 Aktifkan promo sesuai jadwal di atas
                             </Label>
                         </div>
 
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setDialogOpen(false)}
+                            >
                                 Batal
                             </Button>
                             <Button type="submit" disabled={processing}>
-                                {processing ? 'Menyimpan...' : editingPromo ? 'Simpan Perubahan' : 'Buat Promo'}
+                                {processing
+                                    ? 'Menyimpan...'
+                                    : editingPromo
+                                      ? 'Simpan Perubahan'
+                                      : 'Buat Promo'}
                             </Button>
                         </DialogFooter>
                     </form>

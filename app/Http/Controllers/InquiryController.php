@@ -26,7 +26,7 @@ class InquiryController extends Controller
             $adminEmail = config('mail.from.address', 'admin@galuh.co.id');
             Mail::to($adminEmail)->send(new InquiryReceivedMail($inquiry));
         } catch (\Throwable $e) {
-            Log::error('Gagal mengirim email notifikasi inquiry: ' . $e->getMessage());
+            Log::error('Gagal mengirim email notifikasi inquiry: '.$e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Terima kasih atas permintaan penawaran Anda! Tim konsultan gifting GALUH & CO. akan segera menghubungi Anda dalam 1x24 jam.');

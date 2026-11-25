@@ -28,13 +28,19 @@ export function NavMain({ items }: { items: NavItem[] }) {
                                 tooltip={{ children: item.title }}
                                 className={
                                     active
-                                        ? 'border-l-2 border-[#A88B54] bg-[#203252] text-[#F2EBDC] font-medium hover:bg-[#203252] hover:text-[#F2EBDC]'
+                                        ? 'border-l-2 border-[#A88B54] bg-[#203252] font-medium text-[#F2EBDC] hover:bg-[#203252] hover:text-[#F2EBDC]'
                                         : 'text-[#D8CEBA] hover:bg-[#203252]/70 hover:text-[#F2EBDC]'
                                 }
                             >
                                 <Link href={item.href} prefetch>
                                     {item.icon && (
-                                        <item.icon className={active ? 'text-[#C5AA74]' : 'text-[#C5AA74]/75'} />
+                                        <item.icon
+                                            className={
+                                                active
+                                                    ? 'text-[#C5AA74]'
+                                                    : 'text-[#C5AA74]/75'
+                                            }
+                                        />
                                     )}
                                     <span>{item.title}</span>
                                 </Link>

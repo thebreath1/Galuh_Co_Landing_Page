@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { m, AnimatePresence, type Variants } from 'motion/react';
 import {
     Check,
@@ -7,12 +7,16 @@ import {
     ExternalLink,
     Loader2,
     LocateFixed,
+    Lock,
+    LogIn,
     MapPin,
     Percent,
     Radio,
     ShoppingBag,
     Sparkles,
     Tag,
+    UserCheck,
+    UserPlus,
     Wallet,
     X,
 } from 'lucide-react';
@@ -20,11 +24,18 @@ import { toast } from 'sonner';
 import { EmailQuickDomains } from '@/components/EmailQuickDomains';
 import { InteractiveMapPicker } from '@/components/InteractiveMapPicker';
 import { MAX_PHONE_DIGITS, sanitizePhoneInput } from '@/lib/input-helpers';
-import { ORDER_PAYMENT_METHODS, formatPaymentMethodLabel } from '@/lib/payment-methods';
+import {
+    ORDER_PAYMENT_METHODS,
+    formatPaymentMethodLabel,
+} from '@/lib/payment-methods';
 import { haversineMeters, reverseGeocodeCoords } from '@/lib/reverse-geocode';
-import { store as storeOrder } from '@/routes/orders';
+import { login, register } from '@/routes';
+import { mine as ordersMine, store as storeOrder } from '@/routes/orders';
+import type { User } from '@/types';
 import type { Product, SiteSettings } from '@/types/landing';
 import { fadeUp, viewportConfig, smoothEase } from '@/lib/motion';
+
+const PENDING_ORDER_STORAGE_KEY = 'galuh_pending_order_product_id';
 
 interface CollectionSectionProps {
     products: Product[];
@@ -106,11 +117,20 @@ const DEFAULT_STUDIO_COORDS = {
     lon: 108.3534,
 };
 
-export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, settings }) => {
+export const CollectionSection: React.FC<CollectionSectionProps> = ({
+    products,
+    settings,
+}) => {
+    const { auth } = usePage<{ auth?: { user?: User | null } }>().props;
+    const user = auth?.user ?? null;
     const categories = ['Semua', 'Lebaran', 'Natal', 'Corporate', 'Wedding'];
     const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+        null,
+    );
+    const [submittedMessage, setSubmittedMessage] = useState<string | null>(
+        null,
+    );
     const [showMapPicker, setShowMapPicker] = useState(false);
     const [isResolvingAddress, setIsResolvingAddress] = useState(false);
     const [locationState, setLocationState] = useState<{
@@ -125,7 +145,16 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
     const geocodeAbortRef = useRef<AbortController | null>(null);
     const emailInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { data, setData, post, processing, errors, reset, clearErrors, transform } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+        transform,
+    } = useForm({
         product_id: 0,
         customer_name: '',
         customer_whatsapp: '',
@@ -147,17 +176,24 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
     const filteredProducts =
         selectedCategory === 'Semua'
             ? products
-            : products.filter((p) => p.category.trim().toLowerCase() === selectedCategory.toLowerCase());
+            : products.filter(
+                  (p) =>
+                      p.category.trim().toLowerCase() ===
+                      selectedCategory.toLowerCase(),
+              );
 
     const highlightedPromo = products.reduce<Product['active_promo']>(
         (best, item) => {
             if (!item.active_promo) return best;
-            if (!best || item.active_promo.discount_percent > best.discount_percent) {
+            if (
+                !best ||
+                item.active_promo.discount_percent > best.discount_percent
+            ) {
                 return item.active_promo;
             }
             return best;
         },
-        null
+        null,
     );
 
     const formatRupiah = (amount: number) => {
@@ -170,7 +206,11 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
     };
 
     const stopLocationTracking = (resetCoords = false) => {
-        if (watchIdRef.current !== null && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+        if (
+            watchIdRef.current !== null &&
+            typeof navigator !== 'undefined' &&
+            'geolocation' in navigator
+        ) {
             navigator.geolocation.clearWatch(watchIdRef.current);
             watchIdRef.current = null;
         }
@@ -185,7 +225,11 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
 
     useEffect(() => {
         return () => {
-            if (watchIdRef.current !== null && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+            if (
+                watchIdRef.current !== null &&
+                typeof navigator !== 'undefined' &&
+                'geolocation' in navigator
+            ) {
                 navigator.geolocation.clearWatch(watchIdRef.current);
             }
             geocodeAbortRef.current?.abort();
@@ -229,10 +273,11 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                         lastGeocodedRef.current.lat,
                         lastGeocodedRef.current.lon,
                         lat,
-                        lon
+                        lon,
                     ) >= 15;
                 const accuracyImproved =
-                    lastAccuracyRef.current === null || accuracy < lastAccuracyRef.current * 0.7;
+                    lastAccuracyRef.current === null ||
+                    accuracy < lastAccuracyRef.current * 0.7;
 
                 if (!movedEnough && !accuracyImproved) return;
 
@@ -246,7 +291,11 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
 
                 try {
                     setIsResolvingAddress(true);
-                    const resolvedAddress = await reverseGeocodeCoords(lat, lon, controller.signal);
+                    const resolvedAddress = await reverseGeocodeCoords(
+                        lat,
+                        lon,
+                        controller.signal,
+                    );
                     if (controller.signal.aborted) return;
 
                     if (!manualAddressEditedRef.current) {
@@ -254,16 +303,20 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                         if (isFirstFix) {
                             if (accuracy > 250) {
                                 toast.info(
-                                    `Perkiraan lokasi jaringan (±${accuracy}m). Geser pin di peta atau cari nama jalan agar presisi.`
+                                    `Perkiraan lokasi jaringan (±${accuracy}m). Geser pin di peta atau cari nama jalan agar presisi.`,
                                 );
                             } else {
-                                toast.success('Alamat berhasil diisi otomatis dari lokasi real-time Anda.');
+                                toast.success(
+                                    'Alamat berhasil diisi otomatis dari lokasi real-time Anda.',
+                                );
                             }
                         }
                     }
                 } catch (err) {
                     if ((err as DOMException)?.name !== 'AbortError') {
-                        toast.error('Gagal menerjemahkan koordinat. Silakan pilih titik di peta atau ketik manual.');
+                        toast.error(
+                            'Gagal menerjemahkan koordinat. Silakan pilih titik di peta atau ketik manual.',
+                        );
                     }
                 } finally {
                     if (!controller.signal.aborted) {
@@ -286,11 +339,15 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                 enableHighAccuracy: true,
                 timeout: 12000,
                 maximumAge: 0,
-            }
+            },
         );
     };
 
-    const handleSelectMapLocation = async (lat: number, lon: number, prefilledAddress?: string) => {
+    const handleSelectMapLocation = async (
+        lat: number,
+        lon: number,
+        prefilledAddress?: string,
+    ) => {
         stopLocationTracking(false);
         manualAddressEditedRef.current = false;
         lastGeocodedRef.current = { lat, lon };
@@ -313,13 +370,19 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
 
         try {
             setIsResolvingAddress(true);
-            const resolvedAddress = await reverseGeocodeCoords(lat, lon, controller.signal);
+            const resolvedAddress = await reverseGeocodeCoords(
+                lat,
+                lon,
+                controller.signal,
+            );
             if (controller.signal.aborted) return;
             setData('shipping_address', resolvedAddress);
             toast.success('Alamat diperbarui sesuai pin peta.');
         } catch (err) {
             if ((err as DOMException)?.name !== 'AbortError') {
-                toast.error('Gagal mengambil nama jalan untuk titik ini. Silakan lengkapi alamat manual.');
+                toast.error(
+                    'Gagal mengambil nama jalan untuk titik ini. Silakan lengkapi alamat manual.',
+                );
             }
         } finally {
             if (!controller.signal.aborted) {
@@ -327,6 +390,33 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
             }
         }
     };
+
+    useEffect(() => {
+        if (!user || typeof window === 'undefined') return;
+        const pendingId = window.sessionStorage.getItem(
+            PENDING_ORDER_STORAGE_KEY,
+        );
+        if (!pendingId) return;
+
+        window.sessionStorage.removeItem(PENDING_ORDER_STORAGE_KEY);
+        const matched = products.find((item) => item.id === Number(pendingId));
+        if (matched) {
+            setSelectedProduct(matched);
+            setSubmittedMessage(null);
+            setData({
+                product_id: matched.id,
+                customer_name: user.name ?? '',
+                customer_whatsapp: '',
+                customer_email: user.email ?? '',
+                quantity: '1',
+                delivery_date: '',
+                shipping_address: '',
+                greeting_card_note: '',
+                payment_method: 'transfer_bca',
+                website: '',
+            });
+        }
+    }, [user, products, setData]);
 
     const openOrderModal = (product: Product) => {
         stopLocationTracking(true);
@@ -340,9 +430,9 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
         setSelectedProduct(product);
         setData({
             product_id: product.id,
-            customer_name: '',
+            customer_name: user?.name ?? '',
             customer_whatsapp: '',
-            customer_email: '',
+            customer_email: user?.email ?? '',
             quantity: '1',
             delivery_date: '',
             shipping_address: '',
@@ -350,6 +440,16 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
             payment_method: 'transfer_bca',
             website: '',
         });
+    };
+
+    const redirectToAuthForOrder = (targetUrl: string) => {
+        if (selectedProduct && typeof window !== 'undefined') {
+            window.sessionStorage.setItem(
+                PENDING_ORDER_STORAGE_KEY,
+                String(selectedProduct.id),
+            );
+        }
+        router.visit(targetUrl);
     };
 
     const closeOrderModal = () => {
@@ -366,7 +466,9 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
         e.preventDefault();
         if (!selectedProduct) return;
 
-        const chosenPaymentLabel = formatPaymentMethodLabel(data.payment_method);
+        const chosenPaymentLabel = formatPaymentMethodLabel(
+            data.payment_method,
+        );
 
         transform((current) => ({
             ...current,
@@ -396,43 +498,45 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
         <section
             id="koleksi"
             aria-label="Koleksi Hampers Pilihan"
-            className="py-20 md:py-28 bg-[#F2EBDC] relative"
+            className="relative bg-[#F2EBDC] py-20 md:py-28"
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <m.div
-                    className="text-center max-w-2xl mx-auto mb-12"
+                    className="mx-auto mb-12 max-w-2xl text-center"
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
                     variants={fadeUp}
                 >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[#725C30] font-semibold mb-3">
+                    <p className="mb-3 text-xs font-semibold tracking-[0.25em] text-[#725C30] uppercase">
                         {eyebrow}
                     </p>
-                    <h2 className="font-serif text-3xl sm:text-4xl text-[#16233B] font-bold tracking-tight mb-4">
+                    <h2 className="mb-4 font-serif text-3xl font-bold tracking-tight text-[#16233B] sm:text-4xl">
                         {title}
                     </h2>
-                    <div className="w-12 h-0.5 bg-[#A88B54] mx-auto mb-5" />
-                    <p className="text-[#6E675D] text-base">
-                        {description}
-                    </p>
+                    <div className="mx-auto mb-5 h-0.5 w-12 bg-[#A88B54]" />
+                    <p className="text-base text-[#6E675D]">{description}</p>
                 </m.div>
 
                 {highlightedPromo && (
                     <div className="mb-8 flex justify-center">
                         <div className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full border border-[#A88B54]/45 bg-[#16233B] px-5 py-2 text-xs text-[#F2EBDC] shadow-sm">
                             <span className="inline-flex items-center gap-1 font-semibold text-[#C5AA74]">
-                                <Tag className="w-3.5 h-3.5" />
+                                <Tag className="h-3.5 w-3.5" />
                                 Promo Otomatis Aktif:
                             </span>
-                            <span className="font-semibold">{highlightedPromo.promo_name}</span>
+                            <span className="font-semibold">
+                                {highlightedPromo.promo_name}
+                            </span>
                             <span className="rounded-full bg-[#A88B54]/25 px-2 py-0.5 text-[11px] font-bold text-[#C5AA74]">
                                 Diskon s/d {highlightedPromo.discount_percent}%
                             </span>
                             <span className="text-[11px] text-[#D8CEBA]">
                                 s/d{' '}
-                                {new Date(highlightedPromo.ends_at).toLocaleDateString('id-ID', {
+                                {new Date(
+                                    highlightedPromo.ends_at,
+                                ).toLocaleDateString('id-ID', {
                                     day: 'numeric',
                                     month: 'short',
                                     year: 'numeric',
@@ -443,11 +547,11 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                 )}
 
                 {/* Category Filters */}
-                <div className="flex justify-center mb-14">
+                <div className="mb-14 flex justify-center">
                     <div
                         role="tablist"
                         aria-label="Filter kategori hampers"
-                        className="inline-flex flex-wrap items-center justify-center gap-1.5 p-1.5 rounded-full bg-[#FFFFFF]/85 backdrop-blur-xs border border-[#D8CEBA] shadow-xs"
+                        className="inline-flex flex-wrap items-center justify-center gap-1.5 rounded-full border border-[#D8CEBA] bg-[#FFFFFF]/85 p-1.5 shadow-xs backdrop-blur-xs"
                     >
                         {categories.map((cat) => {
                             const isActive = selectedCategory === cat;
@@ -458,10 +562,10 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                     role="tab"
                                     aria-selected={isActive}
                                     onClick={() => setSelectedCategory(cat)}
-                                    className={`relative px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] cursor-pointer ${
+                                    className={`relative cursor-pointer rounded-full px-4 py-2 text-xs font-medium tracking-wide transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] sm:px-5 sm:text-sm ${
                                         isActive
                                             ? 'bg-[#16233B] text-[#F2EBDC] shadow-sm'
-                                            : 'text-[#6E675D] hover:text-[#16233B] hover:bg-[#EAE1CE]/70'
+                                            : 'text-[#6E675D] hover:bg-[#EAE1CE]/70 hover:text-[#16233B]'
                                     }`}
                                 >
                                     <span>{cat}</span>
@@ -480,108 +584,170 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
                         >
                             {filteredProducts.map((product) => {
                                 return (
                                     <m.article
                                         key={product.id}
                                         variants={cardItemVariants}
-                                        whileHover={{ y: -8, transition: { duration: 0.25, ease: smoothEase } }}
-                                        className="bg-[#FFFFFF] rounded-2xl overflow-hidden border border-[#D8CEBA] shadow-luxury hover:shadow-luxury-hover transition-shadow duration-300 flex flex-col group will-change-transform"
+                                        whileHover={{
+                                            y: -8,
+                                            transition: {
+                                                duration: 0.25,
+                                                ease: smoothEase,
+                                            },
+                                        }}
+                                        className="shadow-luxury hover:shadow-luxury-hover group flex flex-col overflow-hidden rounded-2xl border border-[#D8CEBA] bg-[#FFFFFF] transition-shadow duration-300 will-change-transform"
                                     >
                                         {/* Product Image */}
-                                        <div className="relative aspect-[4/3] bg-[#EAE1CE] overflow-hidden">
+                                        <div className="relative aspect-[4/3] overflow-hidden bg-[#EAE1CE]">
                                             <img
                                                 src={product.image}
                                                 alt={product.name}
                                                 width={800}
                                                 height={600}
-                                                className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out"
+                                                className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-106"
                                                 loading="lazy"
                                                 decoding="async"
                                             />
                                             <div className="absolute top-3.5 left-3.5">
-                                                <span className="px-3 py-1 rounded-full bg-[#16233B]/90 backdrop-blur-xs text-[#C5AA74] text-[11px] font-semibold tracking-wider uppercase border border-[#A88B54]/30">
+                                                <span className="rounded-full border border-[#A88B54]/30 bg-[#16233B]/90 px-3 py-1 text-[11px] font-semibold tracking-wider text-[#C5AA74] uppercase backdrop-blur-xs">
                                                     {product.category}
                                                 </span>
                                             </div>
                                             {product.active_promo && (
                                                 <div className="absolute top-3.5 right-3.5">
-                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#16233B] text-[#F2EBDC] text-[11px] font-bold border border-[#A88B54] shadow-md">
-                                                        <Percent className="w-3 h-3 text-[#C5AA74]" />
-                                                        <span>-{product.active_promo.discount_percent}%</span>
+                                                    <span className="inline-flex items-center gap-1 rounded-full border border-[#A88B54] bg-[#16233B] px-2.5 py-1 text-[11px] font-bold text-[#F2EBDC] shadow-md">
+                                                        <Percent className="h-3 w-3 text-[#C5AA74]" />
+                                                        <span>
+                                                            -
+                                                            {
+                                                                product
+                                                                    .active_promo
+                                                                    .discount_percent
+                                                            }
+                                                            %
+                                                        </span>
                                                     </span>
                                                 </div>
                                             )}
                                         </div>
 
                                         {/* Product Content */}
-                                        <div className="p-6 flex-1 flex flex-col justify-between">
+                                        <div className="flex flex-1 flex-col justify-between p-6">
                                             <div>
-                                                <h3 className="font-serif text-xl font-bold text-[#16233B] mb-2 group-hover:text-[#725C30] transition-colors duration-300">
+                                                <h3 className="mb-2 font-serif text-xl font-bold text-[#16233B] transition-colors duration-300 group-hover:text-[#725C30]">
                                                     {product.name}
                                                 </h3>
-                                                <p className="text-xs sm:text-sm text-[#6E675D] leading-relaxed mb-4">
+                                                <p className="mb-4 text-xs leading-relaxed text-[#6E675D] sm:text-sm">
                                                     {product.short_description}
                                                 </p>
 
                                                 {/* Contents list chips */}
-                                                {product.contents && product.contents.length > 0 && (
-                                                    <div className="mb-5 space-y-1.5 pt-3 border-t border-[#D8CEBA]/70">
-                                                        <p className="text-[11px] font-semibold text-[#16233B] uppercase tracking-wider flex items-center gap-1.5">
-                                                            <Sparkles className="w-3 h-3 text-[#A88B54]" />
-                                                            <span>Daftar Isi Paket:</span>
-                                                        </p>
-                                                        <ul className="text-xs text-[#6E675D] space-y-1 pl-1">
-                                                            {product.contents.slice(0, 3).map((item, idx) => (
-                                                                <li key={idx} className="flex items-center gap-2">
-                                                                    <Check className="w-3 h-3 text-[#A88B54] flex-shrink-0" />
-                                                                    <span className="truncate">{item}</span>
-                                                                </li>
-                                                            ))}
-                                                            {product.contents.length > 3 && (
-                                                                <li className="text-[11px] text-[#725C30] font-medium pl-5">
-                                                                    + {product.contents.length - 3} item eksklusif lainnya
-                                                                </li>
-                                                            )}
-                                                        </ul>
-                                                    </div>
-                                                )}
+                                                {product.contents &&
+                                                    product.contents.length >
+                                                        0 && (
+                                                        <div className="mb-5 space-y-1.5 border-t border-[#D8CEBA]/70 pt-3">
+                                                            <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-[#16233B] uppercase">
+                                                                <Sparkles className="h-3 w-3 text-[#A88B54]" />
+                                                                <span>
+                                                                    Daftar Isi
+                                                                    Paket:
+                                                                </span>
+                                                            </p>
+                                                            <ul className="space-y-1 pl-1 text-xs text-[#6E675D]">
+                                                                {product.contents
+                                                                    .slice(0, 3)
+                                                                    .map(
+                                                                        (
+                                                                            item,
+                                                                            idx,
+                                                                        ) => (
+                                                                            <li
+                                                                                key={
+                                                                                    idx
+                                                                                }
+                                                                                className="flex items-center gap-2"
+                                                                            >
+                                                                                <Check className="h-3 w-3 flex-shrink-0 text-[#A88B54]" />
+                                                                                <span className="truncate">
+                                                                                    {
+                                                                                        item
+                                                                                    }
+                                                                                </span>
+                                                                            </li>
+                                                                        ),
+                                                                    )}
+                                                                {product
+                                                                    .contents
+                                                                    .length >
+                                                                    3 && (
+                                                                    <li className="pl-5 text-[11px] font-medium text-[#725C30]">
+                                                                        +{' '}
+                                                                        {product
+                                                                            .contents
+                                                                            .length -
+                                                                            3}{' '}
+                                                                        item
+                                                                        eksklusif
+                                                                        lainnya
+                                                                    </li>
+                                                                )}
+                                                            </ul>
+                                                        </div>
+                                                    )}
                                             </div>
 
                                             {/* Price & CTA Button */}
-                                            <div className="pt-4 border-t border-[#D8CEBA] flex items-center justify-between gap-3">
+                                            <div className="flex items-center justify-between gap-3 border-t border-[#D8CEBA] pt-4">
                                                 <div>
-                                                    <span className="text-[11px] text-[#6E675D] uppercase tracking-wider block">
-                                                        {product.active_promo ? product.active_promo.promo_name : 'Mulai Dari'}
+                                                    <span className="block text-[11px] tracking-wider text-[#6E675D] uppercase">
+                                                        {product.active_promo
+                                                            ? product
+                                                                  .active_promo
+                                                                  .promo_name
+                                                            : 'Mulai Dari'}
                                                     </span>
                                                     {product.active_promo ? (
                                                         <div className="flex flex-wrap items-baseline gap-1.5">
-                                                            <span className="font-serif text-base sm:text-lg font-bold text-[#725C30]">
-                                                                {formatRupiah(product.active_promo.discounted_price)}
+                                                            <span className="font-serif text-base font-bold text-[#725C30] sm:text-lg">
+                                                                {formatRupiah(
+                                                                    product
+                                                                        .active_promo
+                                                                        .discounted_price,
+                                                                )}
                                                             </span>
                                                             <span className="text-xs text-[#6E675D] line-through">
-                                                                {formatRupiah(product.price_from)}
+                                                                {formatRupiah(
+                                                                    product.price_from,
+                                                                )}
                                                             </span>
                                                         </div>
                                                     ) : (
-                                                        <span className="font-serif text-base sm:text-lg font-bold text-[#16233B]">
-                                                            {formatRupiah(product.price_from)}
+                                                        <span className="font-serif text-base font-bold text-[#16233B] sm:text-lg">
+                                                            {formatRupiah(
+                                                                product.price_from,
+                                                            )}
                                                         </span>
                                                     )}
                                                 </div>
 
                                                 <m.button
                                                     type="button"
-                                                    onClick={() => openOrderModal(product)}
+                                                    onClick={() =>
+                                                        openOrderModal(product)
+                                                    }
                                                     whileHover={{ scale: 1.04 }}
                                                     whileTap={{ scale: 0.96 }}
-                                                    transition={{ duration: 0.2, ease: smoothEase }}
-                                                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#16233B] hover:bg-[#203252] text-[#F2EBDC] text-xs font-semibold shadow-xs hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-[#A88B54] cursor-pointer"
+                                                    transition={{
+                                                        duration: 0.2,
+                                                        ease: smoothEase,
+                                                    }}
+                                                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#16233B] px-4 py-2.5 text-xs font-semibold text-[#F2EBDC] shadow-xs transition-all hover:bg-[#203252] hover:shadow-md focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                                     aria-label={`Pesan ${product.name}`}
                                                 >
-                                                    <ShoppingBag className="w-3.5 h-3.5 text-[#C5AA74] flex-shrink-0" />
+                                                    <ShoppingBag className="h-3.5 w-3.5 flex-shrink-0 text-[#C5AA74]" />
                                                     <span>Pesan Sekarang</span>
                                                 </m.button>
                                             </div>
@@ -603,7 +769,7 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                         onClick={closeOrderModal}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B1322]/65 backdrop-blur-xs overflow-y-auto"
+                        className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#0B1322]/65 p-4 backdrop-blur-xs"
                         role="dialog"
                         aria-modal="true"
                         aria-label={`Form pemesanan ${selectedProduct.name}`}
@@ -614,58 +780,73 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                             exit={{ opacity: 0, y: 12, scale: 0.97 }}
                             transition={{ duration: 0.22, ease: smoothEase }}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full max-w-xl rounded-2xl bg-[#F2EBDC] text-[#1E2430] border border-[#D8CEBA] shadow-2xl overflow-hidden my-auto"
+                            className="my-auto w-full max-w-xl overflow-hidden rounded-2xl border border-[#D8CEBA] bg-[#F2EBDC] text-[#1E2430] shadow-2xl"
                         >
                             {/* Modal Header */}
-                            <div className="px-6 py-4 bg-[#16233B] text-[#F2EBDC] flex items-center justify-between gap-4">
+                            <div className="flex items-center justify-between gap-4 bg-[#16233B] px-6 py-4 text-[#F2EBDC]">
                                 <div>
-                                    <p className="text-[11px] uppercase tracking-[0.2em] text-[#C5AA74] font-semibold">
+                                    <p className="text-[11px] font-semibold tracking-[0.2em] text-[#C5AA74] uppercase">
                                         Form Pemesanan Manual
                                     </p>
-                                    <h3 className="font-serif text-lg sm:text-xl font-bold">
+                                    <h3 className="font-serif text-lg font-bold sm:text-xl">
                                         {selectedProduct.name}
                                     </h3>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={closeOrderModal}
-                                    className="w-8 h-8 rounded-full bg-[#FFFFFF]/10 hover:bg-[#FFFFFF]/20 text-[#F2EBDC] flex items-center justify-center transition-colors cursor-pointer"
+                                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-[#FFFFFF]/10 text-[#F2EBDC] transition-colors hover:bg-[#FFFFFF]/20"
                                     aria-label="Tutup form pemesanan"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="h-4 w-4" />
                                 </button>
                             </div>
 
-                            <div className="p-6 max-h-[80vh] overflow-y-auto">
+                            <div className="max-h-[80vh] overflow-y-auto p-6">
                                 {/* Selected Product Summary */}
                                 {(() => {
                                     const promo = selectedProduct.active_promo;
-                                    const effectiveUnit = promo ? promo.discounted_price : selectedProduct.price_from;
-                                    const qty = Math.max(1, Number(data.quantity || 1));
+                                    const effectiveUnit = promo
+                                        ? promo.discounted_price
+                                        : selectedProduct.price_from;
+                                    const qty = Math.max(
+                                        1,
+                                        Number(data.quantity || 1),
+                                    );
                                     const effectiveTotal = effectiveUnit * qty;
-                                    const originalTotal = selectedProduct.price_from * qty;
-                                    const savingsTotal = Math.max(0, originalTotal - effectiveTotal);
+                                    const originalTotal =
+                                        selectedProduct.price_from * qty;
+                                    const savingsTotal = Math.max(
+                                        0,
+                                        originalTotal - effectiveTotal,
+                                    );
 
                                     return (
                                         <div className="mb-5 space-y-2">
-                                            <div className="flex items-center gap-4 p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA]">
+                                            <div className="flex items-center gap-4 rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] p-3.5">
                                                 <img
                                                     src={selectedProduct.image}
                                                     alt={selectedProduct.name}
-                                                    className="w-16 h-16 rounded-lg object-cover shrink-0 bg-[#EAE1CE]"
+                                                    className="h-16 w-16 shrink-0 rounded-lg bg-[#EAE1CE] object-cover"
                                                 />
                                                 <div className="min-w-0 flex-1">
                                                     <div className="flex flex-wrap items-center gap-1.5">
-                                                        <span className="text-[11px] uppercase tracking-wider font-semibold text-[#725C30]">
-                                                            {selectedProduct.category}
+                                                        <span className="text-[11px] font-semibold tracking-wider text-[#725C30] uppercase">
+                                                            {
+                                                                selectedProduct.category
+                                                            }
                                                         </span>
                                                         {promo && (
                                                             <span className="rounded-full bg-[#16233B] px-2 py-0.5 text-[10px] font-bold text-[#C5AA74]">
-                                                                -{promo.discount_percent}%
+                                                                -
+                                                                {
+                                                                    promo.discount_percent
+                                                                }
+                                                                %
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="font-serif font-bold text-[#16233B] truncate">
+                                                    <p className="truncate font-serif font-bold text-[#16233B]">
                                                         {selectedProduct.name}
                                                     </p>
                                                     <p className="text-xs text-[#6E675D]">
@@ -673,37 +854,55 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                         {promo ? (
                                                             <>
                                                                 <span className="font-semibold text-[#725C30]">
-                                                                    {formatRupiah(effectiveUnit)}
+                                                                    {formatRupiah(
+                                                                        effectiveUnit,
+                                                                    )}
                                                                 </span>{' '}
                                                                 <span className="line-through">
-                                                                    {formatRupiah(selectedProduct.price_from)}
+                                                                    {formatRupiah(
+                                                                        selectedProduct.price_from,
+                                                                    )}
                                                                 </span>
                                                             </>
                                                         ) : (
-                                                            formatRupiah(selectedProduct.price_from)
+                                                            formatRupiah(
+                                                                selectedProduct.price_from,
+                                                            )
                                                         )}
                                                     </p>
                                                 </div>
-                                                <div className="text-right shrink-0">
-                                                    <span className="text-[11px] text-[#6E675D] block">Estimasi Total</span>
+                                                <div className="shrink-0 text-right">
+                                                    <span className="block text-[11px] text-[#6E675D]">
+                                                        Estimasi Total
+                                                    </span>
                                                     {promo && (
                                                         <span className="block text-[11px] text-[#6E675D] line-through">
-                                                            {formatRupiah(originalTotal)}
+                                                            {formatRupiah(
+                                                                originalTotal,
+                                                            )}
                                                         </span>
                                                     )}
                                                     <span className="font-serif text-base font-bold text-[#16233B]">
-                                                        {formatRupiah(effectiveTotal)}
+                                                        {formatRupiah(
+                                                            effectiveTotal,
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
                                             {promo && savingsTotal > 0 && (
                                                 <div className="flex items-center justify-between gap-2 rounded-lg border border-[#A88B54]/45 bg-[#EAE1CE]/75 px-3 py-1.5 text-[11px] text-[#16233B]">
                                                     <span className="inline-flex items-center gap-1.5 font-medium">
-                                                        <Tag className="w-3 h-3 text-[#725C30]" />
-                                                        Promo otomatis: <strong>{promo.promo_name}</strong>
+                                                        <Tag className="h-3 w-3 text-[#725C30]" />
+                                                        Promo otomatis:{' '}
+                                                        <strong>
+                                                            {promo.promo_name}
+                                                        </strong>
                                                     </span>
                                                     <span className="font-semibold text-[#725C30]">
-                                                        Hemat {formatRupiah(savingsTotal)}
+                                                        Hemat{' '}
+                                                        {formatRupiah(
+                                                            savingsTotal,
+                                                        )}
                                                     </span>
                                                 </div>
                                             )}
@@ -711,44 +910,134 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                     );
                                 })()}
 
-                                {submittedMessage ? (
-                                    <div className="p-5 rounded-xl bg-[#16233B]/5 border border-[#16233B]/20 text-center space-y-3">
-                                        <div className="w-12 h-12 rounded-full bg-[#16233B] text-[#C5AA74] mx-auto flex items-center justify-center">
-                                            <CheckCircle2 className="w-6 h-6" />
+                                {!user ? (
+                                    <div className="space-y-4 rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] p-6 text-center">
+                                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#16233B] text-[#C5AA74] shadow-sm">
+                                            <Lock className="h-5 w-5" />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <h4 className="font-serif text-lg font-bold text-[#16233B]">
+                                                Masuk Terlebih Dahulu untuk
+                                                Memesan
+                                            </h4>
+                                            <p className="mx-auto max-w-md text-xs leading-relaxed text-[#6E675D] sm:text-sm">
+                                                Untuk keamanan transaksi,
+                                                riwayat pesanan, dan pelacakan
+                                                status pengiriman paket hampers
+                                                Anda, silakan masuk atau daftar
+                                                akun terlebih dahulu.
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-col items-center justify-center gap-2.5 pt-1 sm:flex-row">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    redirectToAuthForOrder(
+                                                        login.url(),
+                                                    )
+                                                }
+                                                className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#16233B] px-6 py-2.5 text-xs font-semibold tracking-wider text-[#F2EBDC] uppercase shadow-sm transition-colors hover:bg-[#203252] sm:w-auto"
+                                            >
+                                                <LogIn className="h-3.5 w-3.5 text-[#C5AA74]" />
+                                                <span>Masuk ke Akun</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    redirectToAuthForOrder(
+                                                        register.url(),
+                                                    )
+                                                }
+                                                className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-[#A88B54] bg-[#F2EBDC]/60 px-6 py-2.5 text-xs font-semibold tracking-wider text-[#16233B] uppercase transition-colors hover:bg-[#EAE1CE] sm:w-auto"
+                                            >
+                                                <UserPlus className="h-3.5 w-3.5 text-[#725C30]" />
+                                                <span>Daftar Akun Baru</span>
+                                            </button>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={closeOrderModal}
+                                            className="cursor-pointer text-xs text-[#6E675D] underline hover:text-[#16233B]"
+                                        >
+                                            Kembali ke Katalog
+                                        </button>
+                                    </div>
+                                ) : submittedMessage ? (
+                                    <div className="space-y-3 rounded-xl border border-[#16233B]/20 bg-[#16233B]/5 p-5 text-center">
+                                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#16233B] text-[#C5AA74]">
+                                            <CheckCircle2 className="h-6 w-6" />
                                         </div>
                                         <h4 className="font-serif text-lg font-bold text-[#16233B]">
                                             Pesanan Terkirim!
                                         </h4>
-                                        <p className="text-sm text-[#6E675D] leading-relaxed">
+                                        <p className="text-sm leading-relaxed text-[#6E675D]">
                                             {submittedMessage}
                                         </p>
-                                        <button
-                                            type="button"
-                                            onClick={closeOrderModal}
-                                            className="px-6 py-2.5 rounded-full bg-[#16233B] text-[#F2EBDC] text-xs font-semibold uppercase tracking-wider hover:bg-[#203252] cursor-pointer"
-                                        >
-                                            Selesai
-                                        </button>
+                                        <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+                                            <Link
+                                                href={ordersMine()}
+                                                className="inline-flex items-center gap-1.5 rounded-full bg-[#16233B] px-5 py-2.5 text-xs font-semibold tracking-wider text-[#F2EBDC] uppercase hover:bg-[#203252]"
+                                            >
+                                                <ShoppingBag className="h-3.5 w-3.5 text-[#C5AA74]" />
+                                                <span>Lihat Pesanan Saya</span>
+                                            </Link>
+                                            <button
+                                                type="button"
+                                                onClick={closeOrderModal}
+                                                className="cursor-pointer rounded-full border border-[#D8CEBA] px-5 py-2.5 text-xs font-semibold text-[#16233B] hover:bg-[#EAE1CE]"
+                                            >
+                                                Selesai
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <form onSubmit={handleOrderSubmit} className="space-y-4">
+                                    <form
+                                        onSubmit={handleOrderSubmit}
+                                        className="space-y-4"
+                                    >
+                                        <div className="flex items-center justify-between gap-2 rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2 text-xs text-[#6E675D]">
+                                            <span className="inline-flex items-center gap-1.5 truncate">
+                                                <UserCheck className="h-3.5 w-3.5 shrink-0 text-[#725C30]" />
+                                                <span className="truncate">
+                                                    Memesan sebagai{' '}
+                                                    <strong className="text-[#16233B]">
+                                                        {user.name}
+                                                    </strong>{' '}
+                                                    ({user.email})
+                                                </span>
+                                            </span>
+                                            <Link
+                                                href={ordersMine()}
+                                                className="shrink-0 font-semibold text-[#725C30] underline hover:text-[#16233B]"
+                                            >
+                                                Pesanan Saya
+                                            </Link>
+                                        </div>
                                         {/* Honeypot */}
-                                        <div className="hidden" aria-hidden="true">
+                                        <div
+                                            className="hidden"
+                                            aria-hidden="true"
+                                        >
                                             <input
                                                 type="text"
                                                 name="website"
                                                 tabIndex={-1}
                                                 autoComplete="off"
                                                 value={data.website}
-                                                onChange={(e) => setData('website', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'website',
+                                                        e.target.value,
+                                                    )
+                                                }
                                             />
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                             <div>
                                                 <label
                                                     htmlFor="order_customer_name"
-                                                    className="block text-xs font-semibold text-[#16233B] mb-1.5"
+                                                    className="mb-1.5 block text-xs font-semibold text-[#16233B]"
                                                 >
                                                     Nama Lengkap *
                                                 </label>
@@ -757,25 +1046,39 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     type="text"
                                                     required
                                                     value={data.customer_name}
-                                                    onChange={(e) => setData('customer_name', e.target.value)}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'customer_name',
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     placeholder="Contoh: Ibu Rina Wijaya"
-                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                    className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                                 />
                                                 {errors.customer_name && (
-                                                    <p className="text-xs text-red-600 mt-1">{errors.customer_name}</p>
+                                                    <p className="mt-1 text-xs text-red-600">
+                                                        {errors.customer_name}
+                                                    </p>
                                                 )}
                                             </div>
 
                                             <div>
-                                                <div className="flex items-center justify-between gap-2 mb-1.5">
+                                                <div className="mb-1.5 flex items-center justify-between gap-2">
                                                     <label
                                                         htmlFor="order_customer_whatsapp"
                                                         className="block text-xs font-semibold text-[#16233B]"
                                                     >
-                                                        Nomor WhatsApp / Telepon *
+                                                        Nomor WhatsApp / Telepon
+                                                        *
                                                     </label>
                                                     <span className="text-[11px] font-medium text-[#6E675D]">
-                                                        {data.customer_whatsapp.length}/{MAX_PHONE_DIGITS} digit
+                                                        {
+                                                            data
+                                                                .customer_whatsapp
+                                                                .length
+                                                        }
+                                                        /{MAX_PHONE_DIGITS}{' '}
+                                                        digit
                                                     </span>
                                                 </div>
                                                 <input
@@ -784,24 +1087,35 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     inputMode="numeric"
                                                     maxLength={MAX_PHONE_DIGITS}
                                                     required
-                                                    value={data.customer_whatsapp}
+                                                    value={
+                                                        data.customer_whatsapp
+                                                    }
                                                     onChange={(e) =>
-                                                        setData('customer_whatsapp', sanitizePhoneInput(e.target.value))
+                                                        setData(
+                                                            'customer_whatsapp',
+                                                            sanitizePhoneInput(
+                                                                e.target.value,
+                                                            ),
+                                                        )
                                                     }
                                                     placeholder="0812xxxxxxxx (maks. 12 angka)"
-                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                    className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                                 />
                                                 {errors.customer_whatsapp && (
-                                                    <p className="text-xs text-red-600 mt-1">{errors.customer_whatsapp}</p>
+                                                    <p className="mt-1 text-xs text-red-600">
+                                                        {
+                                                            errors.customer_whatsapp
+                                                        }
+                                                    </p>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                             <div>
                                                 <label
                                                     htmlFor="order_quantity"
-                                                    className="block text-xs font-semibold text-[#16233B] mb-1.5"
+                                                    className="mb-1.5 block text-xs font-semibold text-[#16233B]"
                                                 >
                                                     Jumlah Paket *
                                                 </label>
@@ -812,18 +1126,25 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     max={10000}
                                                     required
                                                     value={data.quantity}
-                                                    onChange={(e) => setData('quantity', e.target.value)}
-                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'quantity',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                                 />
                                                 {errors.quantity && (
-                                                    <p className="text-xs text-red-600 mt-1">{errors.quantity}</p>
+                                                    <p className="mt-1 text-xs text-red-600">
+                                                        {errors.quantity}
+                                                    </p>
                                                 )}
                                             </div>
 
                                             <div>
                                                 <label
                                                     htmlFor="order_delivery_date"
-                                                    className="block text-xs font-semibold text-[#16233B] mb-1.5"
+                                                    className="mb-1.5 block text-xs font-semibold text-[#16233B]"
                                                 >
                                                     Tanggal Kirim
                                                 </label>
@@ -831,11 +1152,18 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     id="order_delivery_date"
                                                     type="date"
                                                     value={data.delivery_date}
-                                                    onChange={(e) => setData('delivery_date', e.target.value)}
-                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'delivery_date',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                                 />
                                                 {errors.delivery_date && (
-                                                    <p className="text-xs text-red-600 mt-1">{errors.delivery_date}</p>
+                                                    <p className="mt-1 text-xs text-red-600">
+                                                        {errors.delivery_date}
+                                                    </p>
                                                 )}
                                             </div>
                                         </div>
@@ -843,7 +1171,7 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                         <div>
                                             <label
                                                 htmlFor="order_customer_email"
-                                                className="block text-xs font-semibold text-[#16233B] mb-1.5"
+                                                className="mb-1.5 block text-xs font-semibold text-[#16233B]"
                                             >
                                                 Email (Opsional)
                                             </label>
@@ -852,22 +1180,34 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                 id="order_customer_email"
                                                 type="email"
                                                 value={data.customer_email}
-                                                onChange={(e) => setData('customer_email', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'customer_email',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 placeholder="Ketik nama lalu pilih akhiran email di bawah..."
-                                                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                             />
                                             <EmailQuickDomains
                                                 value={data.customer_email}
                                                 inputRef={emailInputRef}
-                                                onSelect={(nextEmail) => setData('customer_email', nextEmail)}
+                                                onSelect={(nextEmail) =>
+                                                    setData(
+                                                        'customer_email',
+                                                        nextEmail,
+                                                    )
+                                                }
                                             />
                                             {errors.customer_email && (
-                                                <p className="text-xs text-red-600 mt-1">{errors.customer_email}</p>
+                                                <p className="mt-1 text-xs text-red-600">
+                                                    {errors.customer_email}
+                                                </p>
                                             )}
                                         </div>
 
                                         <div>
-                                            <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                                            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
                                                 <label
                                                     htmlFor="order_shipping_address"
                                                     className="block text-xs font-semibold text-[#16233B]"
@@ -876,22 +1216,34 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                 </label>
 
                                                 <div className="flex flex-wrap items-center gap-1.5">
-                                                    {locationState.status === 'locating' ? (
+                                                    {locationState.status ===
+                                                    'locating' ? (
                                                         <button
                                                             type="button"
-                                                            onClick={() => stopLocationTracking(false)}
-                                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16233B]/10 text-[#16233B] text-[11px] font-semibold cursor-pointer"
+                                                            onClick={() =>
+                                                                stopLocationTracking(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#16233B]/10 px-2.5 py-1 text-[11px] font-semibold text-[#16233B]"
                                                         >
-                                                            <Loader2 className="w-3 h-3 animate-spin" />
-                                                            <span>Mencari GPS...</span>
+                                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                                            <span>
+                                                                Mencari GPS...
+                                                            </span>
                                                         </button>
-                                                    ) : locationState.status === 'tracking' ? (
+                                                    ) : locationState.status ===
+                                                      'tracking' ? (
                                                         <button
                                                             type="button"
-                                                            onClick={() => stopLocationTracking(false)}
-                                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16233B] text-[#F2EBDC] text-[11px] font-semibold cursor-pointer hover:bg-[#203252]"
+                                                            onClick={() =>
+                                                                stopLocationTracking(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#16233B] px-2.5 py-1 text-[11px] font-semibold text-[#F2EBDC] hover:bg-[#203252]"
                                                         >
-                                                            <Radio className="w-3 h-3 text-[#C5AA74] animate-pulse" />
+                                                            <Radio className="h-3 w-3 animate-pulse text-[#C5AA74]" />
                                                             <span>
                                                                 Real-Time Aktif
                                                                 {locationState.coords
@@ -903,29 +1255,43 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     ) : (
                                                         <button
                                                             type="button"
-                                                            onClick={startRealTimeLocation}
-                                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFFFFF] border border-[#D8CEBA] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60 text-[#16233B] text-[11px] font-semibold transition-colors cursor-pointer"
+                                                            onClick={
+                                                                startRealTimeLocation
+                                                            }
+                                                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[#D8CEBA] bg-[#FFFFFF] px-2.5 py-1 text-[11px] font-semibold text-[#16233B] transition-colors hover:border-[#A88B54] hover:bg-[#EAE1CE]/60"
                                                         >
-                                                            <LocateFixed className="w-3 h-3 text-[#725C30]" />
-                                                            <span>Lokasi Saat Ini</span>
+                                                            <LocateFixed className="h-3 w-3 text-[#725C30]" />
+                                                            <span>
+                                                                Lokasi Saat Ini
+                                                            </span>
                                                         </button>
                                                     )}
 
                                                     <button
                                                         type="button"
-                                                        onClick={() => setShowMapPicker((prev) => !prev)}
-                                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold transition-colors cursor-pointer ${
+                                                        onClick={() =>
+                                                            setShowMapPicker(
+                                                                (prev) => !prev,
+                                                            )
+                                                        }
+                                                        className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
                                                             showMapPicker
-                                                                ? 'bg-[#16233B] border-[#16233B] text-[#F2EBDC]'
-                                                                : 'bg-[#FFFFFF] border-[#D8CEBA] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60 text-[#16233B]'
+                                                                ? 'border-[#16233B] bg-[#16233B] text-[#F2EBDC]'
+                                                                : 'border-[#D8CEBA] bg-[#FFFFFF] text-[#16233B] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60'
                                                         }`}
                                                     >
                                                         <MapPin
-                                                            className={`w-3 h-3 ${
-                                                                showMapPicker ? 'text-[#C5AA74]' : 'text-[#725C30]'
+                                                            className={`h-3 w-3 ${
+                                                                showMapPicker
+                                                                    ? 'text-[#C5AA74]'
+                                                                    : 'text-[#725C30]'
                                                             }`}
                                                         />
-                                                        <span>{showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}</span>
+                                                        <span>
+                                                            {showMapPicker
+                                                                ? 'Tutup Peta'
+                                                                : 'Pilih di Peta'}
+                                                        </span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -936,61 +1302,102 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                 value={data.shipping_address}
                                                 onChange={(e) => {
                                                     manualAddressEditedRef.current = true;
-                                                    setData('shipping_address', e.target.value);
+                                                    setData(
+                                                        'shipping_address',
+                                                        e.target.value,
+                                                    );
                                                 }}
                                                 placeholder="Nama jalan, nomor rumah, kecamatan, kota, dan kode pos"
-                                                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                             />
                                             {errors.shipping_address && (
-                                                <p className="text-xs text-red-600 mt-1">{errors.shipping_address}</p>
+                                                <p className="mt-1 text-xs text-red-600">
+                                                    {errors.shipping_address}
+                                                </p>
                                             )}
                                             {locationState.error && (
-                                                <p className="text-[11px] text-red-600 mt-1">{locationState.error}</p>
+                                                <p className="mt-1 text-[11px] text-red-600">
+                                                    {locationState.error}
+                                                </p>
                                             )}
                                             {locationState.coords && (
-                                                <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#EAE1CE]/65 border border-[#D8CEBA] px-3 py-1.5 text-[11px] text-[#6E675D]">
+                                                <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#D8CEBA] bg-[#EAE1CE]/65 px-3 py-1.5 text-[11px] text-[#6E675D]">
                                                     <span>
-                                                        Koordinat: {locationState.coords.lat.toFixed(5)},{' '}
-                                                        {locationState.coords.lon.toFixed(5)} (akurasi ±
-                                                        {locationState.coords.accuracy}m)
+                                                        Koordinat:{' '}
+                                                        {locationState.coords.lat.toFixed(
+                                                            5,
+                                                        )}
+                                                        ,{' '}
+                                                        {locationState.coords.lon.toFixed(
+                                                            5,
+                                                        )}{' '}
+                                                        (akurasi ±
+                                                        {
+                                                            locationState.coords
+                                                                .accuracy
+                                                        }
+                                                        m)
                                                     </span>
                                                     <a
                                                         href={`https://www.google.com/maps?q=${locationState.coords.lat},${locationState.coords.lon}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-1 font-semibold text-[#16233B] hover:text-[#725C30] underline"
+                                                        className="inline-flex items-center gap-1 font-semibold text-[#16233B] underline hover:text-[#725C30]"
                                                     >
-                                                        <span>Buka Google Maps</span>
-                                                        <ExternalLink className="w-3 h-3" />
+                                                        <span>
+                                                            Buka Google Maps
+                                                        </span>
+                                                        <ExternalLink className="h-3 w-3" />
                                                     </a>
                                                 </div>
                                             )}
                                             {showMapPicker && (
                                                 <div className="mt-2.5">
                                                     <InteractiveMapPicker
-                                                        lat={locationState.coords?.lat ?? DEFAULT_STUDIO_COORDS.lat}
-                                                        lon={locationState.coords?.lon ?? DEFAULT_STUDIO_COORDS.lon}
-                                                        accuracy={locationState.coords?.accuracy}
-                                                        isLoadingAddress={isResolvingAddress}
-                                                        onSelectLocation={handleSelectMapLocation}
+                                                        lat={
+                                                            locationState.coords
+                                                                ?.lat ??
+                                                            DEFAULT_STUDIO_COORDS.lat
+                                                        }
+                                                        lon={
+                                                            locationState.coords
+                                                                ?.lon ??
+                                                            DEFAULT_STUDIO_COORDS.lon
+                                                        }
+                                                        accuracy={
+                                                            locationState.coords
+                                                                ?.accuracy
+                                                        }
+                                                        isLoadingAddress={
+                                                            isResolvingAddress
+                                                        }
+                                                        onSelectLocation={
+                                                            handleSelectMapLocation
+                                                        }
                                                     />
                                                 </div>
                                             )}
                                         </div>
 
                                         <div>
-                                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                                            <div className="mb-1.5 flex items-center justify-between gap-2">
                                                 <label
                                                     htmlFor="order_greeting_card_note"
                                                     className="block text-xs font-semibold text-[#16233B]"
                                                 >
-                                                    Pesan Kartu Ucapan / Catatan Khusus
+                                                    Pesan Kartu Ucapan / Catatan
+                                                    Khusus
                                                 </label>
                                                 {data.greeting_card_note && (
                                                     <button
                                                         type="button"
-                                                        onClick={() => setData('greeting_card_note', '')}
-                                                        className="text-[11px] font-medium text-[#725C30] hover:text-[#16233B] underline cursor-pointer"
+                                                        onClick={() =>
+                                                            setData(
+                                                                'greeting_card_note',
+                                                                '',
+                                                            )
+                                                        }
+                                                        className="cursor-pointer text-[11px] font-medium text-[#725C30] underline hover:text-[#16233B]"
                                                     >
                                                         Kosongkan
                                                     </button>
@@ -1000,18 +1407,26 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                 id="order_greeting_card_note"
                                                 rows={3}
                                                 value={data.greeting_card_note}
-                                                onChange={(e) => setData('greeting_card_note', e.target.value)}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'greeting_card_note',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 placeholder="Tuliskan ucapan untuk penerima atau pilih template cepat di bawah..."
-                                                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                                className="w-full rounded-xl border border-[#D8CEBA] bg-[#FFFFFF] px-3.5 py-2.5 text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                                             />
                                             {errors.greeting_card_note && (
-                                                <p className="text-xs text-red-600 mt-1">{errors.greeting_card_note}</p>
+                                                <p className="mt-1 text-xs text-red-600">
+                                                    {errors.greeting_card_note}
+                                                </p>
                                             )}
 
                                             {/* Quick Greeting Templates */}
                                             <div className="mt-2.5">
-                                                <p className="text-[11px] text-[#6E675D] mb-1.5">
-                                                    Template cepat (klik untuk langsung mengisi):
+                                                <p className="mb-1.5 text-[11px] text-[#6E675D]">
+                                                    Template cepat (klik untuk
+                                                    langsung mengisi):
                                                 </p>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {[...GREETING_TEMPLATES]
@@ -1022,21 +1437,31 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                             const bMatch =
                                                                 b.category.toLowerCase() ===
                                                                 selectedProduct.category.toLowerCase();
-                                                            return Number(bMatch) - Number(aMatch);
+                                                            return (
+                                                                Number(bMatch) -
+                                                                Number(aMatch)
+                                                            );
                                                         })
                                                         .map((tpl) => {
-                                                            const isSelected = data.greeting_card_note === tpl.text;
+                                                            const isSelected =
+                                                                data.greeting_card_note ===
+                                                                tpl.text;
                                                             return (
                                                                 <button
-                                                                    key={tpl.label}
+                                                                    key={
+                                                                        tpl.label
+                                                                    }
                                                                     type="button"
                                                                     onClick={() =>
-                                                                        setData('greeting_card_note', tpl.text)
+                                                                        setData(
+                                                                            'greeting_card_note',
+                                                                            tpl.text,
+                                                                        )
                                                                     }
-                                                                    className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] ${
+                                                                    className={`cursor-pointer rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] ${
                                                                         isSelected
-                                                                            ? 'bg-[#16233B] text-[#F2EBDC] border-[#16233B]'
-                                                                            : 'bg-[#FFFFFF] text-[#16233B] border-[#D8CEBA] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60'
+                                                                            ? 'border-[#16233B] bg-[#16233B] text-[#F2EBDC]'
+                                                                            : 'border-[#D8CEBA] bg-[#FFFFFF] text-[#16233B] hover:border-[#A88B54] hover:bg-[#EAE1CE]/60'
                                                                     }`}
                                                                 >
                                                                     {tpl.label}
@@ -1049,70 +1474,99 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
 
                                         {/* Fast 1-Click Payment Method Selector */}
                                         <div>
-                                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                                            <div className="mb-1.5 flex items-center justify-between gap-2">
                                                 <label className="flex items-center gap-1.5 text-xs font-semibold text-[#16233B]">
-                                                    <Wallet className="w-3.5 h-3.5 text-[#725C30]" />
-                                                    <span>Metode Pembayaran *</span>
+                                                    <Wallet className="h-3.5 w-3.5 text-[#725C30]" />
+                                                    <span>
+                                                        Metode Pembayaran *
+                                                    </span>
                                                 </label>
                                                 <span className="text-[11px] text-[#6E675D]">
                                                     Dibayar setelah di-ACC admin
                                                 </span>
                                             </div>
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                                {ORDER_PAYMENT_METHODS.map((method) => {
-                                                    const active = data.payment_method === method.id;
-                                                    return (
-                                                        <button
-                                                            key={method.id}
-                                                            type="button"
-                                                            onClick={() => setData('payment_method', method.id)}
-                                                            className={`text-left rounded-xl border px-3 py-2 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] ${
-                                                                active
-                                                                    ? 'bg-[#16233B] border-[#16233B] text-[#F2EBDC] shadow-xs'
-                                                                    : 'bg-[#FFFFFF] border-[#D8CEBA] text-[#16233B] hover:border-[#A88B54] hover:bg-[#EAE1CE]/50'
-                                                            }`}
-                                                        >
-                                                            <div className="flex items-center justify-between gap-1.5">
-                                                                <span className="text-xs font-semibold truncate">
-                                                                    {method.shortLabel}
-                                                                </span>
-                                                                <span
-                                                                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${
-                                                                        active
-                                                                            ? 'bg-[#A88B54]/25 text-[#C5AA74]'
-                                                                            : 'bg-[#EAE1CE] text-[#725C30]'
-                                                                    }`}
-                                                                >
-                                                                    {method.badge}
-                                                                </span>
-                                                            </div>
-                                                            <p
-                                                                className={`text-[10px] mt-0.5 truncate ${
-                                                                    active ? 'text-[#D8CEBA]' : 'text-[#6E675D]'
+                                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                                {ORDER_PAYMENT_METHODS.map(
+                                                    (method) => {
+                                                        const active =
+                                                            data.payment_method ===
+                                                            method.id;
+                                                        return (
+                                                            <button
+                                                                key={method.id}
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    setData(
+                                                                        'payment_method',
+                                                                        method.id,
+                                                                    )
+                                                                }
+                                                                className={`cursor-pointer rounded-xl border px-3 py-2 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A88B54] ${
+                                                                    active
+                                                                        ? 'border-[#16233B] bg-[#16233B] text-[#F2EBDC] shadow-xs'
+                                                                        : 'border-[#D8CEBA] bg-[#FFFFFF] text-[#16233B] hover:border-[#A88B54] hover:bg-[#EAE1CE]/50'
                                                                 }`}
                                                             >
-                                                                {method.description}
-                                                            </p>
-                                                        </button>
-                                                    );
-                                                })}
+                                                                <div className="flex items-center justify-between gap-1.5">
+                                                                    <span className="truncate text-xs font-semibold">
+                                                                        {
+                                                                            method.shortLabel
+                                                                        }
+                                                                    </span>
+                                                                    <span
+                                                                        className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${
+                                                                            active
+                                                                                ? 'bg-[#A88B54]/25 text-[#C5AA74]'
+                                                                                : 'bg-[#EAE1CE] text-[#725C30]'
+                                                                        }`}
+                                                                    >
+                                                                        {
+                                                                            method.badge
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                                <p
+                                                                    className={`mt-0.5 truncate text-[10px] ${
+                                                                        active
+                                                                            ? 'text-[#D8CEBA]'
+                                                                            : 'text-[#6E675D]'
+                                                                    }`}
+                                                                >
+                                                                    {
+                                                                        method.description
+                                                                    }
+                                                                </p>
+                                                            </button>
+                                                        );
+                                                    },
+                                                )}
                                             </div>
                                             {(() => {
-                                                const currentMethod = ORDER_PAYMENT_METHODS.find(
-                                                    (m) => m.id === data.payment_method
-                                                );
+                                                const currentMethod =
+                                                    ORDER_PAYMENT_METHODS.find(
+                                                        (m) =>
+                                                            m.id ===
+                                                            data.payment_method,
+                                                    );
                                                 if (!currentMethod) return null;
                                                 return (
-                                                    <p className="mt-2 rounded-lg border border-[#D8CEBA] bg-[#EAE1CE]/65 px-3 py-2 text-[11px] text-[#6E675D] leading-relaxed">
+                                                    <p className="mt-2 rounded-lg border border-[#D8CEBA] bg-[#EAE1CE]/65 px-3 py-2 text-[11px] leading-relaxed text-[#6E675D]">
                                                         <span className="font-semibold text-[#16233B]">
-                                                            {currentMethod.label}:{' '}
+                                                            {
+                                                                currentMethod.label
+                                                            }
+                                                            :{' '}
                                                         </span>
-                                                        {currentMethod.instruction}
+                                                        {
+                                                            currentMethod.instruction
+                                                        }
                                                     </p>
                                                 );
                                             })()}
                                             {errors.payment_method && (
-                                                <p className="text-xs text-red-600 mt-1">{errors.payment_method}</p>
+                                                <p className="mt-1 text-xs text-red-600">
+                                                    {errors.payment_method}
+                                                </p>
                                             )}
                                         </div>
 
@@ -1120,17 +1574,21 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                             <button
                                                 type="button"
                                                 onClick={closeOrderModal}
-                                                className="px-5 py-2.5 rounded-full border border-[#D8CEBA] text-xs font-semibold text-[#6E675D] hover:text-[#16233B] hover:bg-[#EAE1CE] cursor-pointer"
+                                                className="cursor-pointer rounded-full border border-[#D8CEBA] px-5 py-2.5 text-xs font-semibold text-[#6E675D] hover:bg-[#EAE1CE] hover:text-[#16233B]"
                                             >
                                                 Batal
                                             </button>
                                             <button
                                                 type="submit"
                                                 disabled={processing}
-                                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#16233B] hover:bg-[#203252] text-[#F2EBDC] text-xs font-semibold uppercase tracking-wider shadow-sm transition-colors disabled:opacity-60 cursor-pointer"
+                                                className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#16233B] px-6 py-2.5 text-xs font-semibold tracking-wider text-[#F2EBDC] uppercase shadow-sm transition-colors hover:bg-[#203252] disabled:opacity-60"
                                             >
-                                                <ShoppingBag className="w-3.5 h-3.5 text-[#C5AA74]" />
-                                                <span>{processing ? 'Mengirim...' : 'Kirim Pesanan'}</span>
+                                                <ShoppingBag className="h-3.5 w-3.5 text-[#C5AA74]" />
+                                                <span>
+                                                    {processing
+                                                        ? 'Mengirim...'
+                                                        : 'Kirim Pesanan'}
+                                                </span>
                                             </button>
                                         </div>
                                     </form>

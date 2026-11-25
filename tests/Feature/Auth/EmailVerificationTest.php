@@ -26,8 +26,8 @@ test('unverified users are redirected to the email verification prompt', functio
     $response->assertRedirect(route('verification.notice'));
 });
 
-test('email can be verified', function () {
-    $user = User::factory()->unverified()->create();
+test('email can be verified for admin and redirects to dashboard', function () {
+    $user = User::factory()->admin()->unverified()->create();
 
     Event::fake();
 
@@ -43,6 +43,25 @@ test('email can be verified', function () {
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
     $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+});
+
+test('email can be verified for customer and redirects to home', function () {
+    $user = User::factory()->unverified()->create();
+
+    Event::fake();
+
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->id, 'hash' => sha1($user->email)],
+    );
+
+    $response = $this->actingAs($user)->get($verificationUrl);
+
+    Event::assertDispatched(Verified::class);
+
+    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $response->assertRedirect(route('home', absolute: false).'?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
@@ -90,8 +109,8 @@ test('verified user is redirected to dashboard from verification prompt', functi
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
-test('already verified user visiting verification link is redirected without firing event again', function () {
-    $user = User::factory()->create();
+test('already verified admin user visiting verification link is redirected to dashboard without firing event again', function () {
+    $user = User::factory()->admin()->create();
 
     Event::fake();
 

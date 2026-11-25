@@ -8,7 +8,12 @@ export interface GeocodeSuggestion {
 /**
  * Compute distance in meters between two GPS coordinates.
  */
-export function haversineMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+export function haversineMeters(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+): number {
     const toRad = (deg: number) => (deg * Math.PI) / 180;
     const R = 6371000;
     const dLat = toRad(lat2 - lat1);
@@ -25,7 +30,7 @@ export function haversineMeters(lat1: number, lon1: number, lat2: number, lon2: 
 export async function reverseGeocodeCoords(
     lat: number,
     lon: number,
-    signal?: AbortSignal
+    signal?: AbortSignal,
 ): Promise<string> {
     try {
         const res = await fetch(
@@ -33,7 +38,7 @@ export async function reverseGeocodeCoords(
             {
                 signal,
                 headers: { Accept: 'application/json' },
-            }
+            },
         );
 
         if (res.ok) {
@@ -54,16 +59,19 @@ export async function reverseGeocodeCoords(
  */
 export async function searchIndonesianAddresses(
     query: string,
-    signal?: AbortSignal
+    signal?: AbortSignal,
 ): Promise<GeocodeSuggestion[]> {
     const trimmed = query.trim();
     if (trimmed.length < 2) return [];
 
     try {
-        const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(trimmed)}`, {
-            signal,
-            headers: { Accept: 'application/json' },
-        });
+        const res = await fetch(
+            `/api/geocode/search?q=${encodeURIComponent(trimmed)}`,
+            {
+                signal,
+                headers: { Accept: 'application/json' },
+            },
+        );
         if (!res.ok) return [];
         const payload = (await res.json()) as { results?: GeocodeSuggestion[] };
         return payload.results ?? [];

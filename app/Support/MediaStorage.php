@@ -19,7 +19,7 @@ class MediaStorage
             static::deleteIfLocalUpload($previousUrl);
         }
 
-        return '/storage/' . ltrim($path, '/');
+        return '/storage/'.ltrim($path, '/');
     }
 
     /**

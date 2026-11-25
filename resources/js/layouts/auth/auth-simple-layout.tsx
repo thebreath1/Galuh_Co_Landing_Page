@@ -8,8 +8,8 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="bg-paper-texture dark:bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-luxury">
+        <div className="bg-paper-texture flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10 dark:bg-background">
+            <div className="shadow-luxury w-full max-w-md rounded-2xl border border-border bg-card p-8">
                 <div className="flex flex-col gap-7">
                     <div className="flex flex-col items-center gap-4">
                         <Link
@@ -28,7 +28,10 @@ export default function AuthSimpleLayout({
                             </span>
                         </Link>
 
-                        <div className="h-px w-12 bg-[#A88B54]" aria-hidden="true" />
+                        <div
+                            className="h-px w-12 bg-[#A88B54]"
+                            aria-hidden="true"
+                        />
 
                         <div className="space-y-1.5 text-center">
                             <h1 className="font-serif text-2xl font-bold tracking-tight text-foreground">

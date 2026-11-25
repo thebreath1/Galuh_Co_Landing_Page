@@ -1,14 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import { m, AnimatePresence } from 'motion/react';
-import { Menu, X, ArrowRight, Sparkles, Tag } from 'lucide-react';
-import type { Product } from '@/types/landing';
+import {
+    Menu,
+    X,
+    ArrowRight,
+    Sparkles,
+    Tag,
+    LogIn,
+    UserPlus,
+    ShoppingBag,
+    LayoutDashboard,
+    LogOut,
+} from 'lucide-react';
+import { dashboard, login, logout, register } from '@/routes';
+import { mine as ordersMine } from '@/routes/orders';
+import type { User } from '@/types';
+import type { ActivePromoBanner, Product } from '@/types/landing';
 
 interface NavbarSectionProps {
     whatsappNumber: string;
     products?: Product[];
+    activePromos?: ActivePromoBanner[];
 }
 
-export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber, products = [] }) => {
+export const NavbarSection: React.FC<NavbarSectionProps> = ({
+    whatsappNumber,
+    products = [],
+    activePromos = [],
+}) => {
+    const { auth } = usePage<{ auth?: { user?: User | null } }>().props;
+    const user = auth?.user ?? null;
+    const isAdmin = user?.role === 'admin';
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -37,56 +60,103 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber, pr
 
     const cleanedNumber = whatsappNumber.replace(/[^0-9]/g, '');
     const waOrderUrl = `https://wa.me/${cleanedNumber}?text=${encodeURIComponent(
-        'Halo GALUH & CO., saya ingin melakukan pemesanan hampers.'
+        'Halo GALUH & CO., saya ingin melakukan pemesanan hampers.',
     )}`;
 
-    const activePromo = products.reduce<Product['active_promo']>((best, item) => {
-        if (!item.active_promo) return best;
-        if (!best || item.active_promo.discount_percent > best.discount_percent) {
-            return item.active_promo;
-        }
-        return best;
-    }, null);
+    const formatPromoEndDate = (isoDate: string) =>
+        new Date(isoDate).toLocaleString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
 
-    const marqueeAnnouncements = [
-        activePromo
-            ? {
-                  text: `PROMO AKTIF: ${activePromo.promo_name} — Hemat hingga ${activePromo.discount_percent}% otomatis di katalog`,
-                  href: '#koleksi',
-                  highlight: true,
-              }
-            : null,
-        {
-            text: 'Koleksi Hampers Artisanal GALUH & CO. • Studio Ciamis (Jl. Jend. Sudirman No. 175)',
+    const formatScopeInfo = (promo: ActivePromoBanner) => {
+        if (promo.scope === 'category' && promo.target_category) {
+            return `Berlaku untuk kategori ${promo.target_category}`;
+        }
+        if (promo.scope === 'product' && promo.product_name) {
+            return `Khusus paket ${promo.product_name}`;
+        }
+        return 'Berlaku untuk seluruh koleksi hampers';
+    };
+
+    const resolvedPromos: ActivePromoBanner[] =
+        activePromos.length > 0
+            ? activePromos
+            : Array.from(
+                  products
+                      .reduce<Map<number, ActivePromoBanner>>(
+                          (map, product) => {
+                              const p = product.active_promo;
+                              if (p && !map.has(p.promo_id)) {
+                                  map.set(p.promo_id, {
+                                      id: p.promo_id,
+                                      name: p.promo_name,
+                                      description: p.description,
+                                      discount_percent: p.discount_percent,
+                                      scope: 'product',
+                                      target_category: null,
+                                      product_name: product.name,
+                                      starts_at: p.ends_at,
+                                      ends_at: p.ends_at,
+                                  });
+                              }
+                              return map;
+                          },
+                          new Map(),
+                      )
+                      .values(),
+              );
+
+    const marqueeAnnouncements = resolvedPromos.flatMap((promo) => {
+        const items: { text: string; href: string; highlight: boolean }[] = [
+            {
+                text: `PROMO BERLANGSUNG: ${promo.name} — Diskon ${promo.discount_percent}% otomatis di katalog`,
+                href: '#koleksi',
+                highlight: true,
+            },
+            {
+                text: `${promo.name}: ${formatScopeInfo(promo)}`,
+                href: '#koleksi',
+                highlight: false,
+            },
+        ];
+
+        if (promo.description?.trim()) {
+            items.push({
+                text: promo.description.trim(),
+                href: '#koleksi',
+                highlight: false,
+            });
+        }
+
+        items.push({
+            text: `Periode ${promo.name} berlaku s/d ${formatPromoEndDate(promo.ends_at)} WIB`,
             href: '#koleksi',
-            highlight: false,
-        },
-        {
-            text: 'Pemesanan Cepat & Praktis — Pembayaran via BCA, Mandiri, QRIS Instan, E-Wallet, atau COD Lokal',
-            href: '#koleksi',
-            highlight: false,
-        },
-        {
-            text: 'Layanan Corporate Gifting B2B — Custom Logo Foil Emas, Faktur Pajak & Termin DP 50%',
-            href: '#corporate',
-            highlight: false,
-        },
-    ].filter((item): item is { text: string; href: string; highlight: boolean } => item !== null);
+            highlight: true,
+        });
+
+        return items;
+    });
 
     return (
         <header
             className={`sticky top-0 z-40 transition-all duration-300 ${
                 scrolled
-                    ? 'bg-[#F2EBDC]/95 backdrop-blur-md shadow-sm'
+                    ? 'bg-[#F2EBDC]/95 shadow-sm backdrop-blur-md'
                     : 'bg-[#F2EBDC]/85 backdrop-blur-xs'
             }`}
         >
-            <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${scrolled ? 'py-2.5' : 'py-3'}`}>
+            <div
+                className={`mx-auto max-w-7xl px-4 transition-all duration-300 sm:px-6 lg:px-8 ${scrolled ? 'py-2.5' : 'py-3'}`}
+            >
                 <div className="flex items-center justify-between">
                     {/* Brand Logo */}
                     <a
                         href="#hero"
-                        className="flex items-center focus:outline-none focus:ring-2 focus:ring-[#A88B54] rounded-lg p-1 group"
+                        className="group flex items-center rounded-lg p-1 focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                         aria-label="GALUH & CO. Beranda"
                     >
                         <img
@@ -97,86 +167,153 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber, pr
                             loading="eager"
                             decoding="sync"
                             fetchPriority="high"
-                            className="h-11 w-[49px] sm:h-12 sm:w-[53px] shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
+                            className="h-11 w-[49px] shrink-0 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-12 sm:w-[53px]"
                         />
                     </a>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-7" aria-label="Navigasi Utama">
+                    <nav
+                        className="hidden items-center gap-6 lg:flex"
+                        aria-label="Navigasi Utama"
+                    >
                         {navLinks.map((link) => (
                             <a
                                 key={link.name}
                                 href={link.href}
-                                className="text-sm font-medium text-[#1E2430]/80 hover:text-[#16233B] transition-colors relative py-1 focus:outline-none focus:ring-1 focus:ring-[#A88B54] rounded"
+                                className="relative rounded py-1 text-sm font-medium whitespace-nowrap text-[#1E2430]/80 transition-colors hover:text-[#16233B] focus:ring-1 focus:ring-[#A88B54] focus:outline-none"
                             >
                                 {link.name}
                             </a>
                         ))}
                     </nav>
 
-                    {/* Desktop CTA Button */}
-                    <div className="hidden sm:flex items-center gap-3">
+                    {/* Desktop Auth & CTA Buttons */}
+                    <div className="hidden items-center gap-2.5 sm:flex">
+                        {user ? (
+                            <>
+                                <Link
+                                    href={isAdmin ? dashboard() : ordersMine()}
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#A88B54]/60 bg-[#FFFFFF]/80 px-4 py-2 text-xs font-semibold whitespace-nowrap text-[#16233B] transition-colors hover:bg-[#EAE1CE]"
+                                >
+                                    {isAdmin ? (
+                                        <>
+                                            <LayoutDashboard className="h-3.5 w-3.5 text-[#725C30]" />
+                                            <span>Dashboard</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShoppingBag className="h-3.5 w-3.5 text-[#725C30]" />
+                                            <span>Pesanan Saya</span>
+                                        </>
+                                    )}
+                                </Link>
+                                <Link
+                                    href={logout()}
+                                    method="post"
+                                    as="button"
+                                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[#D8CEBA] px-3.5 py-2 text-xs font-semibold whitespace-nowrap text-[#6E675D] transition-colors hover:bg-[#EAE1CE] hover:text-[#16233B]"
+                                    title={`Keluar dari ${user.name}`}
+                                >
+                                    <LogOut className="h-3.5 w-3.5" />
+                                    <span className="hidden xl:inline">
+                                        Keluar
+                                    </span>
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    href={login()}
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#16233B]/30 px-4 py-2 text-xs font-semibold whitespace-nowrap text-[#16233B] transition-colors hover:bg-[#EAE1CE]"
+                                >
+                                    <LogIn className="h-3.5 w-3.5 text-[#725C30]" />
+                                    <span>Masuk</span>
+                                </Link>
+                                <Link
+                                    href={register()}
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#A88B54]/60 bg-[#FFFFFF]/85 px-4 py-2 text-xs font-semibold whitespace-nowrap text-[#16233B] transition-colors hover:bg-[#EAE1CE]"
+                                >
+                                    <UserPlus className="h-3.5 w-3.5 text-[#725C30]" />
+                                    <span>Daftar</span>
+                                </Link>
+                            </>
+                        )}
                         <m.a
                             href="#koleksi"
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#16233B] text-[#F2EBDC] text-xs font-semibold tracking-wider uppercase hover:bg-[#203252] transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                            className="inline-flex items-center gap-2 rounded-full bg-[#16233B] px-5 py-2.5 text-xs font-semibold tracking-wider whitespace-nowrap text-[#F2EBDC] uppercase shadow-sm transition-colors hover:bg-[#203252] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                         >
                             <span>Pesan Sekarang</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-[#C5AA74]" />
+                            <ArrowRight className="h-3.5 w-3.5 text-[#C5AA74]" />
                         </m.a>
                     </div>
 
                     {/* Mobile Hamburger Button */}
-                    <div className="flex md:hidden items-center gap-2">
+                    <div className="flex items-center gap-2 lg:hidden">
                         <button
                             type="button"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="p-2 rounded-lg text-[#16233B] hover:bg-[#EAE1CE] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                            className="rounded-lg p-2 text-[#16233B] hover:bg-[#EAE1CE] focus:ring-2 focus:ring-[#A88B54] focus:outline-none"
                             aria-expanded={mobileMenuOpen}
                             aria-label="Buka menu navigasi"
                         >
-                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            {mobileMenuOpen ? (
+                                <X className="h-6 w-6" />
+                            ) : (
+                                <Menu className="h-6 w-6" />
+                            )}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Thin Sticky Marquee Announcement Banner Attached Directly Below Navbar */}
-            <div
-                aria-label="Informasi & Pengumuman Klien"
-                className="relative w-full bg-[#16233B] text-[#F2EBDC] border-y border-[#A88B54]/40 overflow-hidden select-none"
-            >
-                <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#16233B] to-transparent z-10" />
-                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#16233B] to-transparent z-10" />
+            {/* Thin Sticky Marquee Announcement Banner — Only Shown During Active Promos */}
+            {marqueeAnnouncements.length > 0 && (
+                <div
+                    aria-label="Pengumuman Promo Berlangsung"
+                    className="relative w-full overflow-hidden border-y border-[#A88B54]/40 bg-[#16233B] text-[#F2EBDC] select-none"
+                >
+                    <div className="pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8 bg-gradient-to-r from-[#16233B] to-transparent sm:w-16" />
+                    <div className="pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8 bg-gradient-to-l from-[#16233B] to-transparent sm:w-16" />
 
-                <div className="animate-marquee items-center py-1.5">
-                    {[
-                        ...marqueeAnnouncements,
-                        ...marqueeAnnouncements,
-                        ...marqueeAnnouncements,
-                        ...marqueeAnnouncements,
-                    ].map((item, idx) => (
-                        <a
-                            key={idx}
-                            href={item.href}
-                            className="inline-flex items-center gap-2 px-6 text-[11px] sm:text-xs font-medium tracking-wide whitespace-nowrap text-[#F2EBDC]/95 hover:text-[#C5AA74] transition-colors shrink-0"
-                        >
-                            {item.highlight ? (
-                                <Tag className="w-3 h-3 text-[#C5AA74] shrink-0" />
-                            ) : (
-                                <Sparkles className="w-3 h-3 text-[#A88B54] shrink-0" />
-                            )}
-                            <span className={item.highlight ? 'font-semibold text-[#C5AA74]' : ''}>
-                                {item.text}
-                            </span>
-                            <span className="ml-4 text-[#A88B54]/50" aria-hidden="true">
-                                •
-                            </span>
-                        </a>
-                    ))}
+                    <div className="animate-marquee items-center py-1.5">
+                        {[
+                            ...marqueeAnnouncements,
+                            ...marqueeAnnouncements,
+                            ...marqueeAnnouncements,
+                            ...marqueeAnnouncements,
+                        ].map((item, idx) => (
+                            <a
+                                key={idx}
+                                href={item.href}
+                                className="inline-flex shrink-0 items-center gap-2 px-6 text-[11px] font-medium tracking-wide whitespace-nowrap text-[#F2EBDC]/95 transition-colors hover:text-[#C5AA74] sm:text-xs"
+                            >
+                                {item.highlight ? (
+                                    <Tag className="h-3 w-3 shrink-0 text-[#C5AA74]" />
+                                ) : (
+                                    <Sparkles className="h-3 w-3 shrink-0 text-[#A88B54]" />
+                                )}
+                                <span
+                                    className={
+                                        item.highlight
+                                            ? 'font-semibold text-[#C5AA74]'
+                                            : ''
+                                    }
+                                >
+                                    {item.text}
+                                </span>
+                                <span
+                                    className="ml-4 text-[#A88B54]/50"
+                                    aria-hidden="true"
+                                >
+                                    •
+                                </span>
+                            </a>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Mobile Navigation Drawer */}
             <AnimatePresence>
@@ -186,24 +323,84 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber, pr
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="md:hidden bg-[#F2EBDC] border-b border-[#D8CEBA] px-4 pt-3 pb-6 shadow-xl"
+                        className="border-b border-[#D8CEBA] bg-[#F2EBDC] px-4 pt-3 pb-6 shadow-xl lg:hidden"
                     >
-                        <nav className="flex flex-col gap-3" aria-label="Navigasi Seluler">
+                        <nav
+                            className="flex flex-col gap-3"
+                            aria-label="Navigasi Seluler"
+                        >
                             {navLinks.map((link) => (
                                 <a
                                     key={link.name}
                                     href={link.href}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="px-3 py-2 text-sm font-medium text-[#1E2430] hover:bg-[#EAE1CE] hover:text-[#16233B] rounded-lg transition-colors"
+                                    className="rounded-lg px-3 py-2 text-sm font-medium text-[#1E2430] transition-colors hover:bg-[#EAE1CE] hover:text-[#16233B]"
                                 >
                                     {link.name}
                                 </a>
                             ))}
-                            <div className="pt-2 border-t border-[#D8CEBA] flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 border-t border-[#D8CEBA] pt-2">
+                                {user ? (
+                                    <>
+                                        <div className="px-3 py-1.5 text-xs text-[#6E675D]">
+                                            Masuk sebagai{' '}
+                                            <strong className="text-[#16233B]">
+                                                {user.name}
+                                            </strong>
+                                        </div>
+                                        <Link
+                                            href={
+                                                isAdmin
+                                                    ? dashboard()
+                                                    : ordersMine()
+                                            }
+                                            onClick={() =>
+                                                setMobileMenuOpen(false)
+                                            }
+                                            className="w-full rounded-full border border-[#A88B54] bg-[#FFFFFF] px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-[#16233B] uppercase"
+                                        >
+                                            {isAdmin
+                                                ? 'Dashboard Admin'
+                                                : 'Pesanan Saya'}
+                                        </Link>
+                                        <Link
+                                            href={logout()}
+                                            method="post"
+                                            as="button"
+                                            onClick={() =>
+                                                setMobileMenuOpen(false)
+                                            }
+                                            className="w-full cursor-pointer rounded-full border border-[#D8CEBA] px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-[#6E675D] uppercase"
+                                        >
+                                            Keluar
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <Link
+                                            href={login()}
+                                            onClick={() =>
+                                                setMobileMenuOpen(false)
+                                            }
+                                            className="w-full rounded-full border border-[#16233B] px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-[#16233B] uppercase hover:bg-[#EAE1CE]"
+                                        >
+                                            Masuk
+                                        </Link>
+                                        <Link
+                                            href={register()}
+                                            onClick={() =>
+                                                setMobileMenuOpen(false)
+                                            }
+                                            className="w-full rounded-full border border-[#A88B54] bg-[#FFFFFF] px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-[#16233B] uppercase hover:bg-[#EAE1CE]"
+                                        >
+                                            Daftar
+                                        </Link>
+                                    </div>
+                                )}
                                 <a
                                     href="#koleksi"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="w-full text-center py-2.5 px-4 rounded-full bg-[#16233B] text-[#F2EBDC] text-xs font-semibold uppercase tracking-wider shadow-sm"
+                                    className="w-full rounded-full bg-[#16233B] px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-[#F2EBDC] uppercase shadow-sm"
                                 >
                                     Lihat Koleksi
                                 </a>
@@ -211,7 +408,7 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber, pr
                                     href={waOrderUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full text-center py-2.5 px-4 rounded-full border border-[#16233B] text-[#16233B] text-xs font-semibold uppercase tracking-wider hover:bg-[#EAE1CE]"
+                                    className="w-full rounded-full border border-[#16233B] px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-[#16233B] uppercase hover:bg-[#EAE1CE]"
                                 >
                                     Pesan via WhatsApp
                                 </a>

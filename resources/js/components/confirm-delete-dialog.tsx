@@ -31,14 +31,19 @@ export function ConfirmDeleteDialog({
     processing = false,
 }: ConfirmDeleteDialogProps) {
     return (
-        <Dialog open={open} onOpenChange={(next) => !processing && onOpenChange(next)}>
+        <Dialog
+            open={open}
+            onOpenChange={(next) => !processing && onOpenChange(next)}
+        >
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <div className="mb-1 flex items-center gap-2.5">
                         <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-destructive/30 bg-destructive/10 text-destructive">
                             <AlertTriangle className="size-4" />
                         </div>
-                        <DialogTitle className="font-serif text-lg">{title}</DialogTitle>
+                        <DialogTitle className="font-serif text-lg">
+                            {title}
+                        </DialogTitle>
                     </div>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
