@@ -47,8 +47,8 @@ export default function Welcome({ products, testimonials, whatsappNumber, siteSe
             </Head>
 
             <div className="min-h-screen bg-[#F2EBDC] text-[#1E2430] font-sans antialiased selection:bg-[#A88B54]/20 selection:text-[#16233B] overflow-x-clip">
-                {/* 1. Sticky Navigation Bar */}
-                <NavbarSection whatsappNumber={waNumber} />
+                {/* 1. Sticky Navigation Bar + Attached Marquee Banner */}
+                <NavbarSection whatsappNumber={waNumber} products={products} />
 
                 <main id="main-content">
                     {/* 2. Hero Section (Single H1, CTAs, Hampers Visual) */}

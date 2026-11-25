@@ -1,3 +1,13 @@
+export interface ActivePromoInfo {
+    promo_id: number;
+    promo_name: string;
+    description: string | null;
+    discount_percent: number;
+    original_price: number;
+    discounted_price: number;
+    ends_at: string;
+}
+
 export interface Product {
     id: number;
     name: string;
@@ -9,6 +19,29 @@ export interface Product {
     image: string;
     sort_order: number;
     is_active: boolean;
+    active_promo?: ActivePromoInfo | null;
+}
+
+export type PromoScope = 'all' | 'category' | 'product';
+
+export interface PromoRecord {
+    id: number;
+    name: string;
+    description: string | null;
+    discount_percent: number;
+    scope: PromoScope;
+    target_category: string | null;
+    product_id: number | null;
+    starts_at: string;
+    ends_at: string;
+    is_active: boolean;
+    created_at: string;
+    product?: {
+        id: number;
+        name: string;
+        category: string;
+        price_from: number;
+    } | null;
 }
 
 export interface SiteSettings {
@@ -78,14 +111,28 @@ export interface InquiryFormData {
 
 export type OrderStatus = 'pending' | 'approved' | 'rejected' | 'completed';
 
+export type FulfillmentStage = 'curating' | 'packed' | 'shipped' | 'delivered';
+
+export interface TrackingHistoryEntry {
+    stage: FulfillmentStage;
+    label: string;
+    note: string;
+    actor: string;
+    timestamp: string;
+}
+
 export interface OrderRecord {
     id: number;
     order_code: string;
     product_id: number | null;
     product_name: string;
     unit_price: number;
+    original_unit_price?: number | null;
     quantity: number;
     total_price: number;
+    promo_name?: string | null;
+    discount_percent?: number;
+    discount_amount?: number;
     customer_name: string;
     customer_whatsapp: string;
     customer_email: string | null;
@@ -94,14 +141,23 @@ export interface OrderRecord {
     greeting_card_note: string | null;
     payment_method: string | null;
     status: OrderStatus;
+    fulfillment_stage?: FulfillmentStage | null;
+    courier_name?: string | null;
+    tracking_number?: string | null;
+    recipient_name?: string | null;
+    shipping_notes?: string | null;
+    tracking_history?: TrackingHistoryEntry[] | null;
     admin_note: string | null;
     reviewed_at: string | null;
+    shipped_at?: string | null;
+    delivered_at?: string | null;
     created_at: string;
     product?: {
         id: number;
         name: string;
         image: string;
         category: string;
+        contents?: string[];
     } | null;
     reviewer?: {
         id: number;

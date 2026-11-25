@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Promo;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
 use Inertia\Inertia;
@@ -15,10 +16,22 @@ class LandingPageController extends Controller
      */
     public function index(): Response
     {
+        $activePromos = Promo::query()
+            ->currentlyActive()
+            ->orderByDesc('discount_percent')
+            ->get();
+
         $products = Product::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
-            ->get();
+            ->get()
+            ->map(function (Product $product) use ($activePromos) {
+                $payload = $product->toArray();
+                $payload['active_promo'] = Promo::resolveBestForProduct($product, $activePromos);
+
+                return $payload;
+            })
+            ->values();
 
         $testimonials = Testimonial::query()
             ->where('is_active', true)

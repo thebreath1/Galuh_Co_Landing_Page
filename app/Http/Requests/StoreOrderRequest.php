@@ -26,7 +26,7 @@ class StoreOrderRequest extends FormRequest
         return [
             'product_id' => ['required', 'integer', 'exists:products,id'],
             'customer_name' => ['required', 'string', 'max:255'],
-            'customer_whatsapp' => ['required', 'string', 'max:30'],
+            'customer_whatsapp' => ['required', 'string', 'max:12', 'regex:/^[0-9]{1,12}$/'],
             'customer_email' => ['nullable', 'string', 'email', 'max:255'],
             'quantity' => ['required', 'integer', 'min:1', 'max:10000'],
             'delivery_date' => ['nullable', 'date'],
@@ -48,6 +48,8 @@ class StoreOrderRequest extends FormRequest
             'product_id.required' => 'Silakan pilih paket hampers terlebih dahulu.',
             'customer_name.required' => 'Nama pemesan wajib diisi.',
             'customer_whatsapp.required' => 'Nomor WhatsApp aktif wajib diisi.',
+            'customer_whatsapp.max' => 'Nomor WhatsApp maksimal 12 digit angka.',
+            'customer_whatsapp.regex' => 'Nomor WhatsApp hanya boleh berisi angka (maksimal 12 digit).',
             'customer_email.email' => 'Format email tidak valid.',
             'quantity.required' => 'Jumlah pesanan wajib diisi.',
             'quantity.min' => 'Minimal pemesanan adalah 1 paket.',

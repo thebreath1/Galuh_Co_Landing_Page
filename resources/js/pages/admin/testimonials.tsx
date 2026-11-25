@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Eye, EyeOff, MessageSquareQuote, Pencil, Plus, Search, Star, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,8 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'hidden'>('all');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<TestimonialRecord | null>(null);
+    const [pendingDelete, setPendingDelete] = useState<TestimonialRecord | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const { data, setData, post, put, processing, errors, reset, clearErrors, transform } =
         useForm<TestimonialFormState>({
@@ -135,9 +138,17 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
         router.patch(toggleTestimonial.url(item.id), {}, { preserveScroll: true });
     };
 
-    const handleDelete = (item: TestimonialRecord) => {
-        if (!window.confirm(`Hapus testimoni dari "${item.name}"?`)) return;
-        router.delete(destroyTestimonial.url(item.id), { preserveScroll: true });
+    const handleConfirmDelete = () => {
+        if (!pendingDelete) return;
+        setIsDeleting(true);
+        router.delete(destroyTestimonial.url(pendingDelete.id), {
+            preserveScroll: true,
+            onError: () => toast.error('Gagal menghapus testimoni.'),
+            onFinish: () => {
+                setIsDeleting(false);
+                setPendingDelete(null);
+            },
+        });
     };
 
     const filtered = testimonials.filter((item) => {
@@ -289,7 +300,8 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                                             size="icon"
                                             variant="outline"
                                             title="Hapus"
-                                            onClick={() => handleDelete(item)}
+                                            className="hover:border-destructive/60 hover:bg-destructive/10"
+                                            onClick={() => setPendingDelete(item)}
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
@@ -438,6 +450,19 @@ export default function AdminTestimonials({ testimonials }: AdminTestimonialsPro
                     </form>
                 </DialogContent>
             </Dialog>
+
+            <ConfirmDeleteDialog
+                open={pendingDelete !== null}
+                onOpenChange={(open) => !open && setPendingDelete(null)}
+                title="Hapus Testimoni Klien?"
+                description={
+                    pendingDelete
+                        ? `Testimoni dari "${pendingDelete.name}" akan dihapus permanen.`
+                        : ''
+                }
+                processing={isDeleting}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 }

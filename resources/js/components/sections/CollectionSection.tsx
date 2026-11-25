@@ -8,14 +8,18 @@ import {
     Loader2,
     LocateFixed,
     MapPin,
+    Percent,
     Radio,
     ShoppingBag,
     Sparkles,
+    Tag,
     Wallet,
     X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { EmailQuickDomains } from '@/components/EmailQuickDomains';
 import { InteractiveMapPicker } from '@/components/InteractiveMapPicker';
+import { MAX_PHONE_DIGITS, sanitizePhoneInput } from '@/lib/input-helpers';
 import { ORDER_PAYMENT_METHODS, formatPaymentMethodLabel } from '@/lib/payment-methods';
 import { haversineMeters, reverseGeocodeCoords } from '@/lib/reverse-geocode';
 import { store as storeOrder } from '@/routes/orders';
@@ -119,6 +123,7 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
     const lastAccuracyRef = useRef<number | null>(null);
     const manualAddressEditedRef = useRef<boolean>(false);
     const geocodeAbortRef = useRef<AbortController | null>(null);
+    const emailInputRef = useRef<HTMLInputElement | null>(null);
 
     const { data, setData, post, processing, errors, reset, clearErrors, transform } = useForm({
         product_id: 0,
@@ -143,6 +148,17 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
         selectedCategory === 'Semua'
             ? products
             : products.filter((p) => p.category.trim().toLowerCase() === selectedCategory.toLowerCase());
+
+    const highlightedPromo = products.reduce<Product['active_promo']>(
+        (best, item) => {
+            if (!item.active_promo) return best;
+            if (!best || item.active_promo.discount_percent > best.discount_percent) {
+                return item.active_promo;
+            }
+            return best;
+        },
+        null
+    );
 
     const formatRupiah = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -403,6 +419,29 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                     </p>
                 </m.div>
 
+                {highlightedPromo && (
+                    <div className="mb-8 flex justify-center">
+                        <div className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full border border-[#A88B54]/45 bg-[#16233B] px-5 py-2 text-xs text-[#F2EBDC] shadow-sm">
+                            <span className="inline-flex items-center gap-1 font-semibold text-[#C5AA74]">
+                                <Tag className="w-3.5 h-3.5" />
+                                Promo Otomatis Aktif:
+                            </span>
+                            <span className="font-semibold">{highlightedPromo.promo_name}</span>
+                            <span className="rounded-full bg-[#A88B54]/25 px-2 py-0.5 text-[11px] font-bold text-[#C5AA74]">
+                                Diskon s/d {highlightedPromo.discount_percent}%
+                            </span>
+                            <span className="text-[11px] text-[#D8CEBA]">
+                                s/d{' '}
+                                {new Date(highlightedPromo.ends_at).toLocaleDateString('id-ID', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                })}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
                 {/* Category Filters */}
                 <div className="flex justify-center mb-14">
                     <div
@@ -467,6 +506,14 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     {product.category}
                                                 </span>
                                             </div>
+                                            {product.active_promo && (
+                                                <div className="absolute top-3.5 right-3.5">
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#16233B] text-[#F2EBDC] text-[11px] font-bold border border-[#A88B54] shadow-md">
+                                                        <Percent className="w-3 h-3 text-[#C5AA74]" />
+                                                        <span>-{product.active_promo.discount_percent}%</span>
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Product Content */}
@@ -507,11 +554,22 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                             <div className="pt-4 border-t border-[#D8CEBA] flex items-center justify-between gap-3">
                                                 <div>
                                                     <span className="text-[11px] text-[#6E675D] uppercase tracking-wider block">
-                                                        Mulai Dari
+                                                        {product.active_promo ? product.active_promo.promo_name : 'Mulai Dari'}
                                                     </span>
-                                                    <span className="font-serif text-base sm:text-lg font-bold text-[#16233B]">
-                                                        {formatRupiah(product.price_from)}
-                                                    </span>
+                                                    {product.active_promo ? (
+                                                        <div className="flex flex-wrap items-baseline gap-1.5">
+                                                            <span className="font-serif text-base sm:text-lg font-bold text-[#725C30]">
+                                                                {formatRupiah(product.active_promo.discounted_price)}
+                                                            </span>
+                                                            <span className="text-xs text-[#6E675D] line-through">
+                                                                {formatRupiah(product.price_from)}
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="font-serif text-base sm:text-lg font-bold text-[#16233B]">
+                                                            {formatRupiah(product.price_from)}
+                                                        </span>
+                                                    )}
                                                 </div>
 
                                                 <m.button
@@ -580,33 +638,78 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
 
                             <div className="p-6 max-h-[80vh] overflow-y-auto">
                                 {/* Selected Product Summary */}
-                                <div className="flex items-center gap-4 p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] mb-5">
-                                    <img
-                                        src={selectedProduct.image}
-                                        alt={selectedProduct.name}
-                                        className="w-16 h-16 rounded-lg object-cover shrink-0 bg-[#EAE1CE]"
-                                    />
-                                    <div className="min-w-0 flex-1">
-                                        <span className="text-[11px] uppercase tracking-wider font-semibold text-[#725C30]">
-                                            {selectedProduct.category}
-                                        </span>
-                                        <p className="font-serif font-bold text-[#16233B] truncate">
-                                            {selectedProduct.name}
-                                        </p>
-                                        <p className="text-xs text-[#6E675D]">
-                                            Harga satuan: {formatRupiah(selectedProduct.price_from)}
-                                        </p>
-                                    </div>
-                                    <div className="text-right shrink-0">
-                                        <span className="text-[11px] text-[#6E675D] block">Estimasi Total</span>
-                                        <span className="font-serif text-base font-bold text-[#16233B]">
-                                            {formatRupiah(
-                                                selectedProduct.price_from *
-                                                    Math.max(1, Number(data.quantity || 1))
+                                {(() => {
+                                    const promo = selectedProduct.active_promo;
+                                    const effectiveUnit = promo ? promo.discounted_price : selectedProduct.price_from;
+                                    const qty = Math.max(1, Number(data.quantity || 1));
+                                    const effectiveTotal = effectiveUnit * qty;
+                                    const originalTotal = selectedProduct.price_from * qty;
+                                    const savingsTotal = Math.max(0, originalTotal - effectiveTotal);
+
+                                    return (
+                                        <div className="mb-5 space-y-2">
+                                            <div className="flex items-center gap-4 p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA]">
+                                                <img
+                                                    src={selectedProduct.image}
+                                                    alt={selectedProduct.name}
+                                                    className="w-16 h-16 rounded-lg object-cover shrink-0 bg-[#EAE1CE]"
+                                                />
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex flex-wrap items-center gap-1.5">
+                                                        <span className="text-[11px] uppercase tracking-wider font-semibold text-[#725C30]">
+                                                            {selectedProduct.category}
+                                                        </span>
+                                                        {promo && (
+                                                            <span className="rounded-full bg-[#16233B] px-2 py-0.5 text-[10px] font-bold text-[#C5AA74]">
+                                                                -{promo.discount_percent}%
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="font-serif font-bold text-[#16233B] truncate">
+                                                        {selectedProduct.name}
+                                                    </p>
+                                                    <p className="text-xs text-[#6E675D]">
+                                                        Harga satuan:{' '}
+                                                        {promo ? (
+                                                            <>
+                                                                <span className="font-semibold text-[#725C30]">
+                                                                    {formatRupiah(effectiveUnit)}
+                                                                </span>{' '}
+                                                                <span className="line-through">
+                                                                    {formatRupiah(selectedProduct.price_from)}
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            formatRupiah(selectedProduct.price_from)
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right shrink-0">
+                                                    <span className="text-[11px] text-[#6E675D] block">Estimasi Total</span>
+                                                    {promo && (
+                                                        <span className="block text-[11px] text-[#6E675D] line-through">
+                                                            {formatRupiah(originalTotal)}
+                                                        </span>
+                                                    )}
+                                                    <span className="font-serif text-base font-bold text-[#16233B]">
+                                                        {formatRupiah(effectiveTotal)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {promo && savingsTotal > 0 && (
+                                                <div className="flex items-center justify-between gap-2 rounded-lg border border-[#A88B54]/45 bg-[#EAE1CE]/75 px-3 py-1.5 text-[11px] text-[#16233B]">
+                                                    <span className="inline-flex items-center gap-1.5 font-medium">
+                                                        <Tag className="w-3 h-3 text-[#725C30]" />
+                                                        Promo otomatis: <strong>{promo.promo_name}</strong>
+                                                    </span>
+                                                    <span className="font-semibold text-[#725C30]">
+                                                        Hemat {formatRupiah(savingsTotal)}
+                                                    </span>
+                                                </div>
                                             )}
-                                        </span>
-                                    </div>
-                                </div>
+                                        </div>
+                                    );
+                                })()}
 
                                 {submittedMessage ? (
                                     <div className="p-5 rounded-xl bg-[#16233B]/5 border border-[#16233B]/20 text-center space-y-3">
@@ -664,19 +767,28 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                             </div>
 
                                             <div>
-                                                <label
-                                                    htmlFor="order_customer_whatsapp"
-                                                    className="block text-xs font-semibold text-[#16233B] mb-1.5"
-                                                >
-                                                    Nomor WhatsApp / Telepon *
-                                                </label>
+                                                <div className="flex items-center justify-between gap-2 mb-1.5">
+                                                    <label
+                                                        htmlFor="order_customer_whatsapp"
+                                                        className="block text-xs font-semibold text-[#16233B]"
+                                                    >
+                                                        Nomor WhatsApp / Telepon *
+                                                    </label>
+                                                    <span className="text-[11px] font-medium text-[#6E675D]">
+                                                        {data.customer_whatsapp.length}/{MAX_PHONE_DIGITS} digit
+                                                    </span>
+                                                </div>
                                                 <input
                                                     id="order_customer_whatsapp"
                                                     type="tel"
+                                                    inputMode="numeric"
+                                                    maxLength={MAX_PHONE_DIGITS}
                                                     required
                                                     value={data.customer_whatsapp}
-                                                    onChange={(e) => setData('customer_whatsapp', e.target.value)}
-                                                    placeholder="0812xxxxxxxx"
+                                                    onChange={(e) =>
+                                                        setData('customer_whatsapp', sanitizePhoneInput(e.target.value))
+                                                    }
+                                                    placeholder="0812xxxxxxxx (maks. 12 angka)"
                                                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
                                                 />
                                                 {errors.customer_whatsapp && (
@@ -685,7 +797,7 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div>
                                                 <label
                                                     htmlFor="order_quantity"
@@ -726,26 +838,32 @@ export const CollectionSection: React.FC<CollectionSectionProps> = ({ products, 
                                                     <p className="text-xs text-red-600 mt-1">{errors.delivery_date}</p>
                                                 )}
                                             </div>
+                                        </div>
 
-                                            <div>
-                                                <label
-                                                    htmlFor="order_customer_email"
-                                                    className="block text-xs font-semibold text-[#16233B] mb-1.5"
-                                                >
-                                                    Email (Opsional)
-                                                </label>
-                                                <input
-                                                    id="order_customer_email"
-                                                    type="email"
-                                                    value={data.customer_email}
-                                                    onChange={(e) => setData('customer_email', e.target.value)}
-                                                    placeholder="nama@email.com"
-                                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
-                                                />
-                                                {errors.customer_email && (
-                                                    <p className="text-xs text-red-600 mt-1">{errors.customer_email}</p>
-                                                )}
-                                            </div>
+                                        <div>
+                                            <label
+                                                htmlFor="order_customer_email"
+                                                className="block text-xs font-semibold text-[#16233B] mb-1.5"
+                                            >
+                                                Email (Opsional)
+                                            </label>
+                                            <input
+                                                ref={emailInputRef}
+                                                id="order_customer_email"
+                                                type="email"
+                                                value={data.customer_email}
+                                                onChange={(e) => setData('customer_email', e.target.value)}
+                                                placeholder="Ketik nama lalu pilih akhiran email di bawah..."
+                                                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8CEBA] text-sm text-[#1E2430] placeholder:text-[#6E675D] focus:outline-none focus:ring-2 focus:ring-[#A88B54]"
+                                            />
+                                            <EmailQuickDomains
+                                                value={data.customer_email}
+                                                inputRef={emailInputRef}
+                                                onSelect={(nextEmail) => setData('customer_email', nextEmail)}
+                                            />
+                                            {errors.customer_email && (
+                                                <p className="text-xs text-red-600 mt-1">{errors.customer_email}</p>
+                                            )}
                                         </div>
 
                                         <div>

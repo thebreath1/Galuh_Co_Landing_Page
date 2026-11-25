@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useForm } from '@inertiajs/react';
 import { m } from 'motion/react';
 import { CheckCircle2, Send, Loader2, PhoneCall, ExternalLink, Wallet } from 'lucide-react';
+import { EmailQuickDomains } from '@/components/EmailQuickDomains';
+import { MAX_PHONE_DIGITS, sanitizePhoneInput } from '@/lib/input-helpers';
 import type { InquiryFormData } from '@/types/landing';
 import { CORPORATE_PAYMENT_METHODS } from '@/lib/payment-methods';
 import { fadeUp, viewportConfig } from '@/lib/motion';
@@ -15,6 +17,7 @@ interface CorporateGiftingSectionProps {
 }
 
 export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = ({ whatsappNumber, flash }) => {
+    const corporateEmailRef = useRef<HTMLInputElement | null>(null);
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm<InquiryFormData>({
         name: '',
         company: '',
@@ -306,33 +309,46 @@ export const CorporateGiftingSection: React.FC<CorporateGiftingSectionProps> = (
                                             Email Bisnis <span className="text-red-500">*</span>
                                         </label>
                                         <input
+                                            ref={corporateEmailRef}
                                             type="email"
                                             id="email"
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
-                                            placeholder="rian@company.co.id"
+                                            placeholder="nama@gmail.com atau email kantor"
                                             className={`w-full px-4 py-2.5 rounded-xl border text-sm text-[#1E2430] bg-[#F2EBDC] focus:outline-none focus:ring-2 focus:ring-[#A88B54] ${
                                                 errors.email ? 'border-red-500' : 'border-[#D8CEBA]'
                                             }`}
                                             required
+                                        />
+                                        <EmailQuickDomains
+                                            value={data.email}
+                                            inputRef={corporateEmailRef}
+                                            onSelect={(nextEmail) => setData('email', nextEmail)}
                                         />
                                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                                     </div>
 
                                     {/* 4. WhatsApp Number */}
                                     <div>
-                                        <label
-                                            htmlFor="whatsapp_number"
-                                            className="block text-xs font-semibold text-[#16233B] uppercase tracking-wider mb-1.5"
-                                        >
-                                            Nomor WhatsApp <span className="text-red-500">*</span>
-                                        </label>
+                                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                                            <label
+                                                htmlFor="whatsapp_number"
+                                                className="block text-xs font-semibold text-[#16233B] uppercase tracking-wider"
+                                            >
+                                                Nomor WhatsApp <span className="text-red-500">*</span>
+                                            </label>
+                                            <span className="text-[10px] font-medium text-[#6E675D]">
+                                                {data.whatsapp_number.length}/{MAX_PHONE_DIGITS} digit
+                                            </span>
+                                        </div>
                                         <input
                                             type="tel"
+                                            inputMode="numeric"
+                                            maxLength={MAX_PHONE_DIGITS}
                                             id="whatsapp_number"
                                             value={data.whatsapp_number}
-                                            onChange={(e) => setData('whatsapp_number', e.target.value)}
-                                            placeholder="081234567890"
+                                            onChange={(e) => setData('whatsapp_number', sanitizePhoneInput(e.target.value))}
+                                            placeholder="0812xxxxxxxx (maks. 12 angka)"
                                             className={`w-full px-4 py-2.5 rounded-xl border text-sm text-[#1E2430] bg-[#F2EBDC] focus:outline-none focus:ring-2 focus:ring-[#A88B54] ${
                                                 errors.whatsapp_number ? 'border-red-500' : 'border-[#D8CEBA]'
                                             }`}

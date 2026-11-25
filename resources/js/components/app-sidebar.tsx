@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ExternalLink, Inbox, LayoutGrid, MessageSquareQuote, Package, ShoppingBag, Sparkles } from 'lucide-react';
+import { ExternalLink, Inbox, LayoutGrid, MessageSquareQuote, Package, Percent, ShoppingBag, Sparkles, Truck } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,11 +14,13 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
+import { index as contentIndex } from '@/routes/admin/content';
+import { index as inquiriesIndex } from '@/routes/admin/inquiries';
 import { index as ordersIndex } from '@/routes/admin/orders';
 import { index as productsIndex } from '@/routes/admin/products';
-import { index as contentIndex } from '@/routes/admin/content';
+import { index as promosIndex } from '@/routes/admin/promos';
+import { index as shipmentsIndex } from '@/routes/admin/shipments';
 import { index as testimonialsIndex } from '@/routes/admin/testimonials';
-import { index as inquiriesIndex } from '@/routes/admin/inquiries';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -33,9 +35,19 @@ const mainNavItems: NavItem[] = [
         icon: ShoppingBag,
     },
     {
+        title: 'Pelacakan Paket',
+        href: shipmentsIndex(),
+        icon: Truck,
+    },
+    {
         title: 'Kelola Katalog',
         href: productsIndex(),
         icon: Package,
+    },
+    {
+        title: 'Promo & Diskon',
+        href: promosIndex(),
+        icon: Percent,
     },
     {
         title: 'Teks & Hero',

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Eye, EyeOff, ImagePlus, Pencil, Plus, Search, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -73,6 +74,8 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
     const [categoryFilter, setCategoryFilter] = useState('Semua');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [pendingDelete, setPendingDelete] = useState<Product | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [contentsText, setContentsText] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -172,9 +175,17 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
         router.patch(toggleProduct.url(product.id), {}, { preserveScroll: true });
     };
 
-    const handleDelete = (product: Product) => {
-        if (!window.confirm(`Hapus produk "${product.name}" dari katalog?`)) return;
-        router.delete(destroyProduct.url(product.id), { preserveScroll: true });
+    const handleConfirmDelete = () => {
+        if (!pendingDelete) return;
+        setIsDeleting(true);
+        router.delete(destroyProduct.url(pendingDelete.id), {
+            preserveScroll: true,
+            onError: () => toast.error('Gagal menghapus produk hampers.'),
+            onFinish: () => {
+                setIsDeleting(false);
+                setPendingDelete(null);
+            },
+        });
     };
 
     const filteredProducts = products.filter((item) => {
@@ -316,7 +327,8 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                                             size="icon"
                                             variant="outline"
                                             title="Hapus"
-                                            onClick={() => handleDelete(product)}
+                                            className="hover:border-destructive/60 hover:bg-destructive/10"
+                                            onClick={() => setPendingDelete(product)}
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
@@ -502,6 +514,19 @@ export default function AdminProducts({ products, categories }: ProductsPageProp
                     </form>
                 </DialogContent>
             </Dialog>
+
+            <ConfirmDeleteDialog
+                open={pendingDelete !== null}
+                onOpenChange={(open) => !open && setPendingDelete(null)}
+                title="Hapus Produk Katalog?"
+                description={
+                    pendingDelete
+                        ? `Produk "${pendingDelete.name}" akan dihapus dari katalog landing page.`
+                        : ''
+                }
+                processing={isDeleting}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 }

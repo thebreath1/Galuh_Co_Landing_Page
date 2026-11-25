@@ -22,6 +22,18 @@ class Order extends Model
         self::STATUS_COMPLETED,
     ];
 
+    public const STAGE_CURATING = 'curating';
+    public const STAGE_PACKED = 'packed';
+    public const STAGE_SHIPPED = 'shipped';
+    public const STAGE_DELIVERED = 'delivered';
+
+    public const FULFILLMENT_STAGES = [
+        self::STAGE_CURATING,
+        self::STAGE_PACKED,
+        self::STAGE_SHIPPED,
+        self::STAGE_DELIVERED,
+    ];
+
     public const PAYMENT_METHODS = [
         'transfer_bca',
         'transfer_mandiri',
@@ -35,8 +47,12 @@ class Order extends Model
         'product_id',
         'product_name',
         'unit_price',
+        'original_unit_price',
         'quantity',
         'total_price',
+        'promo_name',
+        'discount_percent',
+        'discount_amount',
         'customer_name',
         'customer_whatsapp',
         'customer_email',
@@ -45,17 +61,31 @@ class Order extends Model
         'greeting_card_note',
         'payment_method',
         'status',
+        'fulfillment_stage',
+        'courier_name',
+        'tracking_number',
+        'recipient_name',
+        'shipping_notes',
+        'tracking_history',
         'admin_note',
         'reviewed_by',
         'reviewed_at',
+        'shipped_at',
+        'delivered_at',
     ];
 
     protected $casts = [
         'unit_price' => 'integer',
+        'original_unit_price' => 'integer',
         'quantity' => 'integer',
         'total_price' => 'integer',
+        'discount_percent' => 'integer',
+        'discount_amount' => 'integer',
+        'tracking_history' => 'array',
         'delivery_date' => 'date:Y-m-d',
         'reviewed_at' => 'datetime',
+        'shipped_at' => 'datetime',
+        'delivered_at' => 'datetime',
     ];
 
     public function product(): BelongsTo

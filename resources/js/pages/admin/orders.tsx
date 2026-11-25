@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
+    ArrowRight,
     Calendar,
     CheckCircle2,
     Clock,
@@ -11,11 +12,14 @@ import {
     Phone,
     Search,
     ShoppingBag,
+    Tag,
     Trash2,
+    Truck,
     Wallet,
     XCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,10 +31,12 @@ import {
     index as ordersIndex,
     updateStatus as updateOrderStatus,
 } from '@/routes/admin/orders';
+import { index as shipmentsIndex } from '@/routes/admin/shipments';
 import type { OrderRecord, OrderStatus } from '@/types/landing';
 
 interface AdminOrdersProps {
     orders: OrderRecord[];
+    activeShipmentsCount?: number;
 }
 
 type FlashProps = {
@@ -74,10 +80,12 @@ const STATUS_META: Record<
     },
 };
 
-export default function AdminOrders({ orders }: AdminOrdersProps) {
+export default function AdminOrders({ orders, activeShipmentsCount = 0 }: AdminOrdersProps) {
     const { flash } = usePage<FlashProps>().props;
     const [statusFilter, setStatusFilter] = useState<'all' | OrderStatus>('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [pendingDelete, setPendingDelete] = useState<OrderRecord | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [notesById, setNotesById] = useState<Record<number, string>>(() =>
         Object.fromEntries(orders.map((o) => [o.id, o.admin_note ?? '']))
     );
@@ -98,11 +106,17 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
         );
     };
 
-    const handleDelete = (order: OrderRecord) => {
-        if (!window.confirm(`Hapus pesanan ${order.order_code} atas nama "${order.customer_name}"?`)) {
-            return;
-        }
-        router.delete(destroyOrder.url(order.id), { preserveScroll: true });
+    const handleConfirmDelete = () => {
+        if (!pendingDelete) return;
+        setIsDeleting(true);
+        router.delete(destroyOrder.url(pendingDelete.id), {
+            preserveScroll: true,
+            onError: () => toast.error('Gagal menghapus pesanan.'),
+            onFinish: () => {
+                setIsDeleting(false);
+                setPendingDelete(null);
+            },
+        });
     };
 
     const counts = {
@@ -128,8 +142,6 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
     const filterTabs: { key: 'all' | OrderStatus; label: string }[] = [
         { key: 'all', label: `Semua (${counts.all})` },
         { key: 'pending', label: `Menunggu ACC (${counts.pending})` },
-        { key: 'approved', label: `Di-ACC (${counts.approved})` },
-        { key: 'completed', label: `Selesai (${counts.completed})` },
         { key: 'rejected', label: `Ditolak (${counts.rejected})` },
     ];
 
@@ -138,19 +150,29 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
             <Head title="Kelola & ACC Pesanan Masuk" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
-                <div className="space-y-1.5 border-b border-border pb-5">
-                    <div className="flex items-center gap-2">
-                        <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
-                        <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
-                            Pesanan Manual
-                        </span>
+                <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                            <span className="h-px w-6 bg-[#A88B54]" aria-hidden="true" />
+                            <span className="text-[11px] font-semibold tracking-[0.22em] text-[#725C30] uppercase dark:text-[#C5AA74]">
+                                Pesanan Manual
+                            </span>
+                        </div>
+                        <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+                            Pesanan Hampers Masuk
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Tinjau pesanan baru dan berikan ACC. Pesanan yang sudah di-ACC otomatis berpindah ke menu <strong>Pelacakan Paket</strong>.
+                        </p>
                     </div>
-                    <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
-                        Pesanan Hampers Masuk
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        Pantau pesanan manual dari katalog landing page, berikan catatan internal, lalu ACC atau tolak.
-                    </p>
+
+                    <Button variant="outline" asChild>
+                        <Link href={shipmentsIndex()}>
+                            <Truck className="size-4 text-[#725C30] dark:text-[#C5AA74]" />
+                            Pelacakan Paket ({activeShipmentsCount})
+                            <ArrowRight className="size-3.5" />
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters & Search */}
@@ -206,6 +228,15 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
                                                     <Wallet className="size-3 text-[#725C30] dark:text-[#C5AA74]" />
                                                     {formatPaymentMethodLabel(order.payment_method)}
                                                 </Badge>
+                                                {order.discount_percent && order.discount_percent > 0 ? (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="gap-1 border-[#A88B54]/60 bg-[#EAE1CE]/85 text-[#725C30] dark:bg-[#203252] dark:text-[#C5AA74]"
+                                                    >
+                                                        <Tag className="size-3" />
+                                                        {order.promo_name || 'Promo'} (-{order.discount_percent}%)
+                                                    </Badge>
+                                                ) : null}
                                                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                                                     <Clock className="size-3 text-[#A88B54]" />
                                                     {new Date(order.created_at).toLocaleString('id-ID')}
@@ -319,7 +350,8 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
                                                     size="icon"
                                                     variant="outline"
                                                     title="Hapus pesanan"
-                                                    onClick={() => handleDelete(order)}
+                                                    className="hover:border-destructive/60 hover:bg-destructive/10"
+                                                    onClick={() => setPendingDelete(order)}
                                                 >
                                                     <Trash2 className="size-4 text-destructive" />
                                                 </Button>
@@ -332,6 +364,19 @@ export default function AdminOrders({ orders }: AdminOrdersProps) {
                     </div>
                 )}
             </div>
+
+            <ConfirmDeleteDialog
+                open={pendingDelete !== null}
+                onOpenChange={(open) => !open && setPendingDelete(null)}
+                title="Hapus Pesanan?"
+                description={
+                    pendingDelete
+                        ? `Pesanan ${pendingDelete.order_code} atas nama "${pendingDelete.customer_name}" akan dihapus permanen.`
+                        : ''
+                }
+                processing={isDeleting}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 }

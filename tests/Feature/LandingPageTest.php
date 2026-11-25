@@ -120,4 +120,37 @@ class LandingPageTest extends TestCase
             'needed_date',
         ]);
     }
+
+    public function test_phone_numbers_exceeding_12_digits_are_rejected(): void
+    {
+        $product = Product::create([
+            'name' => 'Test Phone Limit',
+            'slug' => 'test-phone-limit',
+            'category' => 'Lebaran',
+            'short_description' => 'Hampers',
+            'contents' => ['Nastar'],
+            'price_from' => 500000,
+            'image' => 'https://example.com/img.jpg',
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+
+        $this->post('/orders', [
+            'product_id' => $product->id,
+            'customer_name' => 'Tester',
+            'customer_whatsapp' => '0812345678901', // 13 digits
+            'shipping_address' => 'Jl. Sudirman No. 1',
+            'quantity' => 1,
+        ])->assertSessionHasErrors('customer_whatsapp');
+
+        $this->post('/inquiries', [
+            'name' => 'Tester Corp',
+            'company' => 'PT Uji',
+            'email' => 'tester@gmail.com',
+            'whatsapp_number' => '0812345678901', // 13 digits
+            'estimated_quantity' => '50 - 100 paket',
+            'budget_per_package' => 'Rp 350.000 - Rp 500.000',
+            'needed_date' => now()->addDays(7)->format('Y-m-d'),
+        ])->assertSessionHasErrors('whatsapp_number');
+    }
 }

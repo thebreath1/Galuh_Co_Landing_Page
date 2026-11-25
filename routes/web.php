@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminInquiryController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminPromoController;
+use App\Http\Controllers\Admin\AdminShipmentController;
 use App\Http\Controllers\Admin\AdminTestimonialController;
 use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\InquiryController;
@@ -39,11 +41,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('pesanan/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::delete('pesanan/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
+        Route::get('pengiriman', [AdminShipmentController::class, 'index'])->name('shipments.index');
+        Route::patch('pengiriman/{order}', [AdminShipmentController::class, 'update'])->name('shipments.update');
+
         Route::get('katalog', [AdminProductController::class, 'index'])->name('products.index');
         Route::post('katalog', [AdminProductController::class, 'store'])->name('products.store');
         Route::post('katalog/{product}', [AdminProductController::class, 'update'])->name('products.update');
         Route::patch('katalog/{product}/toggle', [AdminProductController::class, 'toggle'])->name('products.toggle');
         Route::delete('katalog/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+
+        Route::get('promo', [AdminPromoController::class, 'index'])->name('promos.index');
+        Route::post('promo', [AdminPromoController::class, 'store'])->name('promos.store');
+        Route::put('promo/{promo}', [AdminPromoController::class, 'update'])->name('promos.update');
+        Route::patch('promo/{promo}/toggle', [AdminPromoController::class, 'toggle'])->name('promos.toggle');
+        Route::delete('promo/{promo}', [AdminPromoController::class, 'destroy'])->name('promos.destroy');
 
         Route::get('testimoni', [AdminTestimonialController::class, 'index'])->name('testimonials.index');
         Route::post('testimoni', [AdminTestimonialController::class, 'store'])->name('testimonials.store');

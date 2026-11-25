@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { m, AnimatePresence } from 'motion/react';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, Sparkles, Tag } from 'lucide-react';
+import type { Product } from '@/types/landing';
 
 interface NavbarSectionProps {
     whatsappNumber: string;
+    products?: Product[];
 }
 
-export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) => {
+export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber, products = [] }) => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,15 +40,48 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
         'Halo GALUH & CO., saya ingin melakukan pemesanan hampers.'
     )}`;
 
+    const activePromo = products.reduce<Product['active_promo']>((best, item) => {
+        if (!item.active_promo) return best;
+        if (!best || item.active_promo.discount_percent > best.discount_percent) {
+            return item.active_promo;
+        }
+        return best;
+    }, null);
+
+    const marqueeAnnouncements = [
+        activePromo
+            ? {
+                  text: `PROMO AKTIF: ${activePromo.promo_name} — Hemat hingga ${activePromo.discount_percent}% otomatis di katalog`,
+                  href: '#koleksi',
+                  highlight: true,
+              }
+            : null,
+        {
+            text: 'Koleksi Hampers Artisanal GALUH & CO. • Studio Ciamis (Jl. Jend. Sudirman No. 175)',
+            href: '#koleksi',
+            highlight: false,
+        },
+        {
+            text: 'Pemesanan Cepat & Praktis — Pembayaran via BCA, Mandiri, QRIS Instan, E-Wallet, atau COD Lokal',
+            href: '#koleksi',
+            highlight: false,
+        },
+        {
+            text: 'Layanan Corporate Gifting B2B — Custom Logo Foil Emas, Faktur Pajak & Termin DP 50%',
+            href: '#corporate',
+            highlight: false,
+        },
+    ].filter((item): item is { text: string; href: string; highlight: boolean } => item !== null);
+
     return (
         <header
             className={`sticky top-0 z-40 transition-all duration-300 ${
                 scrolled
-                    ? 'bg-[#F2EBDC]/95 backdrop-blur-md shadow-sm border-b border-[#D8CEBA]/80 py-2.5'
-                    : 'bg-[#F2EBDC]/70 backdrop-blur-xs py-3 border-b border-transparent'
+                    ? 'bg-[#F2EBDC]/95 backdrop-blur-md shadow-sm'
+                    : 'bg-[#F2EBDC]/85 backdrop-blur-xs'
             }`}
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${scrolled ? 'py-2.5' : 'py-3'}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand Logo */}
                     <a
@@ -104,6 +139,42 @@ export const NavbarSection: React.FC<NavbarSectionProps> = ({ whatsappNumber }) 
                             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
                     </div>
+                </div>
+            </div>
+
+            {/* Thin Sticky Marquee Announcement Banner Attached Directly Below Navbar */}
+            <div
+                aria-label="Informasi & Pengumuman Klien"
+                className="relative w-full bg-[#16233B] text-[#F2EBDC] border-y border-[#A88B54]/40 overflow-hidden select-none"
+            >
+                <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#16233B] to-transparent z-10" />
+                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#16233B] to-transparent z-10" />
+
+                <div className="animate-marquee items-center py-1.5">
+                    {[
+                        ...marqueeAnnouncements,
+                        ...marqueeAnnouncements,
+                        ...marqueeAnnouncements,
+                        ...marqueeAnnouncements,
+                    ].map((item, idx) => (
+                        <a
+                            key={idx}
+                            href={item.href}
+                            className="inline-flex items-center gap-2 px-6 text-[11px] sm:text-xs font-medium tracking-wide whitespace-nowrap text-[#F2EBDC]/95 hover:text-[#C5AA74] transition-colors shrink-0"
+                        >
+                            {item.highlight ? (
+                                <Tag className="w-3 h-3 text-[#C5AA74] shrink-0" />
+                            ) : (
+                                <Sparkles className="w-3 h-3 text-[#A88B54] shrink-0" />
+                            )}
+                            <span className={item.highlight ? 'font-semibold text-[#C5AA74]' : ''}>
+                                {item.text}
+                            </span>
+                            <span className="ml-4 text-[#A88B54]/50" aria-hidden="true">
+                                •
+                            </span>
+                        </a>
+                    ))}
                 </div>
             </div>
 

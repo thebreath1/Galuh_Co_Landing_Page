@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
 import { Building2, Calendar, Mail, MessageSquare, Package, Phone, Trash2, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,15 +25,25 @@ type FlashProps = {
 
 export default function AdminInquiries({ inquiries }: AdminInquiriesProps) {
     const { flash } = usePage<FlashProps>().props;
+    const [pendingDelete, setPendingDelete] = useState<InquiryRecord | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
         if (flash?.error) toast.error(flash.error);
     }, [flash?.success, flash?.error]);
 
-    const handleDelete = (inquiry: InquiryRecord) => {
-        if (!window.confirm(`Hapus inquiry dari "${inquiry.name}"?`)) return;
-        router.delete(destroyInquiry.url(inquiry.id), { preserveScroll: true });
+    const handleConfirmDelete = () => {
+        if (!pendingDelete) return;
+        setIsDeleting(true);
+        router.delete(destroyInquiry.url(pendingDelete.id), {
+            preserveScroll: true,
+            onError: () => toast.error('Gagal menghapus data inquiry. Silakan coba lagi.'),
+            onFinish: () => {
+                setIsDeleting(false);
+                setPendingDelete(null);
+            },
+        });
     };
 
     return (
@@ -114,7 +125,8 @@ export default function AdminInquiries({ inquiries }: AdminInquiriesProps) {
                                             size="icon"
                                             variant="outline"
                                             title="Hapus inquiry"
-                                            onClick={() => handleDelete(inq)}
+                                            className="hover:border-destructive/60 hover:bg-destructive/10"
+                                            onClick={() => setPendingDelete(inq)}
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
@@ -134,6 +146,19 @@ export default function AdminInquiries({ inquiries }: AdminInquiriesProps) {
                     </div>
                 )}
             </div>
+
+            <ConfirmDeleteDialog
+                open={pendingDelete !== null}
+                onOpenChange={(open) => !open && setPendingDelete(null)}
+                title="Hapus Inquiry Corporate?"
+                description={
+                    pendingDelete
+                        ? `Inquiry atas nama "${pendingDelete.name}"${pendingDelete.company ? ` (${pendingDelete.company})` : ''} akan dihapus permanen.`
+                        : ''
+                }
+                processing={isDeleting}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 }

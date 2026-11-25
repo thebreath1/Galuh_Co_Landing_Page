@@ -93,20 +93,18 @@ export const FaqSection: React.FC = () => {
                                     </span>
                                     <span
                                         aria-hidden="true"
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
-                                            isOpen
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${isOpen
                                                 ? 'bg-[#16233B] text-[#C5AA74]'
                                                 : 'bg-[#EFE6D2] text-[#A88B54]'
-                                        }`}
+                                            }`}
                                     >
                                         <span className="relative w-3.5 h-3.5 flex items-center justify-center">
                                             <span className="absolute w-3.5 h-0.5 rounded-full bg-current" />
                                             <span
-                                                className={`absolute w-0.5 h-3.5 rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-                                                    isOpen
+                                                className={`absolute w-0.5 h-3.5 rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${isOpen
                                                         ? 'rotate-90 opacity-0 scale-y-0'
                                                         : 'rotate-0 opacity-100 scale-y-100'
-                                                }`}
+                                                    }`}
                                             />
                                         </span>
                                     </span>
@@ -114,15 +112,13 @@ export const FaqSection: React.FC = () => {
 
                                 <div
                                     aria-hidden={!isOpen}
-                                    className={`grid transition-[grid-template-rows,opacity] duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-                                        isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                                    }`}
+                                    className={`grid transition-[grid-template-rows,opacity] duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                                        }`}
                                 >
                                     <div className="overflow-hidden">
                                         <div
-                                            className={`px-6 pb-6 pt-1 text-sm text-[#6E675D] leading-relaxed border-t border-[#E6DEC9] transition-transform duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-                                                isOpen ? 'translate-y-0' : '-translate-y-1.5'
-                                            }`}
+                                            className={`px-6 pb-6 pt-1 text-sm text-[#6E675D] leading-relaxed border-t border-[#E6DEC9] transition-transform duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${isOpen ? 'translate-y-0' : '-translate-y-1.5'
+                                                }`}
                                         >
                                             {faq.answer}
                                         </div>
